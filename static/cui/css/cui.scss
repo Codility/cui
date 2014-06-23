@@ -1,0 +1,425 @@
+
+@import "bourbon/bourbon";
+
+// Reset (on top of standard normalize.css)
+
+html, body {
+  margin: 0px;
+  padding: 0px;
+  height: 100%;
+}
+
+body {
+  font-family: Verdana, Arial, Helvetica;
+  font-size: 12px;
+}
+
+* { box-sizing: border-box; }
+
+h1, h2, h3, h4, p, form, ul {
+  margin: 0px;
+  padding: 0px;
+}
+
+h1 {
+  font-size: 30px;
+  margin: 0.5em 0;
+}
+
+h2 {
+  margin: 1em 0;
+}
+
+// Helpers
+
+.three-columns {
+  @include clearfix;
+  > div {
+    float: left;
+    width: 33.3%;
+    height: 100%;
+    min-height: 1px;
+  }
+  > div:first-child { text-align: left; }
+  > div:first-child + div { text-align: center; }
+  > div:first-child + div + div { text-align: right; }
+}
+
+.clr {
+  clear: both;
+}
+
+// Candidate UI
+
+$grey1: #f5f6f7;
+$grey2: #aaa;
+$grey3: #777;
+
+#page {
+  min-height: 100%;
+  position: relative;
+
+  $header-height: 53px;
+  // Standard padding used throughout the interface
+  $padding: 10px;
+
+  #header {
+    padding: 0px;
+    text-align: center;
+    height: $header-height;
+
+    .top-bar {
+      height: 27px;
+      line-height: 27px;
+      vertical-align: middle;
+      background: #222;
+      color: #fff;
+      > .logos {
+        > img {
+          display: inline-block;
+          margin-top: 2px;
+          vertical-align: middle;
+        }
+        > span { // "for"
+          color: #999;
+          font-size: 10px;
+          vertical-align: middle;
+        }
+        > .img-company-logo-small {
+          height: 25px;
+          margin-right: 10px;
+        }
+
+      }
+      #clock {
+        font-size: 140%;
+        padding: 5px $padding;
+      }
+    }
+
+    .settings-bar {
+      height: 25px;
+      line-height: 25px;
+      vertical-align: middle;
+      padding: 0 $padding;
+      border-bottom: 1px solid $grey2;
+
+      background: $grey1;
+      font-size: 80%;
+    }
+  }
+  #content {
+    @include position(absolute, $header-height 0px 0px 0px);
+    min-height: 500px;
+
+    $left-size: 40%;
+    #task {
+      @include position(absolute, 0px 100%-$left-size 0px 0px);
+      padding: $padding;
+      > div {
+        height: 100%;
+        position: relative;
+        #task_description {
+          overflow: auto;
+          padding-right: $padding;
+        }
+        .under-task {
+          // stick to bottom
+          @include position(absolute, 0 0px 0px 0px);
+          padding-top: $padding;
+          #verification_results {
+            max-height: 200px;
+            overflow: auto;
+          }
+        }
+      }
+    }
+
+    #rightColumn {
+      @include position(absolute, 0px 0px 0px $left-size);
+      padding: $padding;
+      > div {
+        height:100%;
+        position: relative;
+
+        #edit {
+          #solution {
+            width: 100%;
+          }
+
+          #solution, .ace, .CodeMirror {
+            border: 1px solid $grey2;
+            border-bottom: none;
+            margin: 0;
+            height: 100%;
+          }
+
+          #solution, .ace, .CodeMirror pre {
+            // Override default Ace styles
+            font-family: Droid Sans Mono, Courier, monospace !important;
+            font-size: 12px !important;
+          }
+          .CodeMirror * {
+            // see https://groups.google.com/forum/#!topic/codemirror/nmeqV2AHB_g
+            @include box-sizing(content-box);
+          }
+
+          //diff engine css
+          .highlight-changed-line{
+              position:absolute;
+              background:rgba(150, 200, 150, 0.2);
+              z-index:20
+          }
+          .diff_widget_wrapper {
+              background: inherit;
+              color: inherit;
+              border:none
+          }
+          .diff_widget {
+              border-top: solid 2px;
+              border-bottom: solid 2px;
+              margin: 5px 0;
+              padding: 1px 0px 1px 50px;
+              white-space: pre-wrap;
+          }
+          .diff_widget.diff_widget_default, .diff_widget_arrow.diff_widget_default{
+              border-color: #fff0f0
+          }
+          .diff_widget_arrow {
+              position: absolute;
+              border: solid 5px;
+              border-top-color: transparent!important;
+              border-right-color: transparent!important;
+              border-left-color: transparent!important;
+              top: -5px;
+          }
+          //end of diff engine css
+        }
+        #reset_btn {
+          position: absolute;
+          top: 0;
+          right: 0;
+          margin: $padding;
+          /* go over CodeMirror */
+          z-index: 3;
+        }
+
+        .under-edit {
+          // stick to bottom
+          @include position(absolute, 0 0px 0px 0px);
+          #editor_bar {
+            /* Give enough space to prevent glitches */
+            line-height: 15px;
+            border: 1px solid $grey2;
+            border-top: none;
+            padding: 2px 5px;
+            color: $grey3;
+            background-color: $grey1;
+            a, a:visited {
+              color: $grey3;
+            }
+          }
+
+          .buttons-toolbar {
+            margin: 10px 0;
+            input {
+              margin: 0 1em;
+            }
+          }
+          #resize_console_button {
+            float: right;
+            margin-top: -25px;
+          }
+
+          #console {
+            height: 200px;
+            font-family: Droid Sans Mono, Courier, monospace;
+            font-size: 12px;
+            overflow: auto;
+            padding: 5px;
+            border: 1px solid $grey2;
+            background: $grey1;
+
+            // Easter eggs
+            .quote {
+              color: blue;
+              font-style: italic;
+              margin-top:0.75em;
+              float:right;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Modals
+
+.jqmWindow {
+  padding: 40px !important;
+  text-align: center;
+
+  box-sizing: content-box;
+  * { box-sizing: content-box; }
+  button, input, select { box-sizing: border-box; }
+
+  .message {
+    padding-bottom: 20px;
+    font-size: 120%;
+    background: none;
+    border: none;
+  }
+
+  .dialog_buttons {
+    text-align: center;
+    input {
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      padding: 10px;
+      margin-left: 20px;
+      margin-right: 20px;
+      font-size: 150%;
+    }
+  }
+
+  // Forms
+
+  form th {
+    text-align: right;
+  }
+
+  form th, form td {
+    padding: 4px 0;
+  }
+
+  form ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+
+  form li {
+    list-style-type: none;
+  }
+
+  div.errmsg {
+    color: red;
+    background: pink;
+    border: 1px solid red;
+    font-weight: bold;
+    padding: 5px;
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+
+  .errorlist {
+    color: #f00;
+    font-weight: bold;
+  }
+
+  .errorlist li {
+    list-style: none;
+  }
+
+}
+
+// Survey form
+
+#survey_form > table {
+  width: 80%;
+  margin: auto;
+}
+
+#survey {
+  .choice_answer_label_left {
+    max-width: 120px;
+    text-align: right;
+  }
+  .choice_answer_label_right {
+    max-width: 120px;
+    text-align: left;
+  }
+  .choice_answer_radio {
+    max-width: 40px;
+    text-align: center;
+  }
+  tbody.hidden_part {
+    display: none;
+  }
+  .question_spacer {
+    height: 2em;
+  }
+}
+
+// Anti-cheating
+
+@media print {
+    #brinza-task-description { display: none; }
+}
+
+.transparent {
+    /* Theoretically for IE 8 & 9 (more valid) */
+    /* ...but not required as filter works too */
+    /* should come BEFORE filter */
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+
+    /* This works in IE 8 & 9 too */
+    /* ... but also 5, 6, 7 */
+    filter: alpha(opacity=0.55);
+
+    /* Older than Firefox 0.9 */
+    -moz-opacity:0.99;
+
+    /* Safari 1.x (pre WebKit!) */
+    -khtml-opacity: 0.99;
+
+    /* Modern!
+    /* Firefox 0.9+, Safari 2?, Chrome any?
+    /* Opera 9+, IE 9+ */
+    opacity: 0.99;
+}
+
+#t_overlay {
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:9900;
+    display:block;
+    background-color:#f0f0f0;
+}
+
+.protected {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.protected tt, .protected span.number {
+    -webkit-touch-callout: text;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+// Help
+
+.help {
+    z-index: 9997;
+    position:absolute;
+    top:0px;left:0px;
+    border: 1px solid #aaa;
+    background: #fff;
+    padding: 10px;
+    width: 200px;
+    height: auto;
+    margin:0px; font-size: 90%;
+}
+.num { z-index:9998;position:absolute;top:0px;left:0px;margin:0px;}
