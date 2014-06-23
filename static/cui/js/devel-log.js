@@ -7,7 +7,8 @@ var DevelLog = {
             s += ", " + msg;
         if (exception)
             s += " (exception: " + exception + ")";
-        console.log(s);
+        if (window.console)
+            window.console.log(s);
     },
 
     flush: function() {},

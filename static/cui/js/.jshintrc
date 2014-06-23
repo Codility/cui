@@ -1,0 +1,6 @@
+{
+    "browser": true,
+    "undef": true,
+    "jquery": true,
+    "indent": 4
+}
