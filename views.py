@@ -7,6 +7,7 @@ def render_cui(context):
     context['STATIC_URL'] = settings.STATIC_URL
     context['DEBUG'] = settings.DEBUG
     context['ticket'] = { 'id': 'TICKET_ID' }
+    context['in_devel'] = True
     return SimpleTemplateResponse('cui/cui.html', context)
 
 

@@ -18,8 +18,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}jquery_ui/jquery-1.10.2.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}jquery_ui/jquery-migrate-1.2.1.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}jquery_ui/jquery-ui-1.10.3.js"></script>
-{# raven has to be included and configured after jquery et al #}
-<script type="text/javascript" src="{{ STATIC_URL }}vendor/raven/raven-jquery-native.min.js"></script>
 {% endcompress %}
 
 {% include "install-loggers.html" with candidate=True %}
@@ -79,6 +77,13 @@
   <script type="text/javascript" src="{{STATIC_URL}}js/candidate/local-server.js?{{ VERSION }}"></script>
 {% endif %}
 
-<meta name="google-site-verification" content="9v164Z_rpdjfMPb9gqiXp6m3zBjJVhoZTwvA3Qj0eIc" />
-<link rel="shortcut icon" href="{{ STATIC_URL }}favicon{% if DEBUG %}_debug{% endif %}.ico">
-{% include "google-analytics-async.html" %}
+{% if not in_devel %}
+  {# Google Analytics #}
+  <meta name="google-site-verification" content="9v164Z_rpdjfMPb9gqiXp6m3zBjJVhoZTwvA3Qj0eIc" />
+  <link rel="shortcut icon" href="{{ STATIC_URL }}favicon{% if DEBUG %}_debug{% endif %}.ico">
+  {% include "google-analytics-async.html" %}
+
+  {# Logging #}
+  <script type="text/javascript" src="{{ STATIC_URL }}vendor/raven/raven-jquery-native.min.js"></script>
+  {% include "install-loggers.html" with candidate=True %}
+{% endif %}
