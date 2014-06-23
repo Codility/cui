@@ -46,8 +46,6 @@
 {# Codility JS #}
 
 {% compress js %}
-  <script src="{{STATIC_URL}}js/codility_logger.js"></script>
-
   <script src="{{STATIC_URL}}cui/js/console.js"></script>
   <script src="{{STATIC_URL}}cui/js/diff.js"></script>
   <script src="{{STATIC_URL}}cui/js/testcases.js"></script>
@@ -100,12 +98,18 @@
 
 {# Production-only code #}
 
-{% if not in_devel %}
+{% if in_devel %}
+  <script src="{{ STATIC_URL }}cui/js/devel-log.js"></script>
+  <script>
+    var Log = DevelLog;
+  </script>
+{% else %}
   {# Google Analytics #}
   <meta name="google-site-verification" content="9v164Z_rpdjfMPb9gqiXp6m3zBjJVhoZTwvA3Qj0eIc" />
   {% include "google-analytics-async.html" %}
 
   {# Logging #}
   <script src="{{ STATIC_URL }}vendor/raven/raven-jquery-native.min.js"></script>
+  <script src="{{ STATIC_URL }}js/codility_logger.js"></script>
   {% include "install-loggers.html" with candidate=True %}
 {% endif %}
