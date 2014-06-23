@@ -8,7 +8,6 @@
 
 <div id="page">
 
-  <form id="frm" method="post" action="{% url "candidate_run" id=ticket.id %}">
     <input type="hidden" name="ticket" value="{{ticket.id}}" />
 
     <div id="header">
@@ -133,8 +132,6 @@
 
       </script>
     </div><!-- #content -->
-
-  </form>
 
   {% include "cui/_help.html" %}
   {% include "cui/_dialogs.html" %}
