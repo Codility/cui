@@ -2,14 +2,26 @@
 from django.template.response import SimpleTemplateResponse
 from django.conf import settings
 
+def render_cui(context):
+    context = context.copy()
+    context['STATIC_URL'] = settings.STATIC_URL
+    context['DEBUG'] = settings.DEBUG
+    context['ticket'] = { 'id': 'TICKET_ID' }
+    return SimpleTemplateResponse('cui/cui.html', context)
+
+
 def cui_test(request):
     '''Scaffolding for candidate interface JS tests.'''
 
-    # Mock ticket, so that the template renders
-    context = {}
-    context['ticket'] = { 'id': 'TICKET_ID' }
-    context['in_test'] = True
-    context['title'] = 'CUI tests'
-    context['STATIC_URL'] = settings.STATIC_URL
-    context['DEBUG'] = settings.DEBUG
-    return SimpleTemplateResponse('cui/cui.html', context)
+    return render_cui({
+        'in_test': True,
+        'title': 'CUI tests'
+    })
+
+def cui_local(request):
+    '''Scaffolding for candidate interface with mock local server.'''
+
+    return render_cui({
+        'in_local': True,
+        'title': 'CUI'
+    })
