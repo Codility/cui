@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   {% include "cui/_head.html" %}
+  {% block extrahead %}{% endblock %}
 </head>
 
 <body>
@@ -15,9 +16,8 @@
         <div></div>
         {% if in_devel %}
           <div class="test-logo">[<span>c</span>o<span>d</span>i<span>l</span>i<span>ty</span>]</div>
-        {% else %}
-          {% include "candidate/_candidate_logos.html" %}
         {% endif %}
+        {% block logos %}{% endblock %}
         <div>
           <span id="clock">0:00:00</span>
         </div>
@@ -109,26 +109,9 @@
             window.ui = CandidateUi(server.ui_options);
             ui.init();
           });
-        {% else %}
-        var ui_options = {{ ui_options_json|safe }};
-        var ui = CandidateUi(ui_options);
+        {% endif %}
 
-        $(document).ready(function(){
-            try {
-                ui.init();
-            } catch (err) {
-                Log.error("Candidate interface", "Error loading the candidate interface", err);
-
-                alert("There are some unexpected errors loading the candidate interface.\n"
-                      + "Please reload and try again.\n"
-                      + "\n"
-                      + "If you continue to have problems, please contact support@codility.com.");
-                {% if DEBUG %}
-                throw err;
-                {% endif %}
-            }
-        });
-        {% endif %} {# not in_test and not in_local #}
+        {% block initialize %}{% endblock %}
 
       </script>
     </div><!-- #content -->

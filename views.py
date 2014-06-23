@@ -8,7 +8,7 @@ def render_cui(context):
     context['DEBUG'] = settings.DEBUG
     context['ticket'] = { 'id': 'TICKET_ID' }
     context['in_devel'] = True
-    return SimpleTemplateResponse('cui/cui.html', context)
+    return SimpleTemplateResponse('cui/cui_devel.html', context)
 
 
 def cui_test(request):

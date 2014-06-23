@@ -10,7 +10,7 @@ ROOT_URLCONF = 'run_urls'
 DATABASES = { 'default': {} } #required regardless of actual usage
 SECRET_KEY = '42'
 
-TEMPLATE_DIRS = (here('templates/'), here('run_templates/'))
+TEMPLATE_DIRS = (here('templates/'))
 
 STATIC_URL = '/static/'
 STATIC_ROOT = here('static')

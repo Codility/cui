@@ -103,13 +103,4 @@
   <script>
     var Log = DevelLog;
   </script>
-{% else %}
-  {# Google Analytics #}
-  <meta name="google-site-verification" content="9v164Z_rpdjfMPb9gqiXp6m3zBjJVhoZTwvA3Qj0eIc" />
-  {% include "google-analytics-async.html" %}
-
-  {# Logging #}
-  <script src="{{ STATIC_URL }}vendor/raven/raven-jquery-native.min.js"></script>
-  <script src="{{ STATIC_URL }}js/codility_logger.js"></script>
-  {% include "install-loggers.html" with candidate=True %}
 {% endif %}

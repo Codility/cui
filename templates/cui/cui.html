@@ -1,0 +1,39 @@
+{# Production version of the CUI template. Not usable outside of the Codility system. #}
+
+{% extends "cui/cui_devel.html" %}
+
+{% block extrahead %}
+  {# Google Analytics #}
+  <meta name="google-site-verification" content="9v164Z_rpdjfMPb9gqiXp6m3zBjJVhoZTwvA3Qj0eIc" />
+  {% include "google-analytics-async.html" %}
+
+  {# Logging #}
+  <script src="{{ STATIC_URL }}vendor/raven/raven-jquery-native.min.js"></script>
+  <script src="{{ STATIC_URL }}js/codility_logger.js"></script>
+  {% include "install-loggers.html" with candidate=True %}
+{% endblock %}
+
+{% block logos %}
+  {% include "candidate/_candidate_logos.html" %}
+{% endblock %}
+
+{% block initialize %}
+  var ui_options = {{ ui_options_json|safe }};
+  var ui = CandidateUi(ui_options);
+
+  $(document).ready(function(){
+    try {
+      ui.init();
+    } catch (err) {
+      Log.error("Candidate interface", "Error loading the candidate interface", err);
+
+      alert("There are some unexpected errors loading the candidate interface.\n"
+      + "Please reload and try again.\n"
+      + "\n"
+      + "If you continue to have problems, please contact support@codility.com.");
+      {% if DEBUG %}
+        throw err;
+      {% endif %}
+     }
+  });
+{% endblock %}
