@@ -1,0 +1,61 @@
+{% load i18n %}
+<img src="{{STATIC_URL}}/img/numbers/1.png" id="num1" style="display:none" class="num" alt="1"/>
+<img src="{{STATIC_URL}}/img/numbers/2.png" id="num2" style="display:none" class="num" alt="2"/>
+<img src="{{STATIC_URL}}/img/numbers/3.png" id="num3" style="display:none" class="num" alt="3"/>
+<img src="{{STATIC_URL}}/img/numbers/4.png" id="num4" style="display:none" class="num" alt="4"/>
+<img src="{{STATIC_URL}}/img/numbers/5.png" id="num5" style="display:none" class="num" alt="5"/>
+<img src="{{STATIC_URL}}/img/numbers/6.png" id="num6" style="display:none" class="num" alt="6"/>
+<img src="{{STATIC_URL}}/img/numbers/7.png" id="num7" style="display:none" class="num" alt="7"/>
+<img src="{{STATIC_URL}}/img/px.gif" id="num8" style="display:none" class="num" alt="8"/>
+
+
+<div id="help1" style="display:none" class="help">
+{% trans "Read the problem description." %}
+</div>
+
+<div id="help2" style="display:none" class="help">
+{% if ticket.current_prg_lang_list.count > 1 %}
+Choose the programming language.
+{% else %}
+You will be solving this problem in {{ticket.current_prg_lang.name}}
+{% endif %}
+</div>
+
+<div id="help3" style="display:none" class="help">
+Write the solution for the problem using the editor; your solution should include a function defined in the task description; your solution can include other functions, procedures or methods.
+</div>
+
+<div id="help4" style="display:none" class="help">
+Verify correctness of your solution
+(you will be informed whether your solution
+(a) compiles;
+(b) returns a correct result given the exemplary data from the task description;
+(c) terminates within an acceptable period of time).
+Verification will help you to avoid simple mistakes.
+You can verify your solution multiple times.
+The number of verification requests will not influence your score.
+</div>
+
+<div id="help5" style="display:none" class="help">
+You can run your solution on your test data to see what result it computes;
+you will not be informed about the correctness of this result.
+</div>
+
+<div id="help6" style="display:none" class="help">
+Submit the solution for the final evaluation.
+{% if ticket.tasks_count > 1 %}
+This will close this task.
+You need to submit each task solution separately.
+{% else %}
+This will end this session. You can submit your solution only once.
+{% endif %}
+</div>
+
+<div id="help7" style="display:none" class="help">
+Quit will finish this session without sending your solution for evaluation.
+You can re-open the session, but quitting does not put the timer on hold.
+</div>
+
+<div id="help8" style="display:none" class="help">
+Click anywhere to hide the help overlay.
+</div>

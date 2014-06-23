@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+{% load compress %}
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+  <meta charset="utf-8">
+  <title>Codility</title>
+
+  {% compress css %}
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/normalize.css"/>
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/candidate.scss" type="text/x-scss"/>
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}jquery_ui/css/smoothness-1-10-4/jquery-ui-1.10.4.custom.css" />
+  {% endcompress %}
+
+  <link rel="stylesheet" href="{{ STATIC_URL }}vendor/jquery/jquery.jqModal.css?{{ VERSION }}" type="text/css"/>
+
+  {% if in_test %}
+    <link rel="stylesheet" href="{{STATIC_URL}}vendor/jasmine-2.0.0/jasmine.css?{{ VERSION }}" />
+  {% endif %}
+
+  {% compress js %}
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery_ui/jquery-1.10.2.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery_ui/jquery-migrate-1.2.1.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery_ui/jquery-ui-1.10.3.js"></script>
+  {# raven has to be included and configured after jquery et al #}
+  <script type="text/javascript" src="{{ STATIC_URL }}vendor/raven/raven-jquery-native.min.js"></script>
+  {% endcompress %}
+
+  {% include "install-loggers.html" with candidate=True %}
+
+  {% compress js %}
+  <script type="text/javascript" src="{{ STATIC_URL }}js/compat.js"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/codility_logger.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/codility.js"></script>
+  {% endcompress %}
+
+  <script type="text/javascript" src="{{STATIC_URL}}vendor/jquery/jquery.jqModal.js?v={{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}vendor/jquery/jquery.dimscreen.js?{{ VERSION }}"></script>
+
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/console.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/diff.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/testcases.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/help.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/editor.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/candidate_ui.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/clock.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/tracker.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/utils.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/survey.js?{{ VERSION }}"></script>
+
+  <script type="text/javascript" src="{{ STATIC_URL }}vendor/webfont/webfont.js"></script>
+
+  {% if ALLOW_EXTERNAL_CONTENT %}
+    <script>
+      WebFont.load({
+          google: {
+              families: ['Droid Sans Mono']
+          }
+      });
+    </script>
+  {% endif %}
+
+  <script type="text/javascript" src="{{STATIC_URL}}vendor/ace-src-noconflict/ace.js"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}vendor/ace-src-noconflict/ext-language_tools.js"></script>
+
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/diff_engine.js?{{ VERSION }}"></script>
+
+  {% if in_test %}
+    <script type="text/javascript" src="{{STATIC_URL}}vendor/jasmine-2.0.0/jasmine.js?{{ VERSION }}"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}vendor/jasmine-2.0.0/jasmine-html.js?{{ VERSION }}"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}vendor/jasmine-2.0.0/boot.js?{{ VERSION }}"></script>
+
+    <script type="text/javascript" src="{{STATIC_URL}}vendor/sinon/sinon-1.8.2.js?{{ VERSION }}"></script>
+
+    <script type="text/javascript" src="{{STATIC_URL}}js/candidate/test-server.js?{{ VERSION }}"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/candidate/tests.js?{{ VERSION }}"></script>
+  {% endif %}
+
+  {% if in_local %}
+    <script type="text/javascript" src="{{STATIC_URL}}vendor/sinon/sinon-1.8.2.js?{{ VERSION }}"></script>
+
+    <script type="text/javascript" src="{{STATIC_URL}}js/candidate/test-server.js?{{ VERSION }}"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/candidate/local-server.js?{{ VERSION }}"></script>
+  {% endif %}
+
+  <meta name="google-site-verification" content="9v164Z_rpdjfMPb9gqiXp6m3zBjJVhoZTwvA3Qj0eIc" />
+  <link rel="shortcut icon" href="{{ STATIC_URL }}favicon{% if DEBUG %}_debug{% endif %}.ico">
+  {% include "google-analytics-async.html" %}
+</head>
+
+<body>
+
+<div id="page">
+
+  <form id="frm" method="post" action="{% url "candidate_run" id=ticket.id %}">
+    <input type="hidden" name="ticket" value="{{ticket.id}}" />
+
+    <div id="header">
+      <div class="top-bar three-columns">
+        <div></div>
+        {% include "candidate/_candidate_logos.html" %}
+        <div>
+          <span id="clock">0:00:00</span>
+        </div>
+      </div><!-- .top-bar -->
+      <div class="settings-bar three-columns">
+        <div>
+          <span id="human_lang_list">
+            Language &nbsp;
+            <select name="current_human_lang" id="current_human_lang"></select>
+          </span>
+        </div>
+
+
+        <div>
+          passcode: {{ticket.id}}
+        </div>
+
+        <div>
+          <span style="display:none" class="current_task_select">
+            Task &nbsp;
+            <select name="current_task" id="current_task"></select>
+          </span>{# current_task_select #}
+          &nbsp;&nbsp;
+          <span id="prg_lang_list">
+            Programming language &nbsp;
+            <select name="current_prg_lang" id="current_prg_lang"></select>
+          </span>
+        </div>
+      </div><!-- .settings-bar -->
+    </div><!-- #header -->
+
+    <div id="content">
+      <div id="overlay" style="width: 100%; height: 100%; position: absolute; top: 0px; left: 0px; z-index: 9996; background-color: #000000; display:none"></div>
+
+      <div id="task"><div>
+        <div id="task_description"></div>
+        <div class="under-task">
+          <div id="verification_results">
+            <input id="example_input" type="hidden" name="test_case_example" value="" />
+
+            <div id="add_test_case">
+              <a id="test_case_link" href="#" style="text-decoration:none">
+                <img id="test_case_img" src="{{STATIC_URL}}img/zoom_in.png" alt="+" align="absmiddle" border="0"/>
+                <span style="font-size:120%;font-weight:bold;background:#c5c5c5;padding:1px 6px">add your test case(s)</span>
+              </a>
+            </div>
+            <div id="test_cases"></div>
+          </div>
+        </div>
+      </div></div><!-- #task -->
+
+      <div id="rightColumn"><div>
+        <div id="edit">
+          <textarea name="solution" id="solution" ></textarea>
+        </div>
+        <input type="button" id="reset_btn" value=" Reset code " style="display:none" disabled="disabled" />
+        <div class="under-edit">
+          <div id="editor_bar" class="three-columns">
+            <div id="prg_lang_ver">Language Version</div>
+            <div id="save_status"></div>
+            <div>
+              <a href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts" target="_blank">Keyboard shortcuts</a>
+            </div>
+          </div>
+
+          <div>
+            <div id="buttons" class="buttons-toolbar" style="text-align:center">
+              <input type="button" id="help_btn" value=" HELP " />
+              <input type="button" id="verify_button" value=" RUN " disabled="disabled" />
+              <input type="button" id="final_button" value=" SUBMIT THIS TASK " disabled="disabled"/>
+              <input type="button" id="quit_button" value=" QUIT " />
+            </div>
+            <input type="button" id="resize_console_button" value="↑"/>
+          </div>
+
+          <div id="console"></div>
+        </div><!-- .under-edit -->
+      </div></div><!-- #rightColumn -->
+
+      <script>
+
+        ////////////////////INITIALIZATION////////////////////////
+        {% if in_test %}
+          {# handled by Jasmine's boot.js #}
+        {% elif in_local %}
+          $(document).ready(function() {
+            window.server = LocalServer();
+            server.init();
+            window.ui = CandidateUi(server.ui_options);
+            ui.init();
+          });
+        {% else %}
+        var ui_options = {{ ui_options_json|safe }};
+        var ui = CandidateUi(ui_options);
+
+        $(document).ready(function(){
+            try {
+                ui.init();
+            } catch (err) {
+                Log.error("Candidate interface", "Error loading the candidate interface", err);
+
+                alert("There are some unexpected errors loading the candidate interface.\n"
+                      + "Please reload and try again.\n"
+                      + "\n"
+                      + "If you continue to have problems, please contact support@codility.com.");
+                {% if DEBUG %}
+                throw err;
+                {% endif %}
+            }
+        });
+        {% endif %} {# not in_test and not in_local #}
+
+      </script>
+    </div><!-- #content -->
+
+  </form>
+
+  {% include "candidate/candidate_help_part.html" %}
+  {% include "candidate/candidate_dialogs_part.html" %}
+
+</div><!-- #page -->
+</body>
+</html>

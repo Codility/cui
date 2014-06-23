@@ -1,0 +1,230 @@
+<div id="quit_prompt" style="display:none"  class="jqmWindow" >
+    <div class="message">Are you sure that you want to quit?</div>
+
+    <div class='dialog_buttons'>
+        <input type="button" value="yes" class='yes' id="q_yes"/>
+        <input type="button" value="no" class='no jqmClose'/>
+    </div>
+</div>
+
+<div id="final_prompt" style="display:none"  class="jqmWindow" >
+    <div class="message">
+      You can't modify your solution after you submit it.<br/>
+      Are you sure that your solution is ready?<br/>
+    </div>
+
+    <div class='dialog_buttons'>
+        <input type="button" value="yes" class='yes' id="fp_yes"/>
+        <input type="button" value="no" class='no jqmClose'/>
+    </div>
+</div>
+
+<div id="bugfix_no_changes" style="display:none"  class="jqmWindow" >
+    <div class="message">
+      <b>You haven't changed anything in the solution!</b><br/>
+      Are you sure you want to submit it?<br/>
+    </div>
+
+    <div class='dialog_buttons'>
+        <input type="button" value="yes" class='yes' id="bugfix_yes"/>
+        <input type="button" value="no" class='no jqmClose'/>
+    </div>
+</div>
+
+<div id="final_verification" style="display:none" class="jqmWindow" >
+    <div class="message">?</div>
+    <div id="fv_loader">
+        <img src="{{STATIC_URL}}img/ajax-loader-tr.gif" alt="*">
+    </div>
+
+    <div class='dialog_buttons' style="display:none">
+        <input type="button" value="yes" class='yes' id="fv_yes"/>
+        <input type="button" value="no" class='no jqmClose'/>
+    </div>
+
+</div>
+
+<div id="force_close_prompt" style="display:none"  class="jqmWindow" >
+    <div class="message">
+      Forcing the closure of the ticket will end candidate's work immediately.<br/>
+      Are you sure that you want to finish his work?<br/>
+    </div>
+
+    <div class='dialog_buttons'>
+        <input type="button" value="yes" class='yes' id="ff_yes"/>
+        <input type="button" value="no" class='no jqmClose'/>
+    </div>
+</div>
+
+<div id="forbidden_extend_prompt" style="display:none"  class="jqmWindow" >
+    <div class="message">
+      The open ticket can not be extended.<br/>
+      Please wait until the canndate finishes his work<br/>
+      or you may perform 'forced closure'<br/>
+    </div>
+
+    <div class='dialog_buttons'>
+        <input type="button" value="ok" class='no jqmClose'/>
+    </div>
+</div>
+
+<div id='msg_task_completed' style='display: none;' class='jqmWindow'>
+    <div class='message'><h3>Task has been received. Now you can solve next task.</h3></div>
+
+    <div class='dialog_buttons'>
+        <input id="next_task_button" type="button" value="next task" class='jqmClose'/>
+    </div>
+</div>
+
+<div id='msg_final_task_completed' style="display: none; max-height: 400px; overflow: auto;" class="jqmWindow">
+    <h3 class='message in-demo' style="display: none;">Your Codility demo session has ended. Thank you!</h3>
+    <h3 class='message no-demo'>Your Codility session has ended. Thank you!</h3>
+
+    <p class="survey-msg" style="display: none;">
+        Your opinion is important to us.
+        Please help us provide better service by filling out the survey below (five questions).
+        Participation in the survey is voluntary.
+        Codility will NOT reveal connection between your answers and your name and/or test ID.
+    </p>
+
+    <div class='dialog_buttons'>
+        <input type="button" value="continue" class='jqmClose survey-skip' id="session_close" style='margin-right: 0;'/>
+    </div>
+
+    <div style="height: 20px;"></div>
+
+    <div class='survey_placeholder'></div>
+</div>
+
+<div id='msg_task_closed' class='jqmWindow'>
+    <div class='message'><h3>Task closed</h3></div>
+
+    <p>
+        Final solution for this task has been submitted.
+        You may read the problem statement.
+        You may review your solution, but you can't introduce any changes.
+    </p>
+
+    <div class='dialog_buttons'>
+        <input type='button' value='OK' class='jqmClose'/>
+    </div>
+</div>
+
+<div id="msg_timeout" style="display: none; max-height: 400px; overflow: auto;" class="jqmWindow" >
+    <h3 class='message'>We are sorry, but the time has run out.</h3>
+
+    <p>
+        Your work has been automatically saved and will be evaluated shortly.
+    </p>
+
+    <div style="height: 20px;"></div>
+
+    <p class="survey-msg" style="display: none;">
+        Your opinion is important to us.
+        Please help us provide better service by filling out the survey below (five questions).
+        Participation in the survey is voluntary.
+        Codility will NOT reveal connection between your answers and your name and/or test ID.
+    </p>
+
+    <div class='dialog_buttons'>
+        <input id="logout_button" type="button" value="continue" class='jqmClose survey-skip' style='margin-right: 0;'/>
+    </div>
+
+    <div style="height: 20px;"></div>
+
+    <div class='survey_placeholder'></div>
+</div>
+
+<div id='survey' style='display: none; text-align: left;'>
+    <form id='survey_form'>
+        <table>
+            <tbody>
+            <tr>
+                <td colspan='12'><b>1. Do you think the Codility test gives a fair assessment of your basic coding skills?</b></td>
+            </tr>
+            <tr>
+                <td class='choice_answer_label_left'>no</td>
+                <td class='choice_answer_radio'><input type='radio' name='answer1' value='1' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer1' value='2' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer1' value='3' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer1' value='4' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer1' value='5' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer1' value='6' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer1' value='7' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer1' value='8' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer1' value='9' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer1' value='10' /></td>
+                <td class='choice_answer_label_right'>yes</td>
+            </tr>
+            </tbody>
+            <tbody class='hidden_part'>
+            <tr><td style='height: 5px;'></td></tr>
+            <tr>
+                <td colspan='12'><b>2. Did you understand the problem descriptions as presented during the test?</b></td>
+            </tr>
+            <tr>
+                <td class='choice_answer_label_left'>didn't understand</td>
+                <td class='choice_answer_radio'><input type='radio' name='answer2' value='1' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer2' value='2' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer2' value='3' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer2' value='4' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer2' value='5' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer2' value='6' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer2' value='7' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer2' value='8' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer2' value='9' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer2' value='10' /></td>
+                <td class='choice_answer_label_right'>understood everything</td>
+            </tr>
+            <tr><td style='height: 5px;'></td></tr>
+            <tr>
+                <td colspan='12'><b>3. Did you feel you had enough time to complete the questions?</b></td>
+            </tr>
+            <tr>
+                <td class='choice_answer_label_left'>I didn't have time to finish single task</td>
+                <td class='choice_answer_radio'><input type='radio' name='answer3' value='1' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer3' value='2' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer3' value='3' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer3' value='4' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer3' value='5' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer3' value='6' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer3' value='7' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer3' value='8' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer3' value='9' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer3' value='10' /></td>
+                <td class='choice_answer_label_right'>I had time to do more</td>
+            </tr>
+            <tr><td style='height: 5px;'></td></tr>
+            <tr>
+                <td colspan='12'><b>4. How do you rate the Codility environment for ease of use?</b></td>
+            </tr>
+            <tr>
+                <td class='choice_answer_label_left'>impossible to use</td>
+                <td class='choice_answer_radio'><input type='radio' name='answer4' value='1' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer4' value='2' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer4' value='3' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer4' value='4' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer4' value='5' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer4' value='6' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer4' value='7' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer4' value='8' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer4' value='9' /></td>
+                <td class='choice_answer_radio'><input type='radio' name='answer4' value='10' /></td>
+                <td class='choice_answer_label_right'>it's great!</td>
+            </tr>
+            <tr><td></td></tr>
+            <tr>
+                <td colspan='12'><b>5. If you faced serious problems when solving the Codility test please describe them.</b></td>
+            </tr>
+            <tr>
+                <td colspan='12'><textarea name='answer5' style='width: 100%; height: 75px;'></textarea></td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+    <div style='height: 10px;'></div>
+    <div class='dialog_buttons'>
+        <input id='survey_continue_button' type='button' value="continue survey" />
+        <input id='survey_submit_button' type='button' value="submit survey" style='display: none;' />
+    </div>
+</div>
