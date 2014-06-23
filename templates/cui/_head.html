@@ -1,10 +1,18 @@
 {% load compress %}
 
+{% comment %}
+
+  This is the <head> part of candidate UI.
+
+  Static assets have to either be in a {% compress %} block, or
+  include ?{{ VERSION }} (for cache busting).
+
+{% endcomment %}
+
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
 <meta charset="utf-8">
 <title>{{ title|default:"Codility" }}</title>
 <link rel="shortcut icon" href="{{ STATIC_URL }}favicon{% if DEBUG %}_debug{% endif %}.ico">
-
 
 {# CSS #}
 
