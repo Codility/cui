@@ -1,0 +1,84 @@
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+  <meta charset="utf-8">
+  <title>{{ title|default:"Codility" }}</title>
+
+  {% compress css %}
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/normalize.css"/>
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/candidate.scss" type="text/x-scss"/>
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}jquery_ui/css/smoothness-1-10-4/jquery-ui-1.10.4.custom.css" />
+  {% endcompress %}
+
+  <link rel="stylesheet" href="{{ STATIC_URL }}vendor/jquery/jquery.jqModal.css?{{ VERSION }}" type="text/css"/>
+
+  {% if in_test %}
+    <link rel="stylesheet" href="{{STATIC_URL}}vendor/jasmine-2.0.0/jasmine.css?{{ VERSION }}" />
+  {% endif %}
+
+  {% compress js %}
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery_ui/jquery-1.10.2.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery_ui/jquery-migrate-1.2.1.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery_ui/jquery-ui-1.10.3.js"></script>
+  {# raven has to be included and configured after jquery et al #}
+  <script type="text/javascript" src="{{ STATIC_URL }}vendor/raven/raven-jquery-native.min.js"></script>
+  {% endcompress %}
+
+  {% include "install-loggers.html" with candidate=True %}
+
+  {% compress js %}
+  <script type="text/javascript" src="{{ STATIC_URL }}js/compat.js"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/codility_logger.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/codility.js"></script>
+  {% endcompress %}
+
+  <script type="text/javascript" src="{{STATIC_URL}}vendor/jquery/jquery.jqModal.js?v={{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}vendor/jquery/jquery.dimscreen.js?{{ VERSION }}"></script>
+
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/console.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/diff.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/testcases.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/help.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/editor.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/candidate_ui.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/clock.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/tracker.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/utils.js?{{ VERSION }}"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/survey.js?{{ VERSION }}"></script>
+
+  <script type="text/javascript" src="{{ STATIC_URL }}vendor/webfont/webfont.js"></script>
+
+  {% if ALLOW_EXTERNAL_CONTENT %}
+    <script>
+      WebFont.load({
+          google: {
+              families: ['Droid Sans Mono']
+          }
+      });
+    </script>
+  {% endif %}
+
+  <script type="text/javascript" src="{{STATIC_URL}}vendor/ace-src-noconflict/ace.js"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}vendor/ace-src-noconflict/ext-language_tools.js"></script>
+
+  <script type="text/javascript" src="{{STATIC_URL}}js/candidate/diff_engine.js?{{ VERSION }}"></script>
+
+  {% if in_test %}
+    <script type="text/javascript" src="{{STATIC_URL}}vendor/jasmine-2.0.0/jasmine.js?{{ VERSION }}"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}vendor/jasmine-2.0.0/jasmine-html.js?{{ VERSION }}"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}vendor/jasmine-2.0.0/boot.js?{{ VERSION }}"></script>
+
+    <script type="text/javascript" src="{{STATIC_URL}}vendor/sinon/sinon-1.8.2.js?{{ VERSION }}"></script>
+
+    <script type="text/javascript" src="{{STATIC_URL}}js/candidate/test-server.js?{{ VERSION }}"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/candidate/tests.js?{{ VERSION }}"></script>
+  {% endif %}
+
+  {% if in_local %}
+    <script type="text/javascript" src="{{STATIC_URL}}vendor/sinon/sinon-1.8.2.js?{{ VERSION }}"></script>
+
+    <script type="text/javascript" src="{{STATIC_URL}}js/candidate/test-server.js?{{ VERSION }}"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/candidate/local-server.js?{{ VERSION }}"></script>
+  {% endif %}
+
+  <meta name="google-site-verification" content="9v164Z_rpdjfMPb9gqiXp6m3zBjJVhoZTwvA3Qj0eIc" />
+  <link rel="shortcut icon" href="{{ STATIC_URL }}favicon{% if DEBUG %}_debug{% endif %}.ico">
+  {% include "google-analytics-async.html" %}
