@@ -14,7 +14,11 @@
     <div id="header">
       <div class="top-bar three-columns">
         <div></div>
-        {% include "candidate/_candidate_logos.html" %}
+        {% if in_devel %}
+          <div class="test-logo">[<span>c</span>o<span>d</span>i<span>l</span>i<span>ty</span>]</div>
+        {% else %}
+          {% include "candidate/_candidate_logos.html" %}
+        {% endif %}
         <div>
           <span id="clock">0:00:00</span>
         </div>

@@ -54,6 +54,7 @@ h2 {
 $grey1: #f5f6f7;
 $grey2: #aaa;
 $grey3: #777;
+$codility-light-blue: #2b9cd9;
 
 #page {
   min-height: 100%;
@@ -89,7 +90,12 @@ $grey3: #777;
           height: 25px;
           margin-right: 10px;
         }
-
+      }
+      > .test-logo {
+        font-family: Droid Sans Mono, Courier, monospace;
+        font-weight: bold;
+        font-size: 21px;
+        > span { color: $codility-light-blue; }
       }
       #clock {
         font-size: 140%;
