@@ -1,0 +1,32 @@
+
+  CUI (Candidate Interface)
+
+This is Codility's candidate interface. It's provided as a Django application
+ready for stand-alone development.
+
+
+INSTALLATION
+
+- Install Python packages (from requirements.txt)
+
+  pip install -r requirements.txt
+
+- Install Ruby packages (from Gemfile)
+
+  gem install bundler
+  bundle install
+
+
+RUNNING
+
+You can run CUI using a standard Django development server:
+
+  python manage.py runserver localhost:8001
+
+To run the unit tests, go to:
+
+  http://localhost:8001/test/
+
+To run against a mock in-browser server, go to:
+
+  http://localhost:8001/local/
