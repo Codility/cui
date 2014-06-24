@@ -28,3 +28,6 @@ COMPRESS_CSS_FILTERS = [
     'compressor.filters.cssmin.CSSMinFilter',  # out of the box
 ]
 COMPRESS_OUTPUT_DIR = ''
+
+# See https://github.com/django-compressor/django-compressor/issues/261
+COMPRESS_PARSER = 'compressor.parser.HtmlParser'
