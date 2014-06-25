@@ -10,4 +10,4 @@ urlpatterns = patterns(
     url(r'^local/$', 'cui_local', name='cui_local')
 )
 
-urlpatterns += static(run_settings.STATIC_URL, document_root=run_settings.STATIC_ROOT)
+urlpatterns += static(run_settings.STATIC_URL)

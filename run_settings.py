@@ -21,7 +21,8 @@ SECRET_KEY = '42'
 TEMPLATE_DIRS = (here('templates/'))
 
 STATIC_URL = '/static/'
-STATIC_ROOT = here('static')
+CUI_STATIC_DIR = here('static')
+STATICFILES_DIRS = [CUI_STATIC_DIR]
 
 # Django-compressor (for SCSS files)
 
@@ -41,9 +42,10 @@ COMPRESS_OUTPUT_DIR = ''
 # See https://github.com/django-compressor/django-compressor/issues/261
 COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
+COMPRESS_ROOT = here('static_auto')
+
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
 
