@@ -6,8 +6,16 @@ here = lambda x: os.path.join(os.path.abspath(os.path.dirname(__file__)), x)
 DEBUG = TEMPLATE_DEBUG = True
 ROOT_URLCONF = 'run_urls'
 
-# Unused but necessary
-DATABASES = { 'default': {} } #required regardless of actual usage
+# Unused, but required by test runner.
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
+        'TEST_NAME': ':memory:',
+    }
+}
+
+# Unused.
 SECRET_KEY = '42'
 
 TEMPLATE_DIRS = (here('templates/'))
@@ -17,8 +25,9 @@ STATIC_ROOT = here('static')
 
 # Django-compressor (for SCSS files)
 
-INSTALLED_APPS = ['compressor']
+INSTALLED_APPS = ['django.contrib.staticfiles', 'compressor']
 
+COMPRESS_ENABLED = False
 COMPRESS_OFFLINE = False
 COMPRESS_PRECOMPILERS = (
     ('text/x-scss', 'bundle exec sass {infile} {outfile} --scss'),
@@ -31,3 +40,13 @@ COMPRESS_OUTPUT_DIR = ''
 
 # See https://github.com/django-compressor/django-compressor/issues/261
 COMPRESS_PARSER = 'compressor.parser.HtmlParser'
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
+
+# Testing
+
+TEST_RUNNER = 'run_util.CUITestRunner'
