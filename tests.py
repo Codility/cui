@@ -1,18 +1,25 @@
 
+import os, sys
+
 from django.test.testcases import LiveServerTestCase
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
 from django.core.urlresolvers import reverse
 
-import sys
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from pyvirtualdisplay.smartdisplay import SmartDisplay
 
 class CUITestCase(LiveServerTestCase):
     def setUp(self):
-        self.driver = webdriver.PhantomJS()
+        if not os.environ.get('SHOW_SELENIUM'):
+            self.display = SmartDisplay(visible=0, size=(1024, 768))
+            self.display.start()
+            self.driver = webdriver.Firefox()
 
     def tearDown(self):
         if hasattr(self, 'driver'):
             self.driver.quit()
+        if hasattr(self, 'display'):
+            self.display.stop()
 
     def wait_until_expr(self, expr, timeout=60):
         WebDriverWait(self.driver, timeout).until(
