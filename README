@@ -16,6 +16,10 @@ INSTALLATION
   gem install bundler
   bundle install
 
+- Install PhantomJS, for running the tests
+
+  sudo apt-get install phantomjs
+
 
 RUNNING
 
@@ -23,10 +27,14 @@ You can run CUI using a standard Django development server:
 
   python manage.py runserver localhost:8001
 
-To run the unit tests, go to:
+Run the test suite (using PhantomJS):
+
+  python manage.py test
+
+See the unit tests in your browser:
 
   http://localhost:8001/test/
 
-To run against a mock in-browser server, go to:
+Run against a mock in-browser server:
 
   http://localhost:8001/local/
