@@ -532,15 +532,13 @@ describe_ui('', {}, function() {
             server.respond();
         });
 
-        // These are href attributes (href="TestCases.add()") now, so
-        // we have to bypass jQuery.
         function addTestCase() {
             expectVisible('#test_case_link', true);
-            $('#test_case_link')[0].click();
+            $('#test_case_link').click();
         }
 
         function removeTestCase() {
-            $('.testCase a')[0].click();
+            $('.testCase a').first().click();
         }
 
         it('should add test cases', function() {
