@@ -211,6 +211,10 @@ function TestServer() {
             return;
         }
 
+        if (req.aborted) {
+            return;
+        }
+
         var data = getParams(req.requestBody);
         if (self.use_asserts) {
             expect(data.ticket).toBe('TICKET_ID');
