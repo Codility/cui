@@ -262,7 +262,7 @@ function CandidateUi(options)
         self.updateControls();
     };
 
-    self.updateControls = function() {
+    self.updateControls = function() { // TODO enabling/disabling task
         var may_edit = (self.task.loaded && self.task.open);
         var may_submit_or_reload = (self.task.loaded && self.task.open && !self.isCalling());
         var may_switch = (self.task.loaded && !self.isCalling());
@@ -666,7 +666,7 @@ function CandidateUi(options)
     self.finalSubmitActionComplete = function() {
         Log.debug('candidate final submit action complete');
         self.closeTask();
-        $('#current_task').find('option:selected').addClass('task-closed');
+        $('#current_task').find('option:selected').addClass('task-closed'); // TODO closing task
 
         if (self.next_task !== '') {
             $('#msg_task_completed').jqmShow();
@@ -722,7 +722,7 @@ function CandidateUi(options)
         self.task.type = null;
         self.editor.setTemplate(null);
 
-        var task = $('#current_task').val();
+        var task = $('#current_task').val(); // TODO get current task
         var prg_lang = $('#current_prg_lang').val() || self.options.current_prg_lang;
         var human_lang = $('#current_human_lang').val() || self.options.current_human_lang;
 
@@ -762,7 +762,7 @@ function CandidateUi(options)
 
     self.nextTask = function() {
         Log.info("candidate next task", "next task="+self.next_task);
-        $('#current_task').val(self.next_task);
+        $('#current_task').val(self.next_task); // TODO set current task
         TestCases.removeAll();
         self.reloadTask(true);
     };
@@ -935,7 +935,7 @@ function CandidateUi(options)
 
     self.changeTaskActionError = function() {
         Console.msg_syserr("Could not change task");
-        $('#current_task').val(self.task.name);
+        $('#current_task').val(self.task.name); // TODO set current task
     };
 
     self.changeTaskAction = function() {
@@ -1058,7 +1058,7 @@ function CandidateUi(options)
 
         $('#current_prg_lang').change(self.changePrgLangAction);
         if (!self.options.sequential)
-            $('#current_task').change(self.changeTaskAction);
+            $('#current_task').change(self.changeTaskAction); // TODO add event handler for change task
         $('#current_human_lang').change(self.changeHumanLangAction);
 
         $('#resize_console_button').click(self.resizeConsoleAction);
@@ -1079,11 +1079,16 @@ function CandidateUi(options)
     self.setupSelects = function() {
         var n_tasks = self.options.task_names.length;
         $.each(self.options.task_names, function(i, task_name) {
+            var $option = $('<li>').addClass('task').data('value', task_name)
+                .text('Task ' + (i+1));
+            $('.task-list').append($option);
+        });
+        $.each(self.options.task_names, function(i, task_name) { // delete
             var $option = $('<option>').attr('value', task_name)
                 .text((i+1) + ' of ' + n_tasks);
             $('#current_task').append($option);
         });
-        $('#current_task').val(self.options.current_task_name);
+        $('#current_task').val(self.options.current_task_name); // TODO set current task
         if (n_tasks > 1) {
             $('.current_task_select').show();
         }
