@@ -722,7 +722,7 @@ function CandidateUi(options)
         self.task.type = null;
         self.editor.setTemplate(null);
 
-        var task = $('#current_task').val(); // TODO get current task
+        var task = $('.task-list').data('value');
         var prg_lang = $('#current_prg_lang').val() || self.options.current_prg_lang;
         var human_lang = $('#current_human_lang').val() || self.options.current_human_lang;
 
@@ -762,7 +762,7 @@ function CandidateUi(options)
 
     self.nextTask = function() {
         Log.info("candidate next task", "next task="+self.next_task);
-        $('#current_task').val(self.next_task); // TODO set current task
+        self.setCurrentTask(self.next_task);
         TestCases.removeAll();
         self.reloadTask(true);
     };
@@ -935,7 +935,7 @@ function CandidateUi(options)
 
     self.changeTaskActionError = function() {
         Console.msg_syserr("Could not change task");
-        $('#current_task').val(self.task.name); // TODO set current task
+        self.setCurrentTask(self.task.name);
     };
 
     self.changeTaskAction = function() {
@@ -1088,10 +1088,17 @@ function CandidateUi(options)
                 .text((i+1) + ' of ' + n_tasks);
             $('#current_task').append($option);
         });
-        $('#current_task').val(self.options.current_task_name); // TODO set current task
+        self.setCurrentTask(self.options.current_task_name);
         if (n_tasks > 1) {
             $('.current_task_select').show();
         }
+    };
+
+    self.setCurrentTask = function(name) {
+        $('.task-list').data('value', name);
+        $('.task-list .task').each(function() {
+            $(this).toggleClass('active', ($(this).data('name') === name));
+        });
     };
 
     self.getTrackersValue = function() {
