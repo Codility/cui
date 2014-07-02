@@ -45,6 +45,19 @@ h2 {
   > div:first-child + div + div { text-align: right; }
 }
 
+.four-columns {
+  @include clearfix;
+  > div {
+    float: left;
+    width: 25%;
+    height: 100%;
+    min-height: 1px;
+  }
+  > div:first-child { text-align: left; }
+  > div:first-child + div { text-align: center; }
+  > div:first-child + div + div + div { text-align: right; }
+}
+
 .clr {
   clear: both;
 }
@@ -113,7 +126,31 @@ $codility-light-blue: #2b9cd9;
       background: $grey1;
       font-size: 80%;
     }
+
+    .task-list {
+      float: left;
+      list-style-type: none;
+      .task {
+        float: left;
+        margin: 0 1em;
+        padding: 0 1em;
+        // Hackity hack- simple tab look
+        border: 1px solid #aaa;
+        border-bottom: 0;
+        height: 21px;
+        margin-top: 3px;
+        line-height: 20px;
+        &.active {
+          background: white;
+          font-weight: bold;
+          // Simple tab look continued
+          border-bottom: 1px solid white;
+          height: 22px;
+        }
+      }
+    }
   }
+
   #content {
     @include position(absolute, $header-height 0px 0px 0px);
     min-height: 500px;
@@ -259,6 +296,7 @@ $codility-light-blue: #2b9cd9;
     }
   }
 }
+
 
 // Modals
 
