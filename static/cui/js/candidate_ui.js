@@ -262,7 +262,7 @@ function CandidateUi(options)
         self.updateControls();
     };
 
-    self.updateControls = function() { // TODO enabling/disabling task
+    self.updateControls = function() {
         var may_edit = (self.task.loaded && self.task.open);
         var may_submit_or_reload = (self.task.loaded && self.task.open && !self.isCalling());
         var may_switch = (self.task.loaded && !self.isCalling());
