@@ -1058,7 +1058,10 @@ function CandidateUi(options)
 
         $('#current_prg_lang').change(self.changePrgLangAction);
         if (!self.options.sequential)
-            $('#current_task').change(self.changeTaskAction); // TODO add event handler for change task
+            $('.task-list').click('.task', function(e) {
+                self.setCurrentTask($(e.target).data('name'));
+                self.changeTaskAction();
+            });
         $('#current_human_lang').change(self.changeHumanLangAction);
 
         $('#resize_console_button').click(self.resizeConsoleAction);
@@ -1079,14 +1082,9 @@ function CandidateUi(options)
     self.setupSelects = function() {
         var n_tasks = self.options.task_names.length;
         $.each(self.options.task_names, function(i, task_name) {
-            var $option = $('<li>').addClass('task').data('value', task_name)
+            var $option = $('<li>').addClass('task').data('name', task_name)
                 .text('Task ' + (i+1));
             $('.task-list').append($option);
-        });
-        $.each(self.options.task_names, function(i, task_name) { // delete
-            var $option = $('<option>').attr('value', task_name)
-                .text((i+1) + ' of ' + n_tasks);
-            $('#current_task').append($option);
         });
         self.setCurrentTask(self.options.current_task_name);
         if (n_tasks > 1) {
