@@ -276,8 +276,8 @@ function CandidateUi(options)
         ];
 
         var switch_controls = [
-            '#current_task',
             '#quit_button'
+            // + .task-list
         ];
 
         self.editor.setEditable(may_edit);
@@ -289,13 +289,15 @@ function CandidateUi(options)
         $(switch_controls).each(function (i, id) {
             $(id).prop('disabled', !may_switch);
         });
+        $('.task-list').toggleClass('disabled', !may_switch);
+
         if (self.task.type == 'bugfixing')
             $('#reset_btn').show();
         else
             $('#reset_btn').hide();
 
         if (self.options.sequential)
-            $('#current_task').prop('disabled', true);
+            $('.task-list').addClass('disabled');
     };
 
     self.submitSolutionStatusReceived = function(data, successCallback, errorCallback) {
@@ -666,7 +668,9 @@ function CandidateUi(options)
     self.finalSubmitActionComplete = function() {
         Log.debug('candidate final submit action complete');
         self.closeTask();
-        $('#current_task').find('option:selected').addClass('task-closed'); // TODO closing task
+        // $('#current_task').find('option:selected').addClass('task-closed');
+        // TODO style for submitted tasks?
+        // - note that this will also need to be set upon page load
 
         if (self.next_task !== '') {
             $('#msg_task_completed').jqmShow();
@@ -1058,7 +1062,9 @@ function CandidateUi(options)
 
         $('#current_prg_lang').change(self.changePrgLangAction);
         if (!self.options.sequential)
-            $('.task-list').click('.task', function(e) {
+            $('.task-list').on('click', '.task:not(.inactive)', function(e) {
+                if ($('.task-list').hasClass('disabled'))
+                    return;
                 self.setCurrentTask($(e.target).data('name'));
                 self.changeTaskAction();
             });

@@ -131,6 +131,7 @@ $codility-light-blue: #2b9cd9;
       float: left;
       list-style-type: none;
       .task {
+        cursor: pointer;
         float: left;
         margin: 0 1em;
         padding: 0 1em;
@@ -147,6 +148,16 @@ $codility-light-blue: #2b9cd9;
           border-bottom: 1px solid white;
           height: 22px;
         }
+        &.inactive {
+          cursor: default;
+          color: $grey2;
+          font-style: italic;
+
+        }
+      }
+      &.disabled .task {
+        cursor: default;
+        color: $grey2;
       }
     }
   }
