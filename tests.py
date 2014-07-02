@@ -1,14 +1,26 @@
 
 import os, sys
 
-from django.test.testcases import LiveServerTestCase
+from django.test.testcases import LiveServerTestCase, TestCase
+from django.test.client import Client
 from django.core.urlresolvers import reverse
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from pyvirtualdisplay.smartdisplay import SmartDisplay
 
-class CUITestCase(LiveServerTestCase):
+
+class CuiTestCase(TestCase):
+    def test_render(self):
+        '''Check whether the template renders'''
+        client = Client()
+        response = client.get(reverse('cui_test'))
+        self.assertEqual(response.status_code, 200)
+        response = client.get(reverse('cui_local'))
+        self.assertEqual(response.status_code, 200)
+
+
+class CuiJsTestCase(LiveServerTestCase):
     def setUp(self):
         if not os.environ.get('SHOW_SELENIUM'):
             self.display = SmartDisplay(visible=0, size=(1024, 768))
