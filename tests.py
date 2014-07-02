@@ -25,7 +25,7 @@ class CuiJsTestCase(LiveServerTestCase):
         if not os.environ.get('SHOW_SELENIUM'):
             self.display = SmartDisplay(visible=0, size=(1024, 768))
             self.display.start()
-            self.driver = webdriver.Firefox()
+        self.driver = webdriver.Firefox()
 
     def tearDown(self):
         if hasattr(self, 'driver'):
