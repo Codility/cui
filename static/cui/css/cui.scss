@@ -143,16 +143,21 @@ $codility-light-blue: #2b9cd9;
       .task {
         cursor: pointer;
         float: left;
-        margin: 0 1em;
+        margin: 0 .2em;
         padding: 0 1em;
+         // Width hardcoded to match "Task N"; avoid jump between normal and bold
+        width: 6.5em;
+        text-align: center;
         // Hackity hack- simple tab look
         border: 1px solid $grey2;
         border-bottom: 0;
-        height: 21px;
+        border-radius: 5px 5px 0 0;
+        height: 19px; // 2px gap intentional
         margin-top: 3px;
         line-height: 20px;
         &.active {
           background: white;
+          font-weight: bold;
           // Simple tab look continued
           border-bottom: 1px solid white;
           height: 22px;
@@ -161,7 +166,6 @@ $codility-light-blue: #2b9cd9;
           cursor: default;
           color: $grey2;
           font-style: italic;
-
         }
       }
       &.disabled .task {
