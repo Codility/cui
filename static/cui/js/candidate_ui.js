@@ -963,7 +963,11 @@ function CandidateUi(options)
     self.actionLogout = function(mode) {
         Log.info("candidate action logout");
         Clock.active = false;
-        window.location.href = self.options.urls['close']+'?'+mode+'=1';
+        self.exit(self.options.urls['close']+'?'+mode+'=1');
+    };
+
+    self.exit = function(url) {
+        window.location.href = url;
     };
 
     self.quitAction = function() {

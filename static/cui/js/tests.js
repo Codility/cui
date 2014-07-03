@@ -68,6 +68,9 @@ function describe_ui(suffix, extra_options, f) {
             var my_ui_options = $.extend(true, {}, this.server.ui_options, extra_options);
             this.ui = window.ui = CandidateUi(my_ui_options);
             this.ui.init();
+
+            this.exit_url = null;
+            this.ui.exit = $.bind(function(url) { this.exit_url = url; }, this);
         });
 
         afterEach(function() {
@@ -526,6 +529,58 @@ describe_ui('', {}, function() {
             expect(ui.editor.getValue()).toBe('my solution in cpp');
         });
     });
+
+    describe('survey form', function() {
+        it('should appear with final-task popup', function() {
+            expectVisible('#survey', false);
+            $('#msg_final_task_completed').jqmShow();
+            expectVisible('#survey', true);
+        });
+
+        it('should appear with timeout popup', function() {
+            expectVisible('#survey', false);
+            $('#msg_timeout').jqmShow();
+            expectVisible('#survey', true);
+        });
+
+        it('should expand on "continue survey"', function() {
+            $('#msg_timeout').jqmShow();
+            expectVisible('#survey input[name=answer2]', false);
+            $('#survey_continue_button').click();
+            expectVisible('#survey input[name=answer2]', true);
+        });
+
+        describe('(after being shown)', function() {
+            beforeEach(function() {
+                $('#msg_timeout').jqmShow();
+                $('#survey_continue_button').click();
+            });
+
+            // see #2507 - actually, it submitted even when the form wasn't shown
+            it('shouldn\'t submit when nothing is filled in', function() {
+                $('#msg_timeout').jqmHide();
+                server.respond();
+                expect(server.survey_submitted).toBe(false);
+            });
+
+            it('should submit when a numerical question is answered', function() {
+                $('[name=answer1][value=1]').click();
+                $('#msg_timeout').jqmHide();
+                server.respond();
+                expect(this.server.survey_submitted).toBe(true);
+            });
+
+            it('should submit when a text question is answered', function() {
+                $('[name=answer5]').val('Bla bla bla');
+                $('#msg_timeout').jqmHide();
+                server.respond();
+                expect(this.server.survey_submitted).toBe(true);
+            });
+
+            // TODO assert that the answers content reached the server
+        });
+    });
+
 
     describe('test cases widget', function () {
         beforeEach(function() {
