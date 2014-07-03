@@ -98,6 +98,10 @@ $codility-light-blue: #2b9cd9;
       vertical-align: middle;
       background: #222;
       color: #fff;
+      > .passcode {
+        padding-left: 1em;
+        color: #999;
+      }
       > .logos {
         > img {
           display: inline-block;
