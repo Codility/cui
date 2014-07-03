@@ -11,7 +11,7 @@
 /*global TestCases */
 /*global Clock */
 /*global Editor, AceEditor */
-/*global surveyShow, surveySubmit */
+/*global surveyShow, surveySubmit, surveyFilled */
 /*global showHelp */
 /*global TimeTracker */
 /*global Diff */
@@ -1023,7 +1023,7 @@ function CandidateUi(options)
                     hash.w.show();
                 },
                 onHide: function(hash) {
-                    if (self.options.show_survey) {
+                    if (self.options.show_survey && surveyFilled()) {
                         surveySubmit(
                             self.options.urls['submit_survey'],
                             function() {

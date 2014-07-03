@@ -8,6 +8,13 @@ function surveyShow(dialog_element) {
     }
 }
 
+function surveyFilled() {
+    var $survey = $('#survey');
+    return !($survey.find('input:checked').length === 0 &&
+             $survey.find('textarea').val() === '');
+
+}
+
 function surveySubmit(url, callback) {
     var form = $('#survey_form');
     var form_data = form.serialize();
