@@ -50,7 +50,7 @@ function TestServer() {
 
         current_human_lang: "en",
         current_prg_lang: "c",
-        current_task_name: ["task1"],
+        current_task_name: "task1",
 
         task_names: ["task1", "task2", "task3"],
 
