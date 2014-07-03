@@ -45,17 +45,27 @@ h2 {
   > div:first-child + div + div { text-align: right; }
 }
 
-.four-columns {
+.tab-columns {
   @include clearfix;
   > div {
     float: left;
-    width: 25%;
     height: 100%;
     min-height: 1px;
   }
-  > div:first-child { text-align: left; }
-  > div:first-child + div { text-align: center; }
-  > div:first-child + div + div + div { text-align: right; }
+  > div:first-child {
+    text-align: left;
+    width: 15%;
+    // background: red;
+  }
+  > div:first-child + div {
+    text-align: left;
+    width: 57%;
+  }
+  > div:first-child + div + div {
+    text-align: right;
+    width: 28%;
+    // background: blue;
+  }
 }
 
 .clr {
