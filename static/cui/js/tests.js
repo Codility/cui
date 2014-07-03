@@ -31,10 +31,22 @@ function expectVisible(selector, is_visible) {
         selector + ' should be ' + (is_visible ? 'visible' : 'invisible'));
 }
 
+function expectHasClass(selector, class_name, has_class) {
+    expect($(selector).hasClass(class_name)).toBe(
+        has_class,
+        selector + (has_class ? ' should' : ' should not') + ' have class ' + class_name);
+}
+
 function expectAllSwitches(is_enabled) {
     expectEnabled('#current_human_lang', is_enabled);
     expectEnabled('#current_prg_lang', is_enabled);
-    expectEnabled('#current_task', is_enabled);
+    expectHasClass($('.task-list'), 'disabled', !is_enabled);
+}
+
+function clickTaskTab(name) {
+    $('.task-list .task')
+        .filter(function() { return $(this).data('name') === name; })
+        .click();
 }
 
 function minutes(m, s) {
@@ -103,8 +115,8 @@ describe_ui('', {}, function() {
             expect(ui.editor.getValue()).toBe('Start: task1,en,c');
 
             // Test that selects are populated correctly
-            expectVisible('#current_task', true);
-            expect($('#current_task option').length).toBe(3);
+            expectVisible('.task-list', true);
+            expect($('.task-list .task').length).toBe(3);
             expect($('#current_prg_lang option').length).toBe(2);
             expect($('#current_human_lang option').length).toBe(2);
         });
@@ -130,7 +142,7 @@ describe_ui('', {}, function() {
 
         it('should switch tasks', function() {
             server.respond();
-            $('#current_task').val('task2').change();
+            clickTaskTab('task2');
             expectAllSwitches(false);
 
             server.respond();
@@ -155,7 +167,7 @@ describe_ui('', {}, function() {
             expect(get_visible_options('#current_human_lang')).toEqual(['en', 'cn']);
             expect(get_visible_options('#current_prg_lang')).toEqual(['c', 'cpp']);
 
-            $('#current_task').val('task3').change();
+            clickTaskTab('task3');
             server.respond();
             expect(get_visible_options('#current_human_lang')).toEqual(['en']);
             expect(get_visible_options('#current_prg_lang')).toEqual(['sql']);
@@ -169,7 +181,7 @@ describe_ui('', {}, function() {
                 'solution': 'bla',
                 'prg_lang': 'cpp',
             };
-            $('#current_task').val('task2').change();
+            clickTaskTab('task2');
             server.respond();
 
             // the UI should switch to C++
@@ -186,7 +198,7 @@ describe_ui('', {}, function() {
             server.respond();
             expect($('#task_description').html()).toBe('Description: task1,cn,cpp');
 
-            $('#current_task').val('task3').change();
+            clickTaskTab('task3');
             server.respond();
             expect($('#task_description').html()).toBe('Description: task3,en,sql');
             expect($('#current_prg_lang').val()).toBe('sql');
@@ -197,7 +209,7 @@ describe_ui('', {}, function() {
             server.respond();
             ui.editor.setValue('just before switch');
 
-            $('#current_task').val('task2').change();
+            clickTaskTab('task2');
             server.respond();
             expect(ui.editor.getValue()).toBe('Start: task2,en,c');
             expect(server.tasks.task1.saved).toEqual({
@@ -210,7 +222,7 @@ describe_ui('', {}, function() {
             server.tasks.task2.status = 'closed';
 
             server.respond();
-            $('#current_task').val('task2').change();
+            clickTaskTab('task2');
             server.respond();
             expectVisible('#msg_task_closed', true);
             expect($('#msg_task_closed').is(':visible')).toBe(true);
@@ -219,25 +231,25 @@ describe_ui('', {}, function() {
 
             expectEnabled('#current_human_lang', false);
             expectEnabled('#current_prg_lang', false);
-            expectEnabled('#current_task', true);
+            expectHasClass('.task-list', 'disabled', false);
 
             // Back to first task
-            $('#current_task').val('task1').change();
+            clickTaskTab('task1');
             server.respond();
             expectAllSwitches(true);
         });
         it('should correctly set noNewLines when switching tasks', function() {
             server.respond();
 
-            $('#current_task').val('task2').change();
+            clickTaskTab('task2');
             server.respond();
             expect(ui.editor.noNewLines).toBe(true);
 
-            $('#current_task').val('task3').change();
+            clickTaskTab('task3');
             server.respond();
             expect(ui.editor.noNewLines).toBe(false);
 
-            $('#current_task').val('task2').change();
+            clickTaskTab('task2');
             server.respond();
             expect(ui.editor.noNewLines).toBe(true);
         });
@@ -278,7 +290,7 @@ describe_ui('', {}, function() {
         expect(ui.task.modified).toBe(false);
 
         ui.editor.setValue('my solution 2');
-        $('#current_task').val('task2').change();
+        clickTaskTab('task2');
         server.respond();
         expect(ui.task.modified).toBe(false);
     });
@@ -498,7 +510,7 @@ describe_ui('', {}, function() {
             expectAllSwitches(true);
             ui.editor.setValue('my solution in cpp');
 
-            $('#current_task').val('task2').change();
+            clickTaskTab('task2');
             server.respond();
 
             expect($('#current_prg_lang').val()).toBe('cpp');
@@ -599,11 +611,11 @@ describe_ui('', {}, function() {
             server.respond();
             expectVisible('#reset_btn', false);
 
-            $('#current_task').val('task2').change();
+            clickTaskTab('task2');
             server.respond();
             expectVisible('#reset_btn', true);
 
-            $('#current_task').val('task3').change();
+            clickTaskTab('task3');
             server.respond();
             expectVisible('#reset_btn', false);
         });
@@ -611,7 +623,7 @@ describe_ui('', {}, function() {
         it('should reset the code to solution template', function() {
             server.respond();
 
-            $('#current_task').val('task2').change();
+            clickTaskTab('task2');
             server.respond();
 
             ui.editor.setValue('modified code');
@@ -643,7 +655,7 @@ describe_ui('', {}, function() {
         it('should work after editing', function() {
             server.respond();
 
-            $('#current_task').val('task2').change();
+            clickTaskTab('task2');
             server.respond();
             ui.editor.setValue('modified');
             renderChanges();
@@ -652,13 +664,13 @@ describe_ui('', {}, function() {
 
         it('should work after reloading the solution', function() {
             server.respond();
-            $('#current_task').val('task2').change();
+            clickTaskTab('task2');
             server.respond();
             ui.editor.setValue('modified');
 
-            $('#current_task').val('task1').change();
+            clickTaskTab('task1');
             server.respond();
-            $('#current_task').val('task2').change();
+            clickTaskTab('task2');
             server.respond();
             renderChanges();
             expect($('.ace .highlight-changed-line').length).toBe(1);
@@ -668,7 +680,7 @@ describe_ui('', {}, function() {
     describe('prompt for bugfixing tasks', function() {
         it('should be displayed when you make no changes', function() {
             server.respond();
-            $('#current_task').val('task2').change();
+            clickTaskTab('task2');
             server.respond();
             $('#final_button').click();
             expectVisible('#bugfix_no_changes', true);
@@ -680,7 +692,7 @@ describe_ui('', {}, function() {
         });
         it('shouldn\'t be displayed if you made changes', function() {
             server.respond();
-            $('#current_task').val('task2').change();
+            clickTaskTab('task2');
             server.respond();
             ui.editor.setValue('modified code');
             $('#final_button').click();
