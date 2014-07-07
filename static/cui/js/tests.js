@@ -70,7 +70,7 @@ function describe_ui(suffix, extra_options, f) {
             this.ui.init();
 
             this.exit_url = null;
-            this.ui.exit = $.bind(function(url) { this.exit_url = url; }, this);
+            this.ui.exit = $.proxy(function(url) { this.exit_url = url; }, this);
         });
 
         afterEach(function() {
