@@ -1,8 +1,8 @@
 
 # CUI (Candidate Interface)
 
-This is Codility's candidate interface. It's provided as a Django application
-ready for stand-alone development.
+This is [Codility's](http://codility.com/) candidate interface. It's provided
+as a Django application ready for stand-alone development.
 
 
 ## Installation
