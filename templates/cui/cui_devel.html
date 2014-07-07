@@ -13,7 +13,7 @@
 
     <div id="header">
       <div class="top-bar three-columns">
-        <div></div>
+        <div class="passcode">{{ ticket.id }}</div>
         {% if in_devel %}
           <div class="test-logo">[<span>c</span>o<span>d</span>i<span>l</span>i<span>ty</span>]</div>
         {% endif %}
@@ -22,7 +22,7 @@
           <span id="clock">0:00:00</span>
         </div>
       </div><!-- .top-bar -->
-      <div class="settings-bar three-columns">
+      <div class="settings-bar tab-columns">
         <div>
           <span id="human_lang_list">
             Language &nbsp;
@@ -30,17 +30,12 @@
           </span>
         </div>
 
-
         <div>
-          passcode: {{ticket.id}}
+          <ul class="task-list current_task_select" style="display: none">
+          </ul>
         </div>
 
         <div>
-          <span style="display:none" class="current_task_select">
-            Task &nbsp;
-            <select name="current_task" id="current_task"></select>
-          </span>{# current_task_select #}
-          &nbsp;&nbsp;
           <span id="prg_lang_list">
             Programming language &nbsp;
             <select name="current_prg_lang" id="current_prg_lang"></select>

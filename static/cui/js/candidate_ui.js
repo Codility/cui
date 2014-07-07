@@ -276,8 +276,8 @@ function CandidateUi(options)
         ];
 
         var switch_controls = [
-            '#current_task',
             '#quit_button'
+            // + .task-list
         ];
 
         self.editor.setEditable(may_edit);
@@ -289,13 +289,15 @@ function CandidateUi(options)
         $(switch_controls).each(function (i, id) {
             $(id).prop('disabled', !may_switch);
         });
+        $('.task-list').toggleClass('disabled', !may_switch);
+
         if (self.task.type == 'bugfixing')
             $('#reset_btn').show();
         else
             $('#reset_btn').hide();
 
         if (self.options.sequential)
-            $('#current_task').prop('disabled', true);
+            $('.task-list').addClass('disabled');
     };
 
     self.submitSolutionStatusReceived = function(data, successCallback, errorCallback) {
@@ -666,7 +668,9 @@ function CandidateUi(options)
     self.finalSubmitActionComplete = function() {
         Log.debug('candidate final submit action complete');
         self.closeTask();
-        $('#current_task').find('option:selected').addClass('task-closed');
+        // $('#current_task').find('option:selected').addClass('task-closed');
+        // TODO style for submitted tasks?
+        // - note that this will also need to be set upon page load
 
         if (self.next_task !== '') {
             $('#msg_task_completed').jqmShow();
@@ -722,7 +726,7 @@ function CandidateUi(options)
         self.task.type = null;
         self.editor.setTemplate(null);
 
-        var task = $('#current_task').val();
+        var task = $('.task-list').data('value');
         var prg_lang = $('#current_prg_lang').val() || self.options.current_prg_lang;
         var human_lang = $('#current_human_lang').val() || self.options.current_human_lang;
 
@@ -762,7 +766,7 @@ function CandidateUi(options)
 
     self.nextTask = function() {
         Log.info("candidate next task", "next task="+self.next_task);
-        $('#current_task').val(self.next_task);
+        self.setCurrentTask(self.next_task);
         TestCases.removeAll();
         self.reloadTask(true);
     };
@@ -935,7 +939,7 @@ function CandidateUi(options)
 
     self.changeTaskActionError = function() {
         Console.msg_syserr("Could not change task");
-        $('#current_task').val(self.task.name);
+        self.setCurrentTask(self.task.name);
     };
 
     self.changeTaskAction = function() {
@@ -1062,7 +1066,12 @@ function CandidateUi(options)
 
         $('#current_prg_lang').change(self.changePrgLangAction);
         if (!self.options.sequential)
-            $('#current_task').change(self.changeTaskAction);
+            $('.task-list').on('click', '.task:not(.inactive)', function(e) {
+                if ($('.task-list').hasClass('disabled'))
+                    return;
+                self.setCurrentTask($(e.target).data('name'));
+                self.changeTaskAction();
+            });
         $('#current_human_lang').change(self.changeHumanLangAction);
 
         $('#resize_console_button').click(self.resizeConsoleAction);
@@ -1083,14 +1092,21 @@ function CandidateUi(options)
     self.setupSelects = function() {
         var n_tasks = self.options.task_names.length;
         $.each(self.options.task_names, function(i, task_name) {
-            var $option = $('<option>').attr('value', task_name)
-                .text((i+1) + ' of ' + n_tasks);
-            $('#current_task').append($option);
+            var $option = $('<li>').addClass('task').data('name', task_name)
+                .text('Task ' + (i+1));
+            $('.task-list').append($option);
         });
-        $('#current_task').val(self.options.current_task_name);
+        self.setCurrentTask(self.options.current_task_name);
         if (n_tasks > 1) {
             $('.current_task_select').show();
         }
+    };
+
+    self.setCurrentTask = function(name) {
+        $('.task-list').data('value', name);
+        $('.task-list .task').each(function() {
+            $(this).toggleClass('active', ($(this).data('name') === name));
+        });
     };
 
     self.getTrackersValue = function() {
