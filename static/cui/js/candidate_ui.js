@@ -11,7 +11,7 @@
 /*global TestCases */
 /*global Clock */
 /*global Editor, AceEditor */
-/*global surveyShow, surveySubmit */
+/*global surveyShow, surveySubmit, surveyFilled */
 /*global showHelp */
 /*global TimeTracker */
 /*global Diff */
@@ -963,7 +963,11 @@ function CandidateUi(options)
     self.actionLogout = function(mode) {
         Log.info("candidate action logout");
         Clock.active = false;
-        window.location.href = self.options.urls['close']+'?'+mode+'=1';
+        self.exit(self.options.urls['close']+'?'+mode+'=1');
+    };
+
+    self.exit = function(url) {
+        window.location.href = url;
     };
 
     self.quitAction = function() {
@@ -1023,7 +1027,7 @@ function CandidateUi(options)
                     hash.w.show();
                 },
                 onHide: function(hash) {
-                    if (self.options.show_survey) {
+                    if (self.options.show_survey && surveyFilled()) {
                         surveySubmit(
                             self.options.urls['submit_survey'],
                             function() {

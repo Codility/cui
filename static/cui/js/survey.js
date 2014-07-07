@@ -8,6 +8,15 @@ function surveyShow(dialog_element) {
     }
 }
 
+function surveyFilled() {
+    var fields = $('#survey_form').serializeArray();
+    for (var i = 0; i < fields.length; ++i) {
+        if (fields[i].value !== '')
+            return true;
+    }
+    return false;
+}
+
 function surveySubmit(url, callback) {
     var form = $('#survey_form');
     var form_data = form.serialize();

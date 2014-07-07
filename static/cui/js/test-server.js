@@ -37,7 +37,8 @@ function TestServer() {
         'submits': [],
         // ticket remaining time at server time = 0
         'time_at_start': 1800,
-        'timed_out': false
+        'timed_out': false,
+        'survey_submitted': false
     };
 
     self.use_asserts = true;
@@ -64,7 +65,7 @@ function TestServer() {
             "cpp": {"version": "C++", "name": "C++"},
         },
 
-        show_survey: false,
+        show_survey: true,
         show_help: true,
         sequential: false,
         save_often: true,
@@ -215,6 +216,12 @@ function TestServer() {
             return;
         }
 
+        if (req.url == '/surveys/_ajax_submit_candidate_survey/TICKET_ID/') {
+            self.survey_submitted = true;
+            req.respond(200, {}, '');
+            return;
+        }
+
         var data = getParams(req.requestBody);
         if (self.use_asserts) {
             expect(data.ticket).toBe('TICKET_ID');
@@ -243,7 +250,6 @@ function TestServer() {
         if (req.url == '/chk/timeout_action/') {
             response = self.respondTimeout(data);
         }
-
         console.debug(JSON.stringify(response, null, '\t'));
         req.respond(200, { "Content-Type": "text/xml" }, xmlResponse(response));
     };
