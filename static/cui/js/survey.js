@@ -9,10 +9,12 @@ function surveyShow(dialog_element) {
 }
 
 function surveyFilled() {
-    var $survey = $('#survey');
-    return !($survey.find('input:checked').length === 0 &&
-             $survey.find('textarea').val() === '');
-
+    var fields = $('#survey_form').serializeArray();
+    for (var i = 0; i < fields.length; ++i) {
+        if (fields[i].value !== '')
+            return true;
+    }
+    return false;
 }
 
 function surveySubmit(url, callback) {
