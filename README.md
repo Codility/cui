@@ -1,59 +1,62 @@
 
-  CUI (Candidate Interface)
+# CUI (Candidate Interface)
 
 This is Codility's candidate interface. It's provided as a Django application
 ready for stand-alone development.
 
 
-INSTALLATION
+## Installation
 
-- Install Python packages (from requirements.txt)
+Install Python packages (from requirements.txt):
 
-  pip install -r requirements.txt
+    pip install -r requirements.txt
 
-- Install Ruby packages (from Gemfile)
+Install Ruby packages (from Gemfile):
 
-  gem install bundler
-  bundle install
+    gem install bundler
+    bundle install
 
-- For running the tests with Selenium, you need Xvfb and Firefox.
-  Under Ubuntu, you can install them using:
+For running the tests with Selenium, you need Xvfb and Firefox.
 
-  sudo apt-get install xvfb firefox
+Under Ubuntu, you can install them using:
+
+    sudo apt-get install xvfb firefox
 
 
-RUNNING
+## Running
 
 You can run CUI using a standard Django development server:
 
-  python manage.py runserver localhost:8001
+    python manage.py runserver localhost:8001
 
 Run the unit tests (using Selenium):
 
-  python manage.py test
+    python manage.py test
 
 Run the unit tests (in your browser):
 
-  http://localhost:8001/test/
+    http://localhost:8001/test/
 
 Run against a mock in-browser server:
 
-  http://localhost:8001/local/
+    http://localhost:8001/local/
 
 
-LICENSE
+## License
 
 CUI is distributed under the terms of
-GNU Lesser General Public License version 3 (LGPLv3).
+**GNU Lesser General Public License version 3** (LGPLv3).
 See files COPYING and COPYING.LESSER for details.
 
 
-CONTACT
+## Contact
 
 By e-mail:
+
     support@codility.com
 
 By phone:
+
     +44-208-970-78-68
     +1-855-888-5880
 
