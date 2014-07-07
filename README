@@ -39,3 +39,28 @@ Run the unit tests (in your browser):
 Run against a mock in-browser server:
 
   http://localhost:8001/local/
+
+
+LICENSE
+
+CUI is distributed under the terms of
+GNU Lesser General Public License version 3 (LGPLv3).
+See files COPYING and COPYING.LESSER for details.
+
+
+CONTACT
+
+By e-mail:
+    support@codility.com
+
+By phone:
+    +44-208-970-78-68
+    +1-855-888-5880
+
+By postal mail:
+
+    Codility Polska
+    Długa 44/50
+    Poddasze A
+    00-241 Warszawa
+    Poland
