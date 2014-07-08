@@ -11,7 +11,7 @@ function TestServer() {
                 'status': 'open',
                 'human_lang_list': ['en', 'cn'],
                 'prg_lang_list': ['c', 'cpp'],
-                'type': 'programming',
+                'type': 'algo',
                 'saved': null,
                 'n_saves': 0
             },
