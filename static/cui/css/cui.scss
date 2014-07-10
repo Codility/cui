@@ -14,7 +14,7 @@ body {
   font-size: 12px;
 }
 
-* { box-sizing: border-box; }
+* { @include box-sizing(border-box); }
 
 h1, h2, h3, h4, p, form, ul {
   margin: 0px;
@@ -332,9 +332,9 @@ $codility-light-blue: #2b9cd9;
   padding: 40px !important;
   text-align: center;
 
-  box-sizing: content-box;
-  * { box-sizing: content-box; }
-  button, input, select { box-sizing: border-box; }
+  @include box-sizing(content-box);
+  * { @include box-sizing(content-box); }
+  button, input, select { @include box-sizing(border-box); }
 
   .message {
     padding-bottom: 20px;
