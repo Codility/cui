@@ -83,6 +83,7 @@ function AceEditor() {
     ace.require('ace/ext/language_tools');
     self.ace.setShowPrintMargin(false);
     self.ace.setOptions({ enableBasicAutocompletion: true });
+    self.ace.setBehavioursEnabled(false);
     var session = self.ace.getSession();
     session.setTabSize(4);
     session.setUseSoftTabs(true);
