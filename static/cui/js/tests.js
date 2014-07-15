@@ -504,6 +504,21 @@ describe_ui('', {}, function() {
             endFinal();
         });
 
+        it('should block timeout action when we\'re on the last task', function() {
+            beginFinal();
+            finalVerifySuccess();
+
+            clock.tick(seconds(1));
+            server.next_task = '';
+            server.respond();
+            clock.tick(500);
+            expectVisible('#msg_final_task_completed', true);
+
+            clock.tick(minutes(31));
+            server.respond();
+            expect(server.timed_out).toBe(false);
+        });
+
         it('should switch to previous programming language afterwards', function() {
             // test Trac #2267
             server.respond();
