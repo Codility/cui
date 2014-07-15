@@ -62,11 +62,8 @@ var Clock = {
         if (result == "ERROR") {
             var t = String(xmlNodeValue(data, 'response message'));
             if (t.match("closed") !== null) {
-                // TODO: notify CandidateUi
-                if (!$("#msg_final_task_completed").is(":visible")) {
-                    Log.info('Ticket closed by server');
-                    ui.actionTimeout(true);
-                }
+                Log.info('Ticket closed by server');
+                ui.actionTimeout(true);
             }
             else {
                 Log.error('Update clock error');
