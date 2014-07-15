@@ -47,9 +47,7 @@ var Clock = {
         }
 
         if (this.time_to_end <= 0) {
-            if (!$("#msg_final_task_completed").is(":visible")) {
-                this.actionTimeout();
-            }
+            ui.actionTimeout();
         }
         else {
             var that = this;
@@ -67,7 +65,7 @@ var Clock = {
                 // TODO: notify CandidateUi
                 if (!$("#msg_final_task_completed").is(":visible")) {
                     Log.info('Ticket closed by server');
-                    this.actionTimeout();
+                    ui.actionTimeout(true);
                 }
             }
             else {
@@ -84,11 +82,6 @@ var Clock = {
                 this.time_from_start = new_time_elapsed;
             }
         }
-    },
-
-    actionTimeout : function() {
-        ui.notifyCheckerTimeoutAction();
-        $('#msg_timeout').jqmShow();
     },
 
     refreshClock : function() {
