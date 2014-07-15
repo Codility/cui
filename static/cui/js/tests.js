@@ -386,7 +386,7 @@ describe_ui('', {}, function() {
         server.respond();
         expectAllSwitches(true);
         expect($('#console').text()).toMatch('compiler output');
-        expect($('#console').text()).toMatch('Example test : OK');
+        expect($('#console').text()).toMatch('Example test OK');
         expect($('#console').text()).toMatch('syntactically correct');
     });
 

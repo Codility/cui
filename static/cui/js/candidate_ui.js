@@ -452,10 +452,10 @@ function CandidateUi(options)
 
                 if (_example == '1') {
                     //Console.msg_ok('Example test : '+ _example_msg);
-                    Console.msg_ok('Example test : ' + '<span style="color:black">' + _example_msg + '</span>');
+                    Console.msg_ok('Example test <br>' + '<span style="color:black">' + _example_msg + '</span>');
                 }
                 else {
-                    Console.msg_error('Example test : ' + '<span style="color:black">' + _example_msg + '</span>');
+                    Console.msg_error('Example test <br>' + '<span style="color:black">' + _example_msg + '</span>');
                 }
             }
         }
