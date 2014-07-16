@@ -796,9 +796,6 @@ function CandidateUi(options)
         if (t_nodename=='TEXTAREA') return true;
         // console.log("t="+t+" t.html="+t.html()+" t.nodeName="+t_nodename);
 
-        //don't disable copy in the console
-        if (t.closest('#console').length) return true;
-
         if (t_nodename=='TT' || (t_nodename=='SPAN' && t.hasClass('number'))) {
             // selection should start in TT block or <span class='number'>
             return true;
@@ -814,6 +811,9 @@ function CandidateUi(options)
         }
 
         var t = $(e.target);
+        //don't disable copy in the console
+        if (t.closest('#console').length) return true;
+
         if (!self.validSelectableNode(t)) return false;
 
         // recover selection html
