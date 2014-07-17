@@ -53,7 +53,10 @@ function CandidateUi(options)
 
             // Whether a solution has been modified wrt. to saved_solution
             modified: false,
-            last_modify_time: null
+            last_modify_time: null,
+
+            // Whether a ticket is already closed on the server
+            closed: false
         },
 
         trackers: [],
@@ -92,6 +95,22 @@ function CandidateUi(options)
             },
             dataType: "xml"
         });
+    };
+
+    // The ticket has timed out.
+    // If already_closed is true, we have been notified of that by server.
+    self.actionTimeout = function(already_closed) {
+        if (!self.closed) {
+            self.closed = true;
+            if (!already_closed) {
+                self.notifyCheckerTimeoutAction();
+            }
+        }
+        if (!$('#msg_final_task_completed').is(':visible') &&
+            !$('#msg_timeout').is(':visible')) {
+
+            $('#msg_timeout').jqmShow();
+        }
     };
 
     self.openTask = function () {
@@ -452,10 +471,10 @@ function CandidateUi(options)
 
                 if (_example == '1') {
                     //Console.msg_ok('Example test : '+ _example_msg);
-                    Console.msg_ok('Example test : ' + '<span style="color:black">' + _example_msg + '</span>');
+                    Console.msg_ok('Example test <br>' + '<span style="color:black">' + _example_msg + '</span>');
                 }
                 else {
-                    Console.msg_error('Example test : ' + '<span style="color:black">' + _example_msg + '</span>');
+                    Console.msg_error('Example test <br>' + '<span style="color:black">' + _example_msg + '</span>');
                 }
             }
         }
@@ -675,6 +694,7 @@ function CandidateUi(options)
         if (self.next_task !== '') {
             $('#msg_task_completed').jqmShow();
         } else {
+            self.closed = true;
             $('#msg_final_task_completed').jqmShow();
         }
     };

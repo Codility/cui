@@ -386,7 +386,7 @@ describe_ui('', {}, function() {
         server.respond();
         expectAllSwitches(true);
         expect($('#console').text()).toMatch('compiler output');
-        expect($('#console').text()).toMatch('Example test : OK');
+        expect($('#console').text()).toMatch('Example test OK');
         expect($('#console').text()).toMatch('syntactically correct');
     });
 
@@ -502,6 +502,21 @@ describe_ui('', {}, function() {
             ui.saveActionAsync();
             // and then submit happens
             endFinal();
+        });
+
+        it('should block timeout action when we\'re on the last task', function() {
+            beginFinal();
+            finalVerifySuccess();
+
+            clock.tick(seconds(1));
+            server.next_task = '';
+            server.respond();
+            clock.tick(500);
+            expectVisible('#msg_final_task_completed', true);
+
+            clock.tick(minutes(31));
+            server.respond();
+            expect(server.timed_out).toBe(false);
         });
 
         it('should switch to previous programming language afterwards', function() {
