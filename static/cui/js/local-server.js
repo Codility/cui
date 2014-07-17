@@ -34,7 +34,7 @@ function LocalServer() {
 
     self.verifySubmit = function(submit) {
         submit.in_eval = false;
-        if (/^ *fail()/m.test(submit.solution)) {
+        if (/^ *fail()/mi.test(submit.solution)) {
             submit.result = {
                 'compile': {'ok': 1,
                             'message': 'The solution compiled flawlessly.'},
@@ -51,15 +51,35 @@ function LocalServer() {
         }
     };
 
-    self.getTaskStart = function(id) {
-        return ['// This is a starting solution for: ' + id,
+    self.getTaskStart = function(task, human_lang, prg_lang) {
+        var header = [
+            '',
+            '// You\'re running an in-browser mock server for the CUI.',
+            '// It will allow you to test the interface, but will not',
+            '// actually assess the solutions.',
+            '',
+            '// This is a starting solution for task="' + task + '", prg_lang="'+ prg_lang + '".',
+            '',
+        ].join('\n');
+
+        var sol;
+        if (prg_lang == 'sql') {
+            sol = [
+                'FAIL; -- comment this out for the solution to pass',
                 '',
+                'SELECT 42;',
+            ].join('\n');
+            header = header.replace(/\/\/ /g, '-- ');
+        } else {
+            sol = [
                 'int solution() {',
-                '    // Delete or comment out the following line',
-                '    // and the solution will pass verification.',
-                '    fail();',
+                '    fail(); // comment this out for the solution to pass',
+                '',
                 '    return 42;',
-                '}'].join('\n');
+                '}'
+            ].join('\n');
+        }
+        return header + '\n' + sol;
     };
 
     return self;

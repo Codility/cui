@@ -100,7 +100,7 @@ function TestServer() {
 
         var id = task + ',' + human_lang + ',' + prg_lang;
 
-        var solution = self.getTaskStart(id);
+        var solution = self.getTaskStart(task, human_lang, prg_lang);
         if (t.saved && t.saved.prg_lang == prg_lang)
             solution = t.saved.solution;
 
@@ -108,7 +108,7 @@ function TestServer() {
             'task_status': t.status,
             'task_description': 'Description: ' + id,
             'task_type': t.type,
-            'solution_template': self.getTaskStart(id),
+            'solution_template': self.getTaskStart(task, human_lang, prg_lang),
             'current_solution': solution,
             'example_input': 'Example input: ' + id,
             'prg_lang_list': JSON.stringify(t.prg_lang_list),
@@ -118,7 +118,9 @@ function TestServer() {
         };
     };
 
-    self.getTaskStart = function(id) { return 'Start: ' + id; };
+    self.getTaskStart = function(task, human_lang, prg_lang) {
+        return 'Start: ' + task + ',' + human_lang + ',' + prg_lang;
+    };
 
     self.respondSave = function(data) {
         var task = data.task;
