@@ -117,12 +117,14 @@ $codility-light-blue: #2b9cd9;
           height: 25px;
           margin-right: 10px;
         }
-      }
-      > .test-logo {
-        font-family: Droid Sans Mono, Courier, monospace;
-        font-weight: bold;
-        font-size: 21px;
-        > span { color: $codility-light-blue; }
+        > .test-logo {
+          font-family: Droid Sans Mono, Courier, monospace;
+          font-weight: bold;
+          font-size: 21px;
+          text-decoration: none;
+          color: white;
+          > span { color: $codility-light-blue; }
+        }
       }
       #clock {
         font-size: 140%;
