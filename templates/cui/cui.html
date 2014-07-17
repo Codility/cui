@@ -127,6 +127,11 @@
             server.init();
             window.ui = CandidateUi(server.ui_options);
             ui.init();
+            ui.exit = function(url) {
+              window.alert("CUI exiting; next page would be '"+ url +"'. \n\n" +
+                           "Press OK to refresh.");
+              window.location = ".";
+            };
           });
         {% endif %}
 
