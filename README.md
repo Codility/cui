@@ -1,5 +1,5 @@
 
-# CUI (Candidate Interface)
+# CUI (Candidate User Interface)
 
 This is [Codility's](http://codility.com/) candidate interface. It's provided
 as a Django application ready for stand-alone development.
