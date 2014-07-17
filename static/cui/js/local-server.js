@@ -43,6 +43,16 @@ function LocalServer() {
         setTimeout(self.beat, self.BEAT_PERIOD);
     };
 
+    // just return first open task
+    self.getNextTask = function() {
+        for (var i = 0; i < self.task_names.length; i++) {
+            var task_name = self.task_names[i];
+            if (self.tasks[task_name].status != 'closed')
+                return task_name;
+        }
+        return '';
+    };
+
     self.verifySubmits = function(timeout) {
         for (var i = 0; i < self.submits.length; i++) {
             var submit = self.submits[i];

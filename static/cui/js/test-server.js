@@ -54,6 +54,7 @@ function TestServer() {
                 'n_saves': 0
             },
         },
+        'task_names': ['task1', 'task2', 'task3'],
         'current_task': 'task1',
         'next_task': '',
         'submits': [],
@@ -185,6 +186,8 @@ function TestServer() {
             'times_polled': 0
         });
 
+        self.tasks[task].status = 'closed';
+
         return self.submitStatus(submit_id);
     };
 
@@ -213,10 +216,16 @@ function TestServer() {
                 'delay': 5
             };
         }
-        if (submit.mode == 'final')
-            response.next_task = self.next_task;
+        if (submit.mode == 'final') {
+            response.next_task = self.getNextTask();
+        }
 
         return response;
+    };
+
+    // Useful for testing.
+    self.getNextTask = function() {
+        return self.next_task;
     };
 
     self.getRemainingTime = function() {
