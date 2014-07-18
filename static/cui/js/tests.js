@@ -827,6 +827,72 @@ describe_ui('', {}, function() {
             expect($('#clock').text()).toBe('00:00:00');
         });
     });
+
+    describe("copy restriction", function(){
+        var buildSelection = function(startNode, endNode){
+            var selRange = document.createRange();
+            selRange.setStart(startNode, 0);
+            if (!endNode){
+                selRange.setEnd(startNode, startNode.childNodes.length);
+            }
+            else{
+                selRange.setEndAfter(endNode, endNode.childNodes.length);
+            }
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(selRange);
+
+        };
+        it('should allow copying in console', function(){
+            server.respond();
+            $('#verify_button').click();
+            server.respond();
+            clock.tick(seconds(6));
+            server.submits[0].result = server.verifyOkResponse();
+            server.respond();
+            //allow copy of the whole console range
+            var c_console = $('#console')[0];
+            buildSelection(c_console);
+            expect(ui.selectionRestrictedToConsole()).toBe(true);
+            //allow copy of a sub element in console
+            var sub_element = c_console.childNodes[4];
+            buildSelection(sub_element);
+            expect(ui.selectionRestrictedToConsole()).toBe(true);
+            //alow copy of overlapping elements within console
+            var sub_element2 = c_console.childNodes[6];
+            buildSelection(sub_element, sub_element2);
+            expect(window.getSelection().getRangeAt(0).commonAncestorContainer.id).toBe('console');
+            expect(ui.selectionRestrictedToConsole()).toBe(true);
+        });
+        it('should not allow copying when overlapping with restricted portions',function(){
+            server.respond();
+            //don't allow copy when console and another is highlighted
+            var c_console = $('#console')[0];
+            var editor_bar = $('#editor_bar')[0];
+            var e = {'target': editor_bar}; //target is usually first node in the selection
+            buildSelection(editor_bar, c_console);
+            expect(ui.selectionRestrictedToConsole()).toBe(false);
+            expect(ui.validCopySelection(e)).toBe(false);
+            //don't allow copy within task description
+            var task_description = $('#task_description')[0];
+            buildSelection(task_description);
+            e.target = task_description;
+            expect(ui.selectionRestrictedToConsole()).toBe(false);
+            expect(ui.validCopySelection(e)).toBe(false);
+        });
+        it('should allow copying of example data from task description', function(){
+            server.respond();
+            var task_description = $('#task_description');
+            task_description.append("<div>Some random descripton text</div>");
+            task_description.append("<tt>This contains example data</tt>");
+            var example_node = $('#task_description tt')[0];
+            var e = {'target': example_node};
+            buildSelection(example_node);
+            expect(ui.selectionRestrictedToConsole()).toBe(false);
+            expect(ui.validCopySelection(e)).toBe(true);
+        });
+
+    });
 });
 
 describe_ui(' (with save_often enabled)', { 'save_often': true }, function() {
