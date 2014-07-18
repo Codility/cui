@@ -7,7 +7,7 @@
 /* global describe,expect,jasmine,it,afterEach,beforeEach*/
 /* global sinon*/
 /* global console*/
-/* global CandidateUi, Clock, TestCases, Diff */
+/* global CandidateUi, Console, Clock, TestCases, Diff */
 /* global AUTOSAVE_MAX_PERIOD */
 /* global TestServer */
 
@@ -845,11 +845,10 @@ describe_ui('', {}, function() {
         };
         it('should allow copying in console', function(){
             server.respond();
-            $('#verify_button').click();
-            server.respond();
-            clock.tick(seconds(6));
-            server.submits[0].result = server.verifyOkResponse();
-            server.respond();
+            Console.msg("Hello, world");
+            Console.msg_error("This is an error");
+            Console.msg_syserr("This is a system error");
+            Console.msg_ok("This is not an error");
             //allow copy of the whole console range
             var c_console = $('#console')[0];
             buildSelection(c_console);
