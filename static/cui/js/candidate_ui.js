@@ -803,6 +803,13 @@ function CandidateUi(options)
             return false;
         }
     };
+    self.selectionRestrictedToConsole = function(){
+        var commonAncestor = $(window.getSelection().getRangeAt(0).commonAncestorContainer);
+        if (commonAncestor.closest('#console').length){ 
+            return true;
+        }
+        return false;
+    };
 
     // returns TRUE if selected text can be copied
     self.validCopySelection = function(e) {
@@ -810,10 +817,10 @@ function CandidateUi(options)
             return false; // IE 8, old browser, disable copy!
         }
 
-        var t = $(e.target);
         //don't disable copy in the console
-        if (t.closest('#console').length) return true;
+        if(self.selectionRestrictedToConsole()) return true;
 
+        var t = $(e.target);
         if (!self.validSelectableNode(t)) return false;
 
         // recover selection html
