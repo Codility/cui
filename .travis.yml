@@ -3,7 +3,7 @@ python: "2.7"
 install:
   - "sudo apt-get install ruby1.9.3"
   - "sudo gem install bundler"
-  - "sudo bundle install"
+  - "bundle install"
   - "pip install -r requirements.txt"
 
 script: python manage.py test -v2
