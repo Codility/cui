@@ -1,6 +1,8 @@
 
 # CUI (Candidate User Interface)
 
+[![Build Status](https://travis-ci.org/Codility/cui.svg?branch=master)](https://travis-ci.org/Codility/cui)
+
 This is [Codility's](https://codility.com/) candidate interface. It's provided
 as a Django application ready for stand-alone development.
 
