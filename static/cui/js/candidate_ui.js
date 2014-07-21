@@ -818,9 +818,6 @@ function CandidateUi(options)
         if (t_nodename=='TEXTAREA') return true;
         // console.log("t="+t+" t.html="+t.html()+" t.nodeName="+t_nodename);
 
-        //don't disable copy in the console
-        if (t.closest('#console').length) return true;
-
         if (t_nodename=='TT' || (t_nodename=='SPAN' && t.hasClass('number'))) {
             // selection should start in TT block or <span class='number'>
             return true;
@@ -828,12 +825,22 @@ function CandidateUi(options)
             return false;
         }
     };
+    self.selectionRestrictedToConsole = function(){
+        var commonAncestor = $(window.getSelection().getRangeAt(0).commonAncestorContainer);
+        if (commonAncestor.closest('#console').length){ 
+            return true;
+        }
+        return false;
+    };
 
     // returns TRUE if selected text can be copied
     self.validCopySelection = function(e) {
         if (typeof window.getSelection == "undefined") {
             return false; // IE 8, old browser, disable copy!
         }
+
+        //don't disable copy in the console
+        if(self.selectionRestrictedToConsole()) return true;
 
         var t = $(e.target);
         if (!self.validSelectableNode(t)) return false;
