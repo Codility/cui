@@ -827,7 +827,7 @@ function CandidateUi(options)
     };
     self.selectionRestrictedToConsole = function(){
         var commonAncestor = $(window.getSelection().getRangeAt(0).commonAncestorContainer);
-        if (commonAncestor.closest('#console').length){ 
+        if (commonAncestor.closest('#console').length){
             return true;
         }
         return false;
@@ -1209,6 +1209,14 @@ function CandidateUi(options)
         });
     };
 
+    self.WELCOME_MESSAGE = (
+        'This is <a href="https://github.com/codility/cui" target="_blank">CUI</a>.  ' +
+        'CUI is free software.  ' +
+        'See <a href="https://github.com/Codility/cui/blob/master/COPYING.LESSER" target="_blank">COPYING.LESSER</a> ' +
+        'and <a href="https://github.com/Codility/cui/blob/master/AUTHORS" target="_blank">AUTHORS</a> ' +
+        'for details.'
+    );
+
     self.init = function() {
         self.setupEditor();
         self.setupModals();
@@ -1230,6 +1238,10 @@ function CandidateUi(options)
 
         if (self.options.show_help)
             setTimeout(showHelp, 500);
+
+        if (self.options.show_welcome) {
+            Console.msg_ok(self.WELCOME_MESSAGE);
+        }
     };
 
     // Unpin global events

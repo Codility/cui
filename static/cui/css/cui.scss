@@ -313,6 +313,10 @@ $codility-light-blue: #2b9cd9;
             border: 1px solid $grey2;
             background: $grey1;
 
+            a, a:visited {
+              color: inherit;
+            }
+
             // Easter eggs
             .quote {
               color: blue;
