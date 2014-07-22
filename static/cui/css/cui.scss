@@ -15,6 +15,7 @@ body {
 }
 
 * { @include box-sizing(border-box); }
+[class*='introjs'] { @include box-sizing(content-box); }
 
 h1, h2, h3, h4, p, form, ul {
   margin: 0px;
@@ -485,19 +486,5 @@ $codility-light-blue: #2b9cd9;
     -moz-user-select: text;
     -ms-user-select: text;
     user-select: text;
-}
-
-// Help
-
-.help {
-    z-index: 9997;
-    position:absolute;
-    top:0px;left:0px;
-    border: 1px solid #aaa;
-    background: #fff;
-    padding: 10px;
-    width: 200px;
-    height: auto;
-    margin:0px; font-size: 90%;
 }
 .num { z-index:9998;position:absolute;top:0px;left:0px;margin:0px;}

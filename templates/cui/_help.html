@@ -21,63 +21,34 @@
 {% endcomment %}
 
 {% load i18n %}
-<img src="{{STATIC_URL}}cui/img/numbers/1.png" id="num1" style="display:none" class="num" alt="1"/>
-<img src="{{STATIC_URL}}cui/img/numbers/2.png" id="num2" style="display:none" class="num" alt="2"/>
-<img src="{{STATIC_URL}}cui/img/numbers/3.png" id="num3" style="display:none" class="num" alt="3"/>
-<img src="{{STATIC_URL}}cui/img/numbers/4.png" id="num4" style="display:none" class="num" alt="4"/>
-<img src="{{STATIC_URL}}cui/img/numbers/5.png" id="num5" style="display:none" class="num" alt="5"/>
-<img src="{{STATIC_URL}}cui/img/numbers/6.png" id="num6" style="display:none" class="num" alt="6"/>
-<img src="{{STATIC_URL}}cui/img/numbers/7.png" id="num7" style="display:none" class="num" alt="7"/>
-<img src="{{STATIC_URL}}cui/img/px.gif" id="num8" style="display:none" class="num" alt="8"/>
 
+<script>
+/* jshint multistr:true */
+var prgLangCount = '{{ticket.current_prg_lang_list.count}}';
+var prgLangName = '{{ticket.current_prg_lang.name}}';
+var taskCount = '{{ticket.tasks_count}}';
+var stepsTexts = {};
+stepsTexts.problemDescription = '{% trans "Read the problem description." %}';
+stepsTexts.tasksTab = 'You can see all the tasks here. You can switch freely between them.';
+stepsTexts.timer = 'The timer is counting down the time for the whole test. If you do not manage to submit all the tasks before the time runs out, we will save your latest solution(s) entered and submit it automatically.';
+if (prgLangCount > 1){
+    stepsTexts.prgLang = 'Choose the programming language. If you switch to another programming language in the middle of writing a solution, your solution will disappear. If you, however, switch back to the previous language, your solution will appear again.';
+}
+else{
+    stepsTexts.prgLang = 'You will be solving this problem in {{ticket.current_prg_lang.name}}.';
+}
+stepsTexts.editor = 'Write the solution for the problem using the editor; your solution should include the function as defined in the task description. Your solution can include other functions, procedures and methods.';
+stepsTexts.solutionSaved = 'Your solutions are being saved continuously.';
+stepsTexts.runButton = 'Run your solution to see if it a) compiles; b) returns a correct result given the exemplary data from the task description; c) terminates within an acceptable period of time. Running your solution will help you to avoid simple mistakes. You can verify your solution multiple times. The number of "run" requests will not influence your score. The output window can be increased.';
+stepsTexts.testData = 'You can run your solution on your test data to see what results it computes; you will not be informed about the correctness of this result. You can add a maximum of 5 test cases at once.';
 
-<div id="help1" style="display:none" class="help">
-{% trans "Read the problem description." %}
-</div>
+if (taskCount > 1){
+    stepsTexts.submitButton =  "Submit your solution for final evaluation. This will close the task and you will not be able to make any more changes. You don't have to submit your solution before moving to another task but you need to submit each task solution separately.";
+}
+else{
+    stepsTexts.submitButton = "This will end this session. You can submit your solution only once.";
 
-<div id="help2" style="display:none" class="help">
-{% if ticket.current_prg_lang_list.count > 1 %}
-Choose the programming language.
-{% else %}
-You will be solving this problem in {{ticket.current_prg_lang.name}}
-{% endif %}
-</div>
-
-<div id="help3" style="display:none" class="help">
-Write the solution for the problem using the editor; your solution should include a function defined in the task description; your solution can include other functions, procedures or methods.
-</div>
-
-<div id="help4" style="display:none" class="help">
-Verify correctness of your solution
-(you will be informed whether your solution
-(a) compiles;
-(b) returns a correct result given the exemplary data from the task description;
-(c) terminates within an acceptable period of time).
-Verification will help you to avoid simple mistakes.
-You can verify your solution multiple times.
-The number of verification requests will not influence your score.
-</div>
-
-<div id="help5" style="display:none" class="help">
-You can run your solution on your test data to see what result it computes;
-you will not be informed about the correctness of this result.
-</div>
-
-<div id="help6" style="display:none" class="help">
-Submit the solution for the final evaluation.
-{% if ticket.tasks_count > 1 %}
-This will close this task.
-You need to submit each task solution separately.
-{% else %}
-This will end this session. You can submit your solution only once.
-{% endif %}
-</div>
-
-<div id="help7" style="display:none" class="help">
-Quit will finish this session without sending your solution for evaluation.
-You can re-open the session, but quitting does not put the timer on hold.
-</div>
-
-<div id="help8" style="display:none" class="help">
-Click anywhere to hide the help overlay.
-</div>
+}
+stepsTexts.quitButton = 'Quit will finish this session without sending your solution for evaluation. You can re-open the session, but quitting does not put the timer on hold.';
+stepsTexts.exitOverlay = 'Click anywhere to hide the help overlay.';
+</script>
