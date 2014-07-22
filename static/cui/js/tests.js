@@ -115,6 +115,9 @@ function describe_ui(suffix, extra_options, f) {
 
             // remove the modal overlay for convenience
             $('.jqmOverlay').hide();
+            $('.introjs-overlay').hide();
+            //remove the help screen after each test, else test will fail
+            $('.introjs-overlay').click();
         });
 
         f.apply(this);
@@ -284,14 +287,14 @@ describe_ui('', {}, function() {
         function testHelp() {
             // wait for help to show
             clock.tick(seconds(5));
-            expectVisible('#overlay', true);
-            expectVisible('#help1', true);
+            expectVisible('.introjs-overlay', true);
+            expectVisible('.introjs-helperLayer', true);
 
             // click on overlay to hide it
-            $('#overlay').click();
+            $('.introjs-overlay').click();
             clock.tick(seconds(1));
-            expectVisible('#overlay', false);
-            expectVisible('#help1', false);
+            expectVisible('.introjs-overlay', false);
+            expectVisible('.introjs-helperLayer', false);
         }
 
         // help is shown initially, after a delay
