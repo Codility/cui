@@ -59,6 +59,14 @@ function buildSteps(){
           intro:stepsTexts.runButton,
           position: "top"
         },
+        { element: "#console",
+          intro:stepsTexts.outputWindow,
+          position: "top"
+        },
+        { element: "#resize_console_button",
+          intro:stepsTexts.outputWindowResize,
+          position: "left"
+        },
         { element: "#test_case_link",
           intro:stepsTexts.testData,
           position: "top",
