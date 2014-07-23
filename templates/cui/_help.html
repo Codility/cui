@@ -20,15 +20,13 @@
 
 {% endcomment %}
 
-{% load i18n %}
-
 <script>
 /* jshint multistr:true */
 var prgLangCount = '{{ticket.current_prg_lang_list.count}}';
 var prgLangName = '{{ticket.current_prg_lang.name}}';
 var taskCount = '{{ticket.tasks_count}}';
 var stepsTexts = {};
-stepsTexts.problemDescription = '{% trans "Read the problem description." %}';
+stepsTexts.problemDescription = 'Read the problem description.';
 stepsTexts.tasksTab = 'You can see all the tasks here. You can switch freely between them.';
 stepsTexts.timer = 'The timer is counting down the time for the whole test. If you do not manage to submit all the tasks before the time runs out, we will save your latest solution(s) entered and submit it automatically.';
 if (prgLangCount > 1){
