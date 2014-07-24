@@ -1126,6 +1126,9 @@ function CandidateUi(options)
         $('#verify_button').click(self.verifyAction);
         $('#reset_btn').click(self.resetAction);
         $('#help_btn').click(showHelp);
+        $('#survey_skip_button').click(function() {
+            $('#survey').parent().jqmHide();
+        });
         $('#survey_continue_button').click(function() {
             $(this).val("submit survey");
             $('#survey tbody.hidden_part').removeClass('hidden_part');
