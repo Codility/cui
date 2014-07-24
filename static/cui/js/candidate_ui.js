@@ -1129,6 +1129,7 @@ function CandidateUi(options)
         $('#survey_continue_button').click(function() {
             $(this).val("submit survey");
             $('#survey tbody.hidden_part').removeClass('hidden_part');
+            $('.hide-for-survey').hide();
             $(this).hide();
             $('#survey_submit_button').show();
         });
