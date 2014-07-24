@@ -1239,16 +1239,6 @@ function CandidateUi(options)
 
         self.setupResizeEvent();
 
-        // <TEMP>
-        if (window.location.hash === '#survey') {
-            self.options.show_help = false;
-            $('#msg_final_task_completed').jqmShow();
-        } else if (window.location.hash === '#survey2') {
-            self.options.show_help = false;
-            $('#msg_timeout').jqmShow();
-        }
-        // <END TEMP>
-
         if (self.options.show_help)
             setTimeout(showHelp, 500);
 
