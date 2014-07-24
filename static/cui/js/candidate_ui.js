@@ -1066,9 +1066,8 @@ function CandidateUi(options)
 
         function surveyPopup($elt, logout_reason) {
             if (self.options.show_survey) {
+                $elt.find('.no-survey-continue').hide();
                 $elt.find('.survey-msg').show();
-                $elt.find('.survey-skip').val('skip survey');
-                $elt.find('.survey-skip').parent().css('text-align', 'right');
             }
             $elt.jqm({
                 modal: true,
