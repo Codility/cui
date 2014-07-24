@@ -354,7 +354,7 @@ $codility-light-blue: #2b9cd9;
     input {
       border: 1px solid #aaa;
       border-radius: 5px;
-      padding: 10px;
+      padding: .6em;
       margin-left: 20px;
       margin-right: 20px;
       font-size: 150%;
@@ -427,6 +427,15 @@ $codility-light-blue: #2b9cd9;
   }
   .question_spacer {
     height: 2em;
+  }
+
+  .dialog_buttons {
+    text-align: right;
+  }
+  #survey_skip_button {
+    font-size: 120%;
+    float: left;
+    margin-top: 5px;
   }
 }
 
