@@ -15,7 +15,7 @@ body {
 }
 
 * { @include box-sizing(border-box); }
-[class*='introjs'] { @include box-sizing(content-box); }
+.introjs-helperNumberLayer { @include box-sizing(content-box); }
 
 h1, h2, h3, h4, p, form, ul {
   margin: 0px;
@@ -204,6 +204,9 @@ $codility-light-blue: #2b9cd9;
           #verification_results {
             max-height: 200px;
             overflow: auto;
+          }
+          #add_test_case {
+            display: inline-block;
           }
         }
       }
