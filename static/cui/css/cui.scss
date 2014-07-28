@@ -130,6 +130,9 @@ $codility-light-blue: #2b9cd9;
       #clock {
         font-size: 140%;
         padding: 5px $padding;
+        &.introjs-showElement{
+          color:black
+        }
       }
     }
 
