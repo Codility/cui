@@ -24,20 +24,20 @@
   opacity: 1.0 !important;
 }
 
-.introjs-showElement {
+.introjs-showElement,
+tr.introjs-showElement > td,
+tr.introjs-showElement > th {
   z-index: 9999999 !important;
 }
 
-.introjs-elementOverlay {
+.introjs-disableInteraction {
   z-index: 99999999 !important;
   position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
 }
 
-.introjs-relativePosition {
+.introjs-relativePosition,
+tr.introjs-showElement > td,
+tr.introjs-showElement > th {
   position: relative;
 }
 
@@ -57,7 +57,8 @@
           transition: all 0.3s ease-out;
 }
 
-.introjs-helperNumberLayer{
+.introjs-helperNumberLayer {
+  position: absolute;
   z-index: 9999999999 !important;
   padding: 2px;
   font-family: Arial, verdana, tahoma;
@@ -78,29 +79,26 @@
   line-height: 20px;
   border: 3px solid white;
   border-radius: 50%;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff3019', endColorstr='#cf0404', GradientType=0); /* IE6-9 */ 
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff3019', endColorstr='#cf0404', GradientType=0); /* IE6-9 */
   filter: progid:DXImageTransform.Microsoft.Shadow(direction=135, strength=2, color=ff0000); /* IE10 text shadows */
   box-shadow: 0 2px 5px rgba(0,0,0,.4);
 }
-
-.introjs-helperNumberLayer-left {
-  position: absolute;
+.introjs-helperNumberLayer.left, .introjs-helperNumberLayer.top-left {
   top: -16px;
   left: -16px;
 }
-
-.introjs-helperNumberLayer-right {
-  position: absolute;
+.introjs-helperNumberLayer.right, .introjs-helperNumberLayer.top-right{
   top: -16px;
   right: -16px;
 }
-
-.introjs-helperNumberLayer-bottom {
-  position: absolute;
+.introjs-helperNumberLayer.bottom, .introjs-helperNumberLayer.bottom-left {
   bottom: -16px;
   left: -16px;
 }
-
+.introjs-helperNumberLayer.bottom-right{
+  top: -16px;
+  right: -16px;
+}
 .introjs-arrow {
   border: 5px solid white;
   content:'';
@@ -108,6 +106,23 @@
 }
 .introjs-arrow.top {
   top: -10px;
+  border-top-color:transparent;
+  border-right-color:transparent;
+  border-bottom-color:white;
+  border-left-color:transparent;
+}
+.introjs-arrow.top-right {
+  top: -10px;
+  right: 10px;
+  border-top-color:transparent;
+  border-right-color:transparent;
+  border-bottom-color:white;
+  border-left-color:transparent;
+}
+.introjs-arrow.top-middle {
+  top: -10px;
+  left: 50%;
+  margin-left: -5px;
   border-top-color:transparent;
   border-right-color:transparent;
   border-bottom-color:white;
@@ -156,8 +171,8 @@
   text-align: right;
 }
 
-/* 
- Buttons style by http://nicolasgallagher.com/lab/css3-github-buttons/ 
+/*
+ Buttons style by http://nicolasgallagher.com/lab/css3-github-buttons/
  Changed by Afshin Mehrabani
 */
 .introjs-button {
@@ -194,7 +209,7 @@
 
 .introjs-button:hover {
   border-color: #bcbcbc;
-  text-decoration: none; 
+  text-decoration: none;
   box-shadow: 0px 1px 1px #e3e3e3;
 }
 
