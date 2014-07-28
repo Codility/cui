@@ -42,7 +42,8 @@ function buildSteps(){
         { element: "#clock",
           intro:stepsTexts.timer,
           position:"left",
-          numberPosition:"bottom"
+          numberPosition:"bottom",
+          padding: 0
         },
         { element: "#prg_lang_list",
           intro:stepsTexts.prgLang
@@ -67,7 +68,7 @@ function buildSteps(){
           intro:stepsTexts.outputWindowResize,
           position: "left"
         },
-        { element: "#test_case_link",
+        { element: "#add_test_case",
           intro:stepsTexts.testData,
           position: "top",
           numberPosition: "right"
