@@ -56,7 +56,7 @@ function Chat(chat_options) {
     // Wait until Freshchat is loaded, then execute onRead after additional
     // delay (to allow it to open if it starts opened).
     self.waitUntilReady = function(delay, onReady, onFailure) {
-        var n_tries = 30, interval = 300;
+        var n_tries = 15, interval = 300;
         function poll() {
             if (self.getState() === 'ready')
                 setTimeout(onReady, delay);
@@ -86,11 +86,11 @@ function Chat(chat_options) {
     };
 
     self.fail = function() {
+        Console.msg_error("Sorry, loading the chat failed.<br>" +
+                          "If you require assistance, please contact " +
+                          "<a href='mailto:" + self.options.support_email +
+                          "' target=_blank>" + self.options.support_email + "</a>.");
         Log.error("couldn't load freshchat");
-        Console.error("Sorry, loading the chat failed.");
-        Console.error("If you require assistance, please contact " +
-                      "<a href='mailto:" + self.chat.support_email +
-                      "'>" + self.chat.support_email + "/>.");
     };
 
     // DWIM: show Freshchat and attract user's attention
