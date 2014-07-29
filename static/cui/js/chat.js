@@ -85,20 +85,26 @@ function Chat(chat_options) {
         }, 200);
     };
 
-    self.fail = function() {
+    self.fail = function(err) {
         Console.msg_error("Sorry, loading the chat failed.<br>" +
                           "If you require assistance, please contact " +
                           "<a href='mailto:" + self.options.support_email +
                           "' target=_blank>" + self.options.support_email + "</a>.");
-        Log.error("couldn't load freshchat");
+        Log.error("couldn't load freshchat", err);
     };
 
     // DWIM: show Freshchat and attract user's attention
     // (by opening it, or animating it if it's open).
     self.activate = function() {
         var state = self.getState();
-        if (state === 'unloaded')
-            self.load();
+        if (state === 'unloaded') {
+            try {
+                self.load();
+            } catch(err) {
+                self.fail(err);
+                return;
+            }
+        }
         if (state === 'unloaded' || state === 'loading') {
             self.waitUntilReady(
                 500,
