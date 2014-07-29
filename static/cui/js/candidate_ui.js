@@ -34,7 +34,7 @@
 /*global Clock */
 /*global Editor, AceEditor */
 /*global surveyShow, surveySubmit, surveyFilled */
-/*global showHelp */
+/*global Help */
 /*global TimeTracker */
 /*global Diff */
 
@@ -894,9 +894,9 @@ function CandidateUi(options)
         var example_input = xmlNodeValue(data, 'response example_input');
         var prg_lang = xmlNodeValue(data, 'response prg_lang');
         var human_lang = xmlNodeValue(data, 'response human_lang');
-        var prg_lang_list = JSON.parse(xmlNodeValue(data, 'response prg_lang_list'));
         var human_lang_list = JSON.parse(xmlNodeValue(data, 'response human_lang_list'));
 
+        self.current_prg_lang_list = JSON.parse(xmlNodeValue(data, 'response prg_lang_list'));
         self.task.name = task;
         self.task.type = task_type;
         self.task.solution_template = solution_template;
@@ -922,7 +922,7 @@ function CandidateUi(options)
         $('#current_human_lang').val(human_lang);
 
         $('#current_prg_lang option').remove();
-        $.each(prg_lang_list, function (i, pl) {
+        $.each(self.current_prg_lang_list, function (i, pl) {
             var name = self.options.prg_langs[pl].name;
             var $option = $('<option>').attr('value', pl).text(name);
             $('#current_prg_lang').append($option);
@@ -1126,7 +1126,7 @@ function CandidateUi(options)
         $('#resize_console_button').click(self.resizeConsoleAction);
         $('#verify_button').click(self.verifyAction);
         $('#reset_btn').click(self.resetAction);
-        $('#help_btn').click(showHelp);
+        $('#help_btn').click(self.showHelp);
         $('#survey_continue_button').click(function() {
             $(this).val("submit survey");
             $('#survey tbody.hidden_part').removeClass('hidden_part');
@@ -1208,6 +1208,15 @@ function CandidateUi(options)
             },100);
         });
     };
+    self.showHelp = function(){
+        var task_count, prg_lang_name, prg_lang_count;
+        task_count = self.options.task_names.length;
+        prg_lang_count = self.current_prg_lang_list.length;
+        prg_lang_name = self.current_prg_lang_list[0];
+
+        var help = Help(task_count, prg_lang_name, prg_lang_count);
+        help.showHelp();
+    };
 
     self.WELCOME_MESSAGE = (
         'This is <a href="https://github.com/codility/cui" target="_blank">CUI</a>.  ' +
@@ -1237,7 +1246,7 @@ function CandidateUi(options)
         self.setupResizeEvent();
 
         if (self.options.show_help)
-            setTimeout(showHelp, 500);
+            setTimeout(self.showHelp, 500);
 
         if (self.options.show_welcome) {
             Console.msg_ok(self.WELCOME_MESSAGE);
