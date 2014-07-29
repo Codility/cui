@@ -1218,8 +1218,8 @@ function CandidateUi(options)
         prg_lang_name = self.current_prg_lang_list[0];
 
         var help = Help(task_count, prg_lang_name, prg_lang_count);
-        if (self.options.show_chat && self.options.freshchat_setting)
-            help.enableChat(self.options.freshchat_setting);
+        if (self.options.chat)
+            help.enableChat(self.options.chat);
         help.showHelp();
     };
 

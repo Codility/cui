@@ -20,7 +20,8 @@
 
 */
 
-/* global Log, introJs*/
+/* global Log, Console, introJs */
+
 var Help = function(taskCount, prgLangName, prgLangCount){
     var self = {};
     self.stepsTexts = {
@@ -141,8 +142,8 @@ var Help = function(taskCount, prgLangName, prgLangCount){
         return ret;
     }
 
-    self.enableChat = function(freshchat_setting) {
-        self.freshchat_setting = freshchat_setting;
+    self.enableChat = function(chat) {
+        self.chat = chat;
     };
 
     function _loadChat() {
@@ -158,7 +159,7 @@ var Help = function(taskCount, prgLangName, prgLangCount){
         var jsload = (typeof jQuery=='undefined')?'visitor-jquery':'visitor';
         fc_JS.src=((isSecured)?'https://d36mpcpuzc4ztk.cloudfront.net':'http://assets.chat.freshdesk.com')+'/js/'+jsload+'.js';
         document.body.appendChild(fc_JS);
-        window.freshchat_setting=self.freshchat_setting;
+        window.freshchat_setting=self.chat.freshchat_setting;
     }
 
     function _activateChat() {
@@ -169,6 +170,10 @@ var Help = function(taskCount, prgLangName, prgLangCount){
             var $fc = $('#fc_chat_header');
             if ($fc.length === 0) {
                 Log.error("couldn't load freshchat");
+                Console.error("Sorry, loading the chat failed.");
+                Console.error("If you require assistance, please contact " +
+                              "<a href='mailto:" + self.chat.support_email +
+                              "'>" + self.chat.support_email + "/>.");
                 return;
             }
 
@@ -205,7 +210,7 @@ var Help = function(taskCount, prgLangName, prgLangCount){
         intro.setOption('steps', _buildSteps());
         intro.setOption('disableInteraction', true);
 
-        if (self.freshchat_setting) {
+        if (self.chat) {
             intro.onafterchange(_addChatToStep);
         }
 
