@@ -47,7 +47,7 @@ function Chat(chat_options) {
     self.getState = function() {
         if (!window.freshchat_setting)
             return 'unloaded';
-        else if ($('#fc_chat_header').length === 0)
+        else if (!$('#fc_chat_header').is(':visible'))
             return 'loading';
         else
             return 'ready';
