@@ -33,7 +33,7 @@ function Chat(chat_options) {
 
         var fc_CSS=document.createElement('link');
         fc_CSS.setAttribute('rel','stylesheet');
-        var isSecured = (window.location && window.location.protocol == 'https:');
+        var isSecured = true;
         fc_CSS.setAttribute('type','text/css');
         fc_CSS.setAttribute('href',((isSecured)? 'https://d36mpcpuzc4ztk.cloudfront.net':'http://assets1.chat.freshdesk.com')+'/css/visitor.css');
         document.getElementsByTagName('head')[0].appendChild(fc_CSS);
