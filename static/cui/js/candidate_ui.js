@@ -1214,8 +1214,13 @@ function CandidateUi(options)
     self.showHelp = function(){
         var task_count, prg_lang_name, prg_lang_count;
         task_count = self.options.task_names.length;
-        prg_lang_count = self.current_prg_lang_list.length;
-        prg_lang_name = self.current_prg_lang_list[0];
+        if(self.current_prg_lang_list !== undefined){
+            prg_lang_count = self.current_prg_lang_list.length;
+            prg_lang_name = self.current_prg_lang_list[0];
+        }
+        else{//just show message for multiple languages
+            prg_lang_count = 2;
+        }
 
         var help = Help(task_count, prg_lang_name, prg_lang_count);
         help.showHelp();
