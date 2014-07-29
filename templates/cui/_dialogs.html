@@ -98,11 +98,11 @@
     </div>
 </div>
 
-<div id='msg_final_task_completed' style="display: none; max-height: 400px; overflow: auto;" class="jqmWindow">
-    <h3 class='message in-demo' style="display: none;">Your Codility demo session has ended. Thank you!</h3>
-    <h3 class='message no-demo'>Your Codility session has ended. Thank you!</h3>
+<div id='msg_final_task_completed' style="display: none; max-height: 420px; overflow: auto;" class="jqmWindow">
+    <h3 class='message in-demo hide-for-survey' style="display: none;">Your Codility demo session has ended. Thank you!</h3>
+    <h3 class='message no-demo hide-for-survey'>Your Codility session has ended. Thank you!</h3>
 
-    <p class="survey-msg" style="display: none;">
+    <p class="survey-msg hide-for-survey" style="display: none;">
         Your opinion is important to us.
         Please help us provide better service by filling out the survey below (five questions).
         Participation in the survey is voluntary.
@@ -110,10 +110,10 @@
     </p>
 
     <div class='dialog_buttons'>
-        <input type="button" value="continue" class='jqmClose survey-skip' id="session_close" style='margin-right: 0;'/>
+        <input type="button" value="continue" class='jqmClose no-survey-continue' id="session_close" style='margin-right: 0;'/>
     </div>
 
-    <div style="height: 20px;"></div>
+    <div style="height: 20px;" class="hide-for-survey"></div>
 
     <div class='survey_placeholder'></div>
 </div>
@@ -132,16 +132,16 @@
     </div>
 </div>
 
-<div id="msg_timeout" style="display: none; max-height: 400px; overflow: auto;" class="jqmWindow" >
-    <h3 class='message'>We are sorry, but the time has run out.</h3>
+<div id="msg_timeout" style="display: none; max-height: 420px; overflow: auto;" class="jqmWindow" >
+    <h3 class='message hide-for-survey'>We are sorry, but the time has run out.</h3>
 
-    <p>
+    <p class="hide-for-survey">
         Your work has been automatically saved and will be evaluated shortly.
     </p>
 
-    <div style="height: 20px;"></div>
+    <div style="height: 20px;" class="hide-for-survey"></div>
 
-    <p class="survey-msg" style="display: none;">
+    <p class="survey-msg hide-for-survey" style="display: none;">
         Your opinion is important to us.
         Please help us provide better service by filling out the survey below (five questions).
         Participation in the survey is voluntary.
@@ -149,7 +149,7 @@
     </p>
 
     <div class='dialog_buttons'>
-        <input id="logout_button" type="button" value="continue" class='jqmClose survey-skip' style='margin-right: 0;'/>
+        <input type="button" value="continue" class='jqmClose no-survey-continue' style='margin-right: 0;'/>
     </div>
 
     <div style="height: 20px;"></div>
@@ -246,6 +246,7 @@
     </form>
     <div style='height: 10px;'></div>
     <div class='dialog_buttons'>
+        <input id="survey_skip_button" type='button' value="skip survey" />
         <input id='survey_continue_button' type='button' value="continue survey" />
         <input id='survey_submit_button' type='button' value="submit survey" style='display: none;' />
     </div>
