@@ -20,7 +20,7 @@
 
 */
 
-/* global Log, Console, introJs */
+/* global Chat, Log, Console, introJs */
 
 var Help = function(taskCount, prgLangName, prgLangCount){
     var self = {};
@@ -143,51 +143,8 @@ var Help = function(taskCount, prgLangName, prgLangCount){
     }
 
     self.enableChat = function(chat_options) {
-        self.chat_options = chat_options;
+        self.chat = Chat(chat_options);
     };
-
-    function _loadChat() {
-        // Adapted from standard Freshchat code
-
-        var fc_CSS=document.createElement('link');
-        fc_CSS.setAttribute('rel','stylesheet');
-        var isSecured = (window.location && window.location.protocol == 'https:');
-        fc_CSS.setAttribute('type','text/css');
-        fc_CSS.setAttribute('href',((isSecured)? 'https://d36mpcpuzc4ztk.cloudfront.net':'http://assets1.chat.freshdesk.com')+'/css/visitor.css');
-        document.getElementsByTagName('head')[0].appendChild(fc_CSS);
-        var fc_JS=document.createElement('script'); fc_JS.type='text/javascript';
-        var jsload = (typeof jQuery=='undefined')?'visitor-jquery':'visitor';
-        fc_JS.src=((isSecured)?'https://d36mpcpuzc4ztk.cloudfront.net':'http://assets.chat.freshdesk.com')+'/js/'+jsload+'.js';
-        document.body.appendChild(fc_JS);
-        window.freshchat_setting=self.chat_options.freshchat_setting;
-    }
-
-    function _activateChat() {
-        if (!window.freshchat_setting) {
-            // the chat should open automatically
-            _loadChat();
-        } else {
-            var $fc = $('#fc_chat_header');
-            if ($fc.length === 0) {
-                Log.error("couldn't load freshchat");
-                Console.error("Sorry, loading the chat failed.");
-                Console.error("If you require assistance, please contact " +
-                              "<a href='mailto:" + self.chat.support_email +
-                              "'>" + self.chat.support_email + "/>.");
-                return;
-            }
-
-            if (!$('#fc_chat_window').is(':visible')) {
-                $fc.click();
-            } else {
-                $('#fc_chat_layout').animate({
-                    'transform': 'scale(1.2)'
-                }, 200).animate({
-                    'transform': 'scale(1)'
-                }, 200);
-            }
-        }
-    }
 
     function _addChatToStep() {
         var introJs = this;
@@ -200,7 +157,7 @@ var Help = function(taskCount, prgLangName, prgLangCount){
         $chatElt.find('a').click(function(e) {
             e.preventDefault();
             introJs.exit();
-            _activateChat();
+            self.chat.activate();
         });
         $stepElt.append($chatElt);
     }
@@ -210,7 +167,7 @@ var Help = function(taskCount, prgLangName, prgLangCount){
         intro.setOption('steps', _buildSteps());
         intro.setOption('disableInteraction', true);
 
-        if (self.chat_options) {
+        if (self.chat) {
             intro.onafterchange(_addChatToStep);
         }
 
