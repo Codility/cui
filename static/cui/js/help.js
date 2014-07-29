@@ -132,7 +132,7 @@ var Help = function(taskCount, prgLangName, prgLangCount){
             },
             { element: "#quit_button",
               intro:self.stepsTexts.quitButton,
-              position: "top"
+              position: "left"
             },
             {
               intro:self.stepsTexts.exitOverlay
