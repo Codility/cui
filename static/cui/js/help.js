@@ -142,8 +142,8 @@ var Help = function(taskCount, prgLangName, prgLangCount){
         return ret;
     }
 
-    self.enableChat = function(chat) {
-        self.chat = chat;
+    self.enableChat = function(chat_options) {
+        self.chat_options = chat_options;
     };
 
     function _loadChat() {
@@ -159,7 +159,7 @@ var Help = function(taskCount, prgLangName, prgLangCount){
         var jsload = (typeof jQuery=='undefined')?'visitor-jquery':'visitor';
         fc_JS.src=((isSecured)?'https://d36mpcpuzc4ztk.cloudfront.net':'http://assets.chat.freshdesk.com')+'/js/'+jsload+'.js';
         document.body.appendChild(fc_JS);
-        window.freshchat_setting=self.chat.freshchat_setting;
+        window.freshchat_setting=self.chat_options.freshchat_setting;
     }
 
     function _activateChat() {
@@ -210,7 +210,7 @@ var Help = function(taskCount, prgLangName, prgLangCount){
         intro.setOption('steps', _buildSteps());
         intro.setOption('disableInteraction', true);
 
-        if (self.chat) {
+        if (self.chat_options) {
             intro.onafterchange(_addChatToStep);
         }
 
