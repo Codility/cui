@@ -140,10 +140,75 @@ var Help = function(taskCount, prgLangName, prgLangCount){
         ]);
         return ret;
     }
+
+    self.enableChat = function(freshchat_setting) {
+        self.freshchat_setting = freshchat_setting;
+    };
+
+    function _loadChat() {
+        // Adapted from standard Freshchat code
+
+        var fc_CSS=document.createElement('link');
+        fc_CSS.setAttribute('rel','stylesheet');
+        var isSecured = (window.location && window.location.protocol == 'https:');
+        fc_CSS.setAttribute('type','text/css');
+        fc_CSS.setAttribute('href',((isSecured)? 'https://d36mpcpuzc4ztk.cloudfront.net':'http://assets1.chat.freshdesk.com')+'/css/visitor.css');
+        document.getElementsByTagName('head')[0].appendChild(fc_CSS);
+        var fc_JS=document.createElement('script'); fc_JS.type='text/javascript';
+        var jsload = (typeof jQuery=='undefined')?'visitor-jquery':'visitor';
+        fc_JS.src=((isSecured)?'https://d36mpcpuzc4ztk.cloudfront.net':'http://assets.chat.freshdesk.com')+'/js/'+jsload+'.js';
+        document.body.appendChild(fc_JS);
+        window.freshchat_setting=self.freshchat_setting;
+    }
+
+    function _activateChat() {
+        if (!window.freshchat_setting) {
+            // the chat should open automatically
+            _loadChat();
+        } else {
+            var $fc = $('#fc_chat_header');
+            if ($fc.length === 0) {
+                Log.error("couldn't load freshchat");
+                return;
+            }
+
+            if (!$('#fc_chat_window').is(':visible')) {
+                $fc.click();
+            } else {
+                $('#fc_chat_layout').animate({
+                    'transform': 'scale(1.2)'
+                }, 200).animate({
+                    'transform': 'scale(1)'
+                }, 200);
+            }
+        }
+    }
+
+    function _addChatToStep() {
+        var introJs = this;
+        var $stepElt = $('.introjs-tooltip');
+        // added already
+        if ($stepElt.find('.chat').length > 0)
+            return;
+
+        var $chatElt = $('<div class="chat"><br>Problems? <a href="#">Chat with us.</a></div>');
+        $chatElt.find('a').click(function(e) {
+            e.preventDefault();
+            introJs.exit();
+            _activateChat();
+        });
+        $stepElt.append($chatElt);
+    }
+
     self.showHelp = function() {
         var intro = introJs();
         intro.setOption('steps', _buildSteps());
         intro.setOption('disableInteraction', true);
+
+        if (self.freshchat_setting) {
+            intro.onafterchange(_addChatToStep);
+        }
+
         intro.start();
     };
     return self;
