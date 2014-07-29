@@ -145,6 +145,11 @@ var Help = function(taskCount, prgLangName, prgLangCount){
         intro.setOption('steps', _buildSteps());
         intro.setOption('disableInteraction', true);
         intro.start();
+        //Override bug with IE9's enthusiastic onbeforeunload trigger
+        //Undesirably causes the next button on introjs to trigger onbeforeunload
+        //which we listen on in clock.js
+        //http://stackoverflow.com/questions/7263309/onbeforeunload-event-is-too-enthusiastic-in-ie9
+        $("a.introjs-button").click(function (e) { e.preventDefault(); });
     };
     return self;
 };
