@@ -20,7 +20,8 @@
 
 */
 
-/* global Log, introJs*/
+/* global Chat, Log, Console, introJs */
+
 var Help = function(taskCount, prgLangName, prgLangCount){
     var self = {};
     self.stepsTexts = {
@@ -140,10 +141,36 @@ var Help = function(taskCount, prgLangName, prgLangCount){
         ]);
         return ret;
     }
+
+    self.enableChat = function(chat_options) {
+        self.chat = Chat(chat_options);
+    };
+
+    function _addChatToStep() {
+        var introJs = this;
+        var $stepElt = $('.introjs-tooltip');
+        // added already
+        if ($stepElt.find('.chat').length > 0)
+            return;
+
+        var $chatElt = $('<div class="chat"><br>Problems? <a href="#">Chat with us.</a></div>');
+        $chatElt.find('a').click(function(e) {
+            e.preventDefault();
+            introJs.exit();
+            self.chat.activate();
+        });
+        $stepElt.append($chatElt);
+    }
+
     self.showHelp = function() {
         var intro = introJs();
         intro.setOption('steps', _buildSteps());
         intro.setOption('disableInteraction', true);
+
+        if (self.chat) {
+            intro.onafterchange(_addChatToStep);
+        }
+
         intro.start();
         //Override bug with IE9's enthusiastic onbeforeunload trigger
         //Undesirably causes the next button on introjs to trigger onbeforeunload
