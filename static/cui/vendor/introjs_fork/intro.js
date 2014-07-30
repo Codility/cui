@@ -558,14 +558,6 @@
       //prevent error when `this._currentStep` in undefined
       if (!this._introItems[this._currentStep]) return;
 
-      var definedPadding = this._introItems[this._currentStep].padding;
-      if(definedPadding === undefined){
-        definedPadding = 5;
-      }
-      var currentElement  = this._introItems[this._currentStep],
-          elementPosition = _getOffset(currentElement.element),
-          widthHeightPadding = 2*definedPadding;
- 
       //make helperLayer invisible before setting getting offsets
       //this way the old position doesn't influence the new one
       //also do this for the disableInteractionLayer if it's present
@@ -576,6 +568,14 @@
       }
       helperLayer.style.display = 'none';
       
+      //get position
+      var definedPadding = this._introItems[this._currentStep].padding;
+      if(definedPadding === undefined){
+        definedPadding = 5;
+      }
+      var currentElement  = this._introItems[this._currentStep],
+          elementPosition = _getOffset(currentElement.element),
+          widthHeightPadding = 2*definedPadding;
       if (currentElement.position == 'floating') {
         widthHeightPadding = 0;
       }
