@@ -99,7 +99,9 @@ var Help = function(taskCount, prgLangName, prgLangCount){
               padding: 0
             },
             { element: "#prg_lang_list",
-              intro:self.stepsTexts.prgLang
+              intro:self.stepsTexts.prgLang,
+              position: "left",
+              numberPosition: "bottom"
             },
             { element: "#edit",
               intro:self.stepsTexts.editor,
