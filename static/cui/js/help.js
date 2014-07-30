@@ -140,10 +140,14 @@ var Help = function(taskCount, prgLangName, prgLangCount){
         ]);
         return ret;
     }
-    self.showHelp = function() {
+    self.showHelp = function(callback) {
         var intro = introJs();
         intro.setOption('steps', _buildSteps());
         intro.setOption('disableInteraction', true);
+        if (typeof callback === 'function'){
+            intro.oncomplete(callback);
+            intro.onexit(callback);
+        }
         intro.start();
         //Override bug with IE9's enthusiastic onbeforeunload trigger
         //Undesirably causes the next button on introjs to trigger onbeforeunload
