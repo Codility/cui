@@ -145,17 +145,21 @@ function CandidateUi(options)
         self.updateControls();
     };
 
+    self.updateSaveStatus = function(text){
+        $('#save_status').text(text);
+    };
+
     self.updateModified = function() {
         if (self.task.open && self.editor.getValue() != self.task.saved_solution) {
             self.task.last_modify_time = new Date().getTime();
             self.task.modified = true;
             if (self.options.save_often)
-                $('#save_status').text('');
+                self.updateSaveStatus('');
         } else {
             self.task.modified = false;
             self.task.last_modify_time = null;
             if (self.options.save_often)
-                $('#save_status').text('All changes saved.');
+                self.updateSaveStatus('All changes saved.');
         }
     };
 
@@ -1211,7 +1215,7 @@ function CandidateUi(options)
             },100);
         });
     };
-    self.showHelp = function(){
+    self.showHelp = function(callback){
         var task_count, prg_lang_name, prg_lang_count;
         task_count = self.options.task_names.length;
         if(self.current_prg_lang_list !== undefined){
@@ -1223,7 +1227,7 @@ function CandidateUi(options)
         }
 
         var help = Help(task_count, prg_lang_name, prg_lang_count);
-        help.showHelp();
+        help.showHelp(callback);
     };
 
     self.WELCOME_MESSAGE = (
@@ -1241,24 +1245,38 @@ function CandidateUi(options)
         self.setupSelects();
         if (!self.options.demo && !self.options.cert) self.setupTrackers();
         TestCases.init();
-        Clock.init(self.options.ticket_id, self.options.urls['clock'], self.options.time_remaining_sec, self.options.time_elapsed_sec);
 
-        self.updatePageLayout();
-        self.reloadTask();
-        if (self.options.save_often)
-            setTimeout(self.checkAutoSave, CHECK_AUTOSAVE_PERIOD);
-        else
-            setTimeout(self.oldAutoSave, OLD_AUTOSAVE_PERIOD);
-        self.updateControls();
+        //Initilaize timer and task
+        var afterHelp = function(){
+            Clock.init(self.options.ticket_id, self.options.urls['clock'], self.options.time_remaining_sec, self.options.time_elapsed_sec);
 
-        self.setupResizeEvent();
+            self.updatePageLayout();
+            self.reloadTask();
+            if (self.options.save_often)
+                setTimeout(self.checkAutoSave, CHECK_AUTOSAVE_PERIOD);
+            else
+                setTimeout(self.oldAutoSave, OLD_AUTOSAVE_PERIOD);
+            self.updateControls();
 
-        if (self.options.show_help)
-            setTimeout(self.showHelp, 500);
+            if (self.options.show_welcome) {
+                Console.msg_ok(self.WELCOME_MESSAGE);
+            }
+        };
 
-        if (self.options.show_welcome) {
-            Console.msg_ok(self.WELCOME_MESSAGE);
+        self.setupResizeEvent();        
+        if (self.options.show_help){
+            //'all changes saved'
+            self.updateSaveStatus("You will see save status here");
+            //size editor and task description pane properly
+            self.updatePageLayout();
+            setTimeout(function(){
+                self.showHelp(afterHelp);
+            }, 500);
         }
+        else{
+            afterHelp();
+        }
+
     };
 
     // Unpin global events
