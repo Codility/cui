@@ -1227,6 +1227,8 @@ function CandidateUi(options)
         }
 
         var help = Help(task_count, prg_lang_name, prg_lang_count);
+        if (self.options.chat_options)
+            help.enableChat(self.options.chat_options);
         help.showHelp(callback);
     };
 
