@@ -1267,6 +1267,8 @@ function CandidateUi(options)
 
         self.setupResizeEvent();        
         if (self.options.show_help){
+            //show time asigned to task
+            Clock.setTime(self.options.time_remaining_sec);
             //'all changes saved'
             self.updateSaveStatus("You will see save status here");
             //size editor and task description pane properly

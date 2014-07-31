@@ -30,10 +30,13 @@ var Clock = {
     time_to_end : null,
     active : true,
 
-    setTime : function() {
-        var seconds = this.time_to_end % 60;
-        var minutes = Math.floor(this.time_to_end / 60) % 60;
-        var hours = Math.floor(this.time_to_end / (60 * 60));
+    setTime : function(time_to_end) {
+        if (typeof time_to_end !== 'number'){
+            time_to_end = this.time_to_end;
+        }
+        var seconds = time_to_end % 60;
+        var minutes = Math.floor(time_to_end / 60) % 60;
+        var hours = Math.floor(time_to_end / (60 * 60));
         var time_string = (hours < 10) ? '0' + hours : hours;
         time_string += ":";
         time_string += (minutes < 10) ? '0' + minutes : minutes;
