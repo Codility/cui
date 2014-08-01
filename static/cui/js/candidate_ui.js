@@ -1067,6 +1067,7 @@ function CandidateUi(options)
         $("#msg_task_completed").jqm({modal: true});
         $('#msg_task_closed').jqm({modal: true});
         $("#bugfix_no_changes").jqm({modal: true});
+        $("#exit_initial_help").jqm({modal: true});
 
         function surveyPopup($elt, logout_reason) {
             if (self.options.show_survey) {
@@ -1109,6 +1110,12 @@ function CandidateUi(options)
             self.nextTask();
         });
 
+        $('#exit_intro_yes').click(function() {
+            $('#exit_initial_help').jqmHide();
+            self.startTicket();
+        });
+        $('#exit_intro_no').click(self.initialHelp);
+        
         $("#fp_yes").click(self.finalSubmitAction);
         $("#bugfix_yes").click(function() {
             $('#bugfix_no_changes').jqmHide();
@@ -1215,6 +1222,7 @@ function CandidateUi(options)
             },100);
         });
     };
+
     self.showHelp = function(callback){
         var task_count, prg_lang_name, prg_lang_count;
         task_count = self.options.task_names.length;
@@ -1232,6 +1240,41 @@ function CandidateUi(options)
         help.showHelp(callback);
     };
 
+    self.startTicket = function(){
+        var url = self.options.urls["start_ticket"];
+        var data = {
+            'ticket': self.options.ticket_id,
+        };
+        var xhr = $.ajax({
+            url: url,
+            data: data,
+            type: 'POST',
+            error: self.startTicketError,
+            success: function() {
+                self.startTicketSuccess(data);
+            }
+        }).always(self.clearCall);
+
+        self.startCall('startTicket', xhr);
+    };
+
+    self.startTicketSuccess = function(data){
+        var error = xmlNodeValue(data, 'error');
+        if (data.redirect) {
+            // might issue a redirect if a downtime is approaching
+            window.location.href = data.redirect;
+        }
+        else if (error){
+            Console.msg_syserr(error);
+        }
+        else{
+            self.initTask();
+        }
+    };
+    self.startTicketError = function(){
+        Console.msg_syserr("Could not load task");
+    };
+
     self.WELCOME_MESSAGE = (
         'This is <a href="https://github.com/codility/cui" target="_blank">CUI</a>.  ' +
         'CUI is free software.  ' +
@@ -1239,6 +1282,36 @@ function CandidateUi(options)
         'and <a href="https://github.com/Codility/cui/blob/master/AUTHORS" target="_blank">AUTHORS</a> ' +
         'for details.'
     );
+
+    self.initTask = function() {
+        Clock.init(self.options.ticket_id, self.options.urls['clock'], self.options.time_remaining_sec, self.options.time_elapsed_sec);
+
+        self.updatePageLayout();
+        self.reloadTask();
+        if (self.options.save_often)
+            setTimeout(self.checkAutoSave, CHECK_AUTOSAVE_PERIOD);
+        else
+            setTimeout(self.oldAutoSave, OLD_AUTOSAVE_PERIOD);
+        self.updateControls();
+
+        if (self.options.show_welcome) {
+            Console.msg_ok(self.WELCOME_MESSAGE);
+        }
+    };
+
+    self.initialHelp = function() {
+        //show time asigned to task
+        Clock.setTime(self.options.time_remaining_sec);
+        //'all changes saved'
+        self.updateSaveStatus("You will see save status here");
+        //size editor and task description pane properly
+        self.updatePageLayout();
+        setTimeout(function(){
+            self.showHelp(function(current_step) {
+                $('#exit_initial_help').jqmShow();
+            });
+        }, 500);
+    };
 
     self.init = function() {
         self.setupEditor();
@@ -1248,37 +1321,12 @@ function CandidateUi(options)
         if (!self.options.demo && !self.options.cert) self.setupTrackers();
         TestCases.init();
 
-        //Initilaize timer and task
-        var afterHelp = function(){
-            Clock.init(self.options.ticket_id, self.options.urls['clock'], self.options.time_remaining_sec, self.options.time_elapsed_sec);
-
-            self.updatePageLayout();
-            self.reloadTask();
-            if (self.options.save_often)
-                setTimeout(self.checkAutoSave, CHECK_AUTOSAVE_PERIOD);
-            else
-                setTimeout(self.oldAutoSave, OLD_AUTOSAVE_PERIOD);
-            self.updateControls();
-
-            if (self.options.show_welcome) {
-                Console.msg_ok(self.WELCOME_MESSAGE);
-            }
-        };
-
         self.setupResizeEvent();        
         if (self.options.show_help){
-            //show time asigned to task
-            Clock.setTime(self.options.time_remaining_sec);
-            //'all changes saved'
-            self.updateSaveStatus("You will see save status here");
-            //size editor and task description pane properly
-            self.updatePageLayout();
-            setTimeout(function(){
-                self.showHelp(afterHelp);
-            }, 500);
+            self.initialHelp();
         }
         else{
-            afterHelp();
+            self.initTask();
         }
 
     };
