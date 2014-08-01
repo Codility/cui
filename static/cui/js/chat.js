@@ -79,7 +79,7 @@ function Chat(support_email) {
         Log.error("couldn't load freshchat", err);
     };
 
-    // DWIM: show Freshchat and attract user's attention.
+    // DWIM: show Olark chat and attract user's attention.
     self.activate = function() {
         if (!self.shown)
             olark('api.box.show');
