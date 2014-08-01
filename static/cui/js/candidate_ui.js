@@ -35,6 +35,7 @@
 /*global Editor, AceEditor */
 /*global surveyShow, surveySubmit, surveyFilled */
 /*global Help */
+/*global Chat */
 /*global TimeTracker */
 /*global Diff */
 
@@ -1222,9 +1223,9 @@ function CandidateUi(options)
             prg_lang_count = 2;
         }
 
-        var help = Help(task_count, prg_lang_name, prg_lang_count);
-        if (self.options.chat_options)
-            help.enableChat(self.options.chat_options);
+        var help = Help(task_count, prg_lang_name, prg_lang_count, self.options.support_email);
+        if (self.chat)
+            help.enableChat(self.chat);
         help.showHelp();
     };
 
@@ -1257,6 +1258,9 @@ function CandidateUi(options)
 
         if (self.options.show_help)
             setTimeout(self.showHelp, 500);
+
+        if (self.options.show_chat)
+            self.chat = Chat(self.options.support_email);
 
         if (self.options.show_welcome) {
             Console.msg_ok(self.WELCOME_MESSAGE);
