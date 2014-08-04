@@ -1286,7 +1286,6 @@ function CandidateUi(options)
     self.initTask = function() {
         Clock.init(self.options.ticket_id, self.options.urls['clock'], self.options.time_remaining_sec, self.options.time_elapsed_sec);
 
-        self.updatePageLayout();
         self.reloadTask();
         if (self.options.save_often)
             setTimeout(self.checkAutoSave, CHECK_AUTOSAVE_PERIOD);
@@ -1304,8 +1303,7 @@ function CandidateUi(options)
         Clock.setTime(self.options.time_remaining_sec);
         //'all changes saved'
         self.updateSaveStatus("You will see save status here");
-        //size editor and task description pane properly
-        self.updatePageLayout();
+        
         setTimeout(function(){
             self.showHelp(function(current_step) {
                 $('#exit_initial_help').jqmShow();
@@ -1320,7 +1318,10 @@ function CandidateUi(options)
         self.setupSelects();
         if (!self.options.demo && !self.options.cert) self.setupTrackers();
         TestCases.init();
-
+        
+        //size editor and task description pane properly
+        self.updatePageLayout();
+        
         self.setupResizeEvent();        
         if (self.options.show_help){
             self.initialHelp();
