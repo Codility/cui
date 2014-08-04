@@ -82,6 +82,21 @@ function seconds(s) {
 
 var PAGE_HTML;
 
+
+//used to test help button and initial help
+function testHelp(clock) {
+    // wait for help to show
+    clock.tick(seconds(5));
+    expectVisible('.introjs-overlay', true);
+    expectVisible('.introjs-helperLayer', true);
+
+    // click on overlay to hide it
+    $('.introjs-overlay').click();
+    clock.tick(seconds(1));
+    expectVisible('.introjs-overlay', false);
+    expectVisible('.introjs-helperLayer', false);
+}
+
 // Scaffolding for candidate UI
 function describe_ui(suffix, extra_options, f) {
     describe('Candidate UI' + suffix, function() {
@@ -115,9 +130,6 @@ function describe_ui(suffix, extra_options, f) {
 
             // remove the modal overlay for convenience
             $('.jqmOverlay').hide();
-            $('.introjs-overlay').hide();
-            //remove the help screen after each test, else test will fail
-            $('.introjs-overlay').click();
         });
 
         f.apply(this);
@@ -284,26 +296,11 @@ describe_ui('', {}, function() {
     });
 
     it('should show help', function() {
-        function testHelp() {
-            // wait for help to show
-            clock.tick(seconds(5));
-            expectVisible('.introjs-overlay', true);
-            expectVisible('.introjs-helperLayer', true);
-
-            // click on overlay to hide it
-            $('.introjs-overlay').click();
-            clock.tick(seconds(1));
-            expectVisible('.introjs-overlay', false);
-            expectVisible('.introjs-helperLayer', false);
-        }
-
-        // help is shown initially, after a delay
-        server.respond();
-        clock.tick(seconds(1));
-        testHelp();
-
         $('#help_btn').click();
-        testHelp();
+        testHelp(clock);
+
+        //don't show dialog
+        expectVisible('#exit_initial_help', false);
     });
 
     it('should update ui.task.modified', function() {
@@ -916,6 +913,69 @@ describe_ui('', {}, function() {
             expect(ui.validCopySelection(e)).toBe(true);
         });
 
+    });
+});
+
+describe_ui(' (with show_help enabled)', { 'show_help': true }, function(){
+    var ui;
+    var server, clock;
+
+    beforeEach(function() {
+        ui = this.ui;
+        server = this.server;
+        clock = this.clock;
+    });
+
+    afterEach(function() {
+        $('.introjs-overlay').click();
+        clock.tick(seconds(1));
+        $('#exit_intro_yes').click();
+    });
+
+    it('should show initial help', function(){
+        // help is shown initially, after a delay
+        server.respond();
+        clock.tick(seconds(1));
+        testHelp(clock);
+    });
+
+    it('should not count down time while in help', function(){
+        server.respond();
+        clock.tick(seconds(1));
+        var firsttime = $("#clock").text();
+        clock.tick(seconds(20));
+        var secondtime = $("#clock").text();
+        expect(secondtime).toBe(firsttime);
+    });
+
+    it('should bring up dialog upon exit', function(){
+        server.respond();
+        clock.tick(seconds(1));
+        $('.introjs-overlay').click();
+        expectVisible("#exit_initial_help", true);
+    });
+
+    it("should return to help if 'no' is selected on dialog", function(){
+        server.respond();
+        clock.tick(seconds(1));
+        $('.introjs-overlay').click();
+        expectVisible("#exit_initial_help", true);
+        $("#exit_intro_no").click();
+        clock.tick(seconds(1));
+        expectVisible('.introjs-overlay', true);
+        expectVisible('.introjs-helperLayer', true);
+
+    });
+
+    it("should exit intro if 'yes' is selected on dialog", function(){
+        server.respond();
+        clock.tick(seconds(1));
+        $('.introjs-overlay').click();
+        expectVisible("#exit_initial_help", true);
+        $("#exit_intro_yes").click();
+        clock.tick(seconds(1));
+        expectVisible('.introjs-overlay', false);
+        expectVisible('.introjs-helperLayer', false);
     });
 });
 

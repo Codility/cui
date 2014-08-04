@@ -89,7 +89,7 @@ function TestServer() {
         },
 
         show_survey: true,
-        show_help: true,
+        show_help: false,
         show_welcome: true,
         sequential: false,
         save_often: true,
