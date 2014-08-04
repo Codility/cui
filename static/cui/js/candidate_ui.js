@@ -1250,7 +1250,7 @@ function CandidateUi(options)
             data: data,
             type: 'POST',
             error: self.startTicketError,
-            success: function() {
+            success: function(data) {
                 self.startTicketSuccess(data);
             }
         }).always(self.clearCall);
@@ -1272,7 +1272,8 @@ function CandidateUi(options)
         }
     };
     self.startTicketError = function(){
-        Console.msg_syserr("Could not load task");
+        Console.msg_syserr("Network error encountered while trying to start your test. "+
+            "Try reloading this page.");
     };
 
     self.WELCOME_MESSAGE = (
@@ -1303,7 +1304,7 @@ function CandidateUi(options)
         Clock.setTime(self.options.time_remaining_sec);
         //'all changes saved'
         self.updateSaveStatus("You will see save status here");
-        
+
         setTimeout(function(){
             self.showHelp(function(current_step) {
                 $('#exit_initial_help').jqmShow();
