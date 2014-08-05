@@ -1236,7 +1236,7 @@ function CandidateUi(options)
         self.plugins.filter(function (plugin) {
             return plugin.loaded;
         }).forEach(function (plugin) {
-            plugin.unload();
+            plugin.object.unload();
         });
     };
 
