@@ -87,7 +87,10 @@ function CandidateUi(options)
 
         // Last time new autosave has been *initiated*
         // (so that we don't save too often)
-        last_autosave_time: null
+        last_autosave_time: null,
+
+        // list of plugins
+        plugins: []
     };
 
     self.updatePageLayout = function() {
@@ -1212,6 +1215,31 @@ function CandidateUi(options)
             },100);
         });
     };
+
+    self.addPlugin = function (plugin) {
+        plugin.loaded = false;
+        if (plugin.autoload) {
+            plugin.object.load(self);
+            plugin.loaded = true;
+        }
+        self.plugins.push(plugin);
+    };
+
+    self.setupPlugins = function () {
+        if (!self.options.plugins) {
+            return;
+        }
+        self.options.plugins.forEach(self.addPlugin);
+    };
+
+    self.removePlugins = function () {
+        self.plugins.filter(function (plugin) {
+            return plugin.loaded;
+        }).forEach(function (plugin) {
+            plugin.unload();
+        });
+    };
+
     self.showHelp = function(){
         var task_count, prg_lang_name, prg_lang_count;
         task_count = self.options.task_names.length;
@@ -1265,12 +1293,15 @@ function CandidateUi(options)
         if (self.options.show_welcome) {
             Console.msg_ok(self.WELCOME_MESSAGE);
         }
+
+        self.setupPlugins();
     };
 
     // Unpin global events
     self.shutdown = function() {
         $(window).off('focus');
         $(window).off('blur');
+        self.removePlugins();
     };
 
     self.data = {};
