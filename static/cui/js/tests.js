@@ -1029,45 +1029,29 @@ describe('plugins', function () {
     function Plugin() {
         var self = {};
 
-        var priv = {
-            load_calls: 0,
-            unload_calls: 0
-        };
+        self.load = function (ui) {};
 
-        self.load = function (ui) {
-            priv.load_calls += 1;
-        };
-
-        self.unload = function () {
-            priv.unload_calls += 1;
-        };
-
-        self.load_calls = function () {
-            return priv.load_calls;
-        };
-
-        self.unload_calls = function () {
-            return priv.unload_calls;
-        };
+        self.unload = function () {};
 
         return self;
     }
 
-    describe_ui(' plugins loading', { plugins: [
-        {
-            name: "One",
-            autoload: false,
-            object: Plugin()
-        },
-        {
-            name: "Two",
-            autoload: true,
-            object: Plugin()
-        }
-    ]}, function() {
-        it('should autoload marked plugins', function () {
-            expect(this.ui.plugins[1].object.load_calls()).toBe(1);
-            expect(this.ui.plugins[0].object.load_calls()).toBe(0);
+    describe_ui(' plugins loading', {}, function() {
+        it('should load and unload plugin', function () {
+            // setup spys
+            var plugin = Plugin();
+            sinon.spy(plugin, 'load');
+            sinon.spy(plugin, 'unload');
+
+            // load plugin
+            this.ui.addPlugin(plugin);
+            console.log(plugin);
+            expect(plugin.load.callCount).toBe(1);
+            expect(plugin.unload.callCount).toBe(0);
+
+            // unload plugin
+            this.ui.removePlugin(plugin);
+            expect(plugin.unload.callCount).toBe(1);
         });
     });
 });

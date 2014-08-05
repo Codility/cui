@@ -1217,19 +1217,18 @@ function CandidateUi(options)
     };
 
     self.addPlugin = function (plugin) {
-        plugin.loaded = false;
-        if (plugin.autoload) {
-            plugin.object.load(self);
-            plugin.loaded = true;
-        }
+        plugin.load(self);
         self.plugins.push(plugin);
     };
 
-    self.setupPlugins = function () {
-        if (!self.options.plugins) {
-            return;
-        }
-        self.options.plugins.forEach(self.addPlugin);
+    self.removePlugin = function (plugin) {
+        self.plugins = self.plugins.filter(function (plugin_on_list) {
+            if (plugin === plugin_on_list) {
+                plugin.unload();
+                return false;
+            }
+            return true;
+        });
     };
 
     self.removePlugins = function () {
@@ -1293,8 +1292,6 @@ function CandidateUi(options)
         if (self.options.show_welcome) {
             Console.msg_ok(self.WELCOME_MESSAGE);
         }
-
-        self.setupPlugins();
     };
 
     // Unpin global events
