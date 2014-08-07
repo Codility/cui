@@ -1232,10 +1232,8 @@ function CandidateUi(options)
     };
 
     self.removePlugins = function () {
-        self.plugins.filter(function (plugin) {
-            return plugin.loaded;
-        }).forEach(function (plugin) {
-            plugin.object.unload();
+        self.plugins.forEach(function (plugin) {
+            plugin.unload();
         });
     };
 

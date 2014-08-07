@@ -1053,6 +1053,20 @@ describe('plugins', function () {
             this.ui.removePlugin(plugin);
             expect(plugin.unload.callCount).toBe(1);
         });
+
+        it('should automaticly unload plugin when shutting down', function () {
+            // setup spys
+            var plugin = Plugin();
+            sinon.spy(plugin, 'unload');
+
+            // load plugin
+            this.ui.addPlugin(plugin);
+
+            // check unloading
+            expect(plugin.unload.callCount).toBe(0);
+            this.ui.shutdown();
+            expect(plugin.unload.callCount).toBe(1);
+        });
     });
 });
 
