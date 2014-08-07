@@ -92,6 +92,7 @@
 {# Tests #}
 
 {% if in_test %}
+  <script src="{{STATIC_URL}}cui/js/selenium-reporter.js"></script>
   <script src="{{STATIC_URL}}cui/vendor/jasmine-2.0.0/jasmine.js?{{ VERSION }}"></script>
   <script src="{{STATIC_URL}}cui/vendor/jasmine-2.0.0/jasmine-html.js?{{ VERSION }}"></script>
   <script src="{{STATIC_URL}}cui/vendor/jasmine-2.0.0/boot.js?{{ VERSION }}"></script>

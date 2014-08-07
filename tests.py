@@ -42,6 +42,128 @@ class CuiTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
+class SeleniumReporter(object):
+    def __init__(self, driver):
+        self.driver = driver
+        self.indent = 0
+        self.tests = 0
+        self.passed = 0
+        self.fails = []
+
+    def jasmine_started(self, options):
+        pass
+
+    def jasmine_done(self, _):
+        pass
+
+    def suite_started(self, result):
+        self.write(self.style(result['description'], "bold") + "\n")
+        self.indent += 1
+
+    def suite_done(self, result):
+        self.indent -= 1
+
+    def spec_started(self, result):
+        self.tests += 1
+        self.write(result['description'] + " ... ")
+
+    def spec_done(self, result):
+        if result['status'] == "passed":
+            self.passed += 1
+            color = "green"
+        else:
+            color = "red"
+            self.fails.append(result)
+
+        self.write(self.style(result['status'], color) + '\n', indent=False)
+
+    def style(self, string, *styles):
+        escape_codes = {
+            'black': '\x1B[30m',
+            'red': '\x1B[31m',
+            'green': '\x1B[32m',
+            'yellow': '\x1B[33m',
+            'blue': '\x1B[34m',
+            'magenta': '\x1B[35m',
+            'cyan': '\x1B[36m',
+            'white': '\x1B[37m',
+            'backblack': '\x1B[40m',
+            'backred': '\x1B[41m',
+            'backgreen': '\x1B[42m',
+            'backyellow': '\x1B[43m',
+            'backblue': '\x1B[44m',
+            'backmagenta': '\x1B[45m',
+            'backcyan': '\x1B[46m',
+            'backwhite': '\x1B[47m',
+            'bold': '\x1B[1m',
+            'none': '\x1B[0m',
+            'underline': '\x1B[4m'
+        }
+        for style in styles:
+            string = escape_codes[style] + string
+        string += escape_codes['none']
+        return string
+
+    def write(self, message, indent=True):
+        if indent:
+            sys.stderr.write('    ' * self.indent)
+        sys.stderr.write(message)
+        sys.stderr.flush()
+
+    def wait_until_expr(self, expr, timeout=60):
+        WebDriverWait(self.driver, timeout).until(
+            lambda driver: driver.execute_script('return (%s)' % expr))
+
+    def print_fail(self, fail):
+        self.write(self.style(fail['fullName'], "blue", "bold") + "\n")
+        for e in fail['failedExpectations']:
+            self.indent = 1
+
+            if e['expected'] != '':
+                self.write("\n")
+                self.write("    {}: {}\n".format(
+                    self.style("expected", "yellow"),
+                    json.dumps(e['expected'])))
+                self.write("    {}:   {}\n".format(
+                    self.style("actual", "yellow"),
+                    json.dumps(e['actual'])))
+
+            self.write("\n")
+
+            stack = e['stack'].split('\n')
+            height = len(stack) - 1
+            self.write(self.style(stack[0], "bold") + "\n")
+            for i in range(1, min(10, height) + 1):
+                self.write(stack[i] + "\n")
+            if height > 10:
+                self.write("{} more...\n".format(height - 10))
+            self.write("\n\n")
+
+            self.indent = 0
+
+    def run(self):
+        self.wait_until_expr('window.seleniumReporter.isFinished()')
+        events = self.driver.execute_script('return window.seleniumReporter.getAllEvents();')
+        for event in events:
+            getattr(self, event['name'])(event['data'])
+
+        if self.tests == 0:
+            sys.stderr.write(self.style('\nDidn\'t found any tests, probably syntax error in tests.js\n\n', "red", "bold").format(self.passed, self.tests))
+            return False
+
+        passed = self.tests == self.passed
+        if passed:
+            color = "green"
+        else:
+            color = "red"
+        sys.stderr.write(self.style('\n    Passed {}/{} tests.\n\n', color, "bold").format(self.passed, self.tests))
+
+        for fail in self.fails:
+            self.print_fail(fail)
+
+        return passed
+
+
 class CuiJsTestCase(LiveServerTestCase):
     def setUp(self):
         if not os.environ.get('SHOW_SELENIUM'):
@@ -77,18 +199,7 @@ class CuiJsTestCase(LiveServerTestCase):
         sys.stderr.flush()
         self.driver.get(self.live_server_url+reverse('cui_test'))
 
-        self.wait_until_expr('window.jsApiReporter !== undefined && window.jsApiReporter.finished')
-        specs = self.driver.execute_script('return window.jsApiReporter.specs()')
-        self.assertTrue(len(specs) > 0, 'No test results found! The tests probably contain syntax errors.')
+        self.wait_until_expr('window.seleniumReporter')
 
-        passed = True
-        for spec in specs:
-            sys.stderr.write('  %s ... %s\n' % (spec['fullName'], spec['status']))
-            if spec['status'] != 'passed':
-                passed = False
-            for exp in spec['failedExpectations']:
-                sys.stderr.write('    %s\n' % exp['message'])
-        sys.stderr.write('Access full report at %s\n\n' % reverse('cui_test'))
-        sys.stderr.flush()
-
-        self.assertTrue(passed, 'JS tests failed. See full report on stderr')
+        reporter = SeleniumReporter(self.driver)
+        self.assertTrue(reporter.run())
