@@ -1234,8 +1234,14 @@ function CandidateUi(options)
     };
 
     self.removePlugins = function () {
-        self.plugins.forEach(function (plugin) {
-            plugin.unload();
+        var plugins = self.plugins;
+        self.plugins = [];
+        plugins.forEach(function (plugin) {
+            try {
+                plugin.unload();
+            } catch (err) {
+                Log.error("Failed to unload plugin", err);
+            }
         });
     };
 

@@ -1036,6 +1036,17 @@ describe('plugins', function () {
         return self;
     }
 
+    function FailingPlugin() {
+        var self = Plugin();
+
+        self.unload = function () {
+            throw new Error("woo, error");
+        };
+
+        return self;
+    }
+
+
     describe_ui(' plugins loading and unloading', {}, function() {
         it('should load and unload plugin', function () {
             // setup spys
@@ -1051,20 +1062,6 @@ describe('plugins', function () {
 
             // unload plugin
             this.ui.removePlugin(plugin);
-            expect(plugin.unload.callCount).toBe(1);
-        });
-
-        it('should automaticly unload plugin when shutting down', function () {
-            // setup spys
-            var plugin = Plugin();
-            sinon.spy(plugin, 'unload');
-
-            // load plugin
-            this.ui.addPlugin(plugin);
-
-            // check unloading
-            expect(plugin.unload.callCount).toBe(0);
-            this.ui.shutdown();
             expect(plugin.unload.callCount).toBe(1);
         });
 
@@ -1096,6 +1093,45 @@ describe('plugins', function () {
                 // ignore
             }
             expect(this.ui.removePlugin.threw()).toBe(true);
+        });
+
+        describe('removePlugins', function () {
+            it('should automaticly unload plugin when shutting down', function () {
+                // setup spys
+                var plugin = Plugin();
+                sinon.spy(plugin, 'unload');
+
+                // load plugin
+                this.ui.addPlugin(plugin);
+
+                // check unloading
+                expect(plugin.unload.callCount).toBe(0);
+                this.ui.shutdown();
+                expect(plugin.unload.callCount).toBe(1);
+            });
+
+            it('should remove all loaded plugins', function () {
+                var that = this;
+
+                // make a few plugins
+                var plugins = new Array(10).join().split('').map(FailingPlugin);
+
+                // setup spys
+                plugins.forEach(function (plugin) {
+                    sinon.spy(plugin, "unload");
+                });
+
+                // load plugins
+                plugins.forEach(this.ui.addPlugin);
+
+                // remove all of them
+                that.ui.removePlugins();
+
+                // check if everyone was unloaded
+                expect(plugins.every(function (plugin) {
+                    return plugin.unload.calledOnce;
+                })).toBe(true);
+            });
         });
     });
 });
