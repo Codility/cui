@@ -1025,4 +1025,115 @@ describe('diff engine', function() {
     });
 });
 
+describe('plugins', function () {
+    function Plugin() {
+        var self = {};
+
+        self.load = function (ui) {};
+
+        self.unload = function () {};
+
+        return self;
+    }
+
+    function FailingPlugin() {
+        var self = Plugin();
+
+        self.unload = function () {
+            throw new Error("woo, error");
+        };
+
+        return self;
+    }
+
+
+    describe_ui(' plugins loading and unloading', {}, function() {
+        it('should load and unload plugin', function () {
+            // setup spys
+            var plugin = Plugin();
+            sinon.spy(plugin, 'load');
+            sinon.spy(plugin, 'unload');
+
+            // load plugin
+            this.ui.addPlugin(plugin);
+            console.log(plugin);
+            expect(plugin.load.callCount).toBe(1);
+            expect(plugin.unload.callCount).toBe(0);
+
+            // unload plugin
+            this.ui.removePlugin(plugin);
+            expect(plugin.unload.callCount).toBe(1);
+        });
+
+        it('should throw exceptions if trying to do something illegal', function () {
+            // setup plugin
+            var plugin = Plugin();
+
+            // setup spys
+            sinon.spy(this.ui, "addPlugin");
+            sinon.spy(this.ui, "removePlugin");
+
+            // test behaviour
+            this.ui.addPlugin(plugin);
+            expect(this.ui.addPlugin.threw()).toBe(false);
+
+            try {
+                this.ui.addPlugin(plugin);
+            } catch (e) {
+                // ignore
+            }
+            expect(this.ui.addPlugin.threw()).toBe(true);
+
+            this.ui.removePlugin(plugin);
+            expect(this.ui.removePlugin.threw()).toBe(false);
+
+            try {
+                this.ui.removePlugin(plugin);
+            } catch (e) {
+                // ignore
+            }
+            expect(this.ui.removePlugin.threw()).toBe(true);
+        });
+
+        describe('removePlugins', function () {
+            it('should automaticly unload plugin when shutting down', function () {
+                // setup spys
+                var plugin = Plugin();
+                sinon.spy(plugin, 'unload');
+
+                // load plugin
+                this.ui.addPlugin(plugin);
+
+                // check unloading
+                expect(plugin.unload.callCount).toBe(0);
+                this.ui.shutdown();
+                expect(plugin.unload.callCount).toBe(1);
+            });
+
+            it('should remove all loaded plugins', function () {
+                var that = this;
+
+                // make a few plugins
+                var plugins = new Array(10).join().split('').map(FailingPlugin);
+
+                // setup spys
+                plugins.forEach(function (plugin) {
+                    sinon.spy(plugin, "unload");
+                });
+
+                // load plugins
+                plugins.forEach(this.ui.addPlugin);
+
+                // remove all of them
+                that.ui.removePlugins();
+
+                // check if everyone was unloaded
+                expect(plugins.every(function (plugin) {
+                    return plugin.unload.calledOnce;
+                })).toBe(true);
+            });
+        });
+    });
+});
+
 $.migrateMute = true;
