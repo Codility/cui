@@ -1217,18 +1217,20 @@ function CandidateUi(options)
     };
 
     self.addPlugin = function (plugin) {
+        if (self.plugins.indexOf(plugin) !== -1) {
+            throw new Error("Trying to load previously loaded plugin");
+        }
         plugin.load(self);
         self.plugins.push(plugin);
     };
 
     self.removePlugin = function (plugin) {
-        self.plugins = self.plugins.filter(function (plugin_on_list) {
-            if (plugin === plugin_on_list) {
-                plugin.unload();
-                return false;
-            }
-            return true;
-        });
+        var index = self.plugins.indexOf(plugin);
+        if (index === -1) {
+            throw new Error("Trying to unload not loaded plugin");
+        }
+        self.plugins.splice(index, 1);
+        plugin.unload();
     };
 
     self.removePlugins = function () {

@@ -1036,7 +1036,7 @@ describe('plugins', function () {
         return self;
     }
 
-    describe_ui(' plugins loading', {}, function() {
+    describe_ui(' plugins loading and unloading', {}, function() {
         it('should load and unload plugin', function () {
             // setup spys
             var plugin = Plugin();
@@ -1066,6 +1066,36 @@ describe('plugins', function () {
             expect(plugin.unload.callCount).toBe(0);
             this.ui.shutdown();
             expect(plugin.unload.callCount).toBe(1);
+        });
+
+        it('should throw exceptions if trying to do something illegal', function () {
+            // setup plugin
+            var plugin = Plugin();
+
+            // setup spys
+            sinon.spy(this.ui, "addPlugin");
+            sinon.spy(this.ui, "removePlugin");
+
+            // test behaviour
+            this.ui.addPlugin(plugin);
+            expect(this.ui.addPlugin.threw()).toBe(false);
+
+            try {
+                this.ui.addPlugin(plugin);
+            } catch (e) {
+                // ignore
+            }
+            expect(this.ui.addPlugin.threw()).toBe(true);
+
+            this.ui.removePlugin(plugin);
+            expect(this.ui.removePlugin.threw()).toBe(false);
+
+            try {
+                this.ui.removePlugin(plugin);
+            } catch (e) {
+                // ignore
+            }
+            expect(this.ui.removePlugin.threw()).toBe(true);
         });
     });
 });
