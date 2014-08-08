@@ -21,45 +21,39 @@
 */
 
 /* global Log, Console */
+/* global olark */
+/* global ui */
 
-// Freshchat-based chat for CUI.
+// Olark-based chat for CUI.
+// Requires the standard Olark code to be loaded.
 
-function Chat(chat_options) {
-    var self = {};
-    self.options = chat_options;
-
-    self.load = function() {
-        // Adapted from standard Freshchat code
-
-        var fc_CSS=document.createElement('link');
-        fc_CSS.setAttribute('rel','stylesheet');
-        var isSecured = true;
-        fc_CSS.setAttribute('type','text/css');
-        fc_CSS.setAttribute('href',((isSecured)? 'https://d36mpcpuzc4ztk.cloudfront.net':'http://assets1.chat.freshdesk.com')+'/css/visitor.css');
-        document.getElementsByTagName('head')[0].appendChild(fc_CSS);
-        var fc_JS=document.createElement('script'); fc_JS.type='text/javascript';
-        var jsload = (typeof jQuery=='undefined')?'visitor-jquery':'visitor';
-        fc_JS.src=((isSecured)?'https://d36mpcpuzc4ztk.cloudfront.net':'http://assets.chat.freshdesk.com')+'/js/'+jsload+'.js';
-        document.body.appendChild(fc_JS);
-        window.freshchat_setting=self.options.freshchat_setting;
+function Chat(support_email) {
+    var self = {
+        available: false,
+        expanded: false,
+        shown: false,
+        support_email: support_email,
     };
 
-    self.getState = function() {
-        if (!window.freshchat_setting)
-            return 'unloaded';
-        else if (!$('#fc_chat_header').is(':visible'))
-            return 'loading';
-        else
-            return 'ready';
+    self.init = function() {
+        olark('api.chat.onOperatorsAvailable', function() { self.available = true; });
+        olark('api.chat.onOperatorsAway', function() { self.available = false; });
+        olark('api.box.onExpand', function() { self.expanded = true; });
+        olark('api.box.onShrink', function() { self.expanded = false; });
+        olark('api.box.onShow', function() { self.shown = true; });
+        olark('api.box.onHide', function() { self.shown = false; });
+
+        olark('api.visitor.updateCustomFields', {
+            report_url: window.location.host + '/tickets/' + ui.options.ticket_id
+        });
     };
 
-    // Wait until Freshchat is loaded, then execute onRead after additional
-    // delay (to allow it to open if it starts opened).
-    self.waitUntilReady = function(delay, onReady, onFailure) {
+    // Wait until the chat window is loaded and expanded, then execute onReady.
+    self.waitUntilReady = function(onReady, onFailure) {
         var n_tries = 15, interval = 300;
         function poll() {
-            if (self.getState() === 'ready')
-                setTimeout(onReady, delay);
+            if (self.shown && self.expanded)
+                onReady();
             else if (n_tries-- > 0)
                 setTimeout(poll, interval);
             else
@@ -69,16 +63,8 @@ function Chat(chat_options) {
         poll();
     };
 
-    self.isOpened = function() {
-        return $('#fc_chat_window').is(':visible');
-    };
-
-    self.open = function() {
-        $('#fc_chat_header').click();
-    };
-
     self.pulse = function() {
-        $('#fc_chat_layout').animate({
+        $('#habla_window_div').animate({
             'transform': 'scale(1.2)'
         }, 200).animate({
             'transform': 'scale(1)'
@@ -88,38 +74,22 @@ function Chat(chat_options) {
     self.fail = function(err) {
         Console.msg_error("Sorry, loading the chat failed.<br>" +
                           "If you require assistance, please contact " +
-                          "<a href='mailto:" + self.options.support_email +
-                          "' target=_blank>" + self.options.support_email + "</a>.");
+                          "<a href='mailto:" + self.support_email +
+                          "' target=_blank>" + self.support_email + "</a>.");
         Log.error("couldn't load freshchat", err);
     };
 
-    // DWIM: show Freshchat and attract user's attention
-    // (by opening it, or animating it if it's open).
+    // DWIM: show Olark chat and attract user's attention.
     self.activate = function() {
-        var state = self.getState();
-        if (state === 'unloaded') {
-            try {
-                self.load();
-            } catch(err) {
-                self.fail(err);
-                return;
-            }
-        }
-        if (state === 'unloaded' || state === 'loading') {
-            self.waitUntilReady(
-                500,
-                function() {
-                    if (!self.isOpened())
-                        self.open();
-                },
-                self.fail);
-        } else {
-            if (self.isOpened())
-                self.pulse();
-            else
-                self.open();
-        }
+        if (!self.shown)
+            olark('api.box.show');
+        if (!self.expanded)
+            olark('api.box.expand');
+
+        self.waitUntilReady(self.pulse, self.fail);
     };
+
+    self.init();
 
     return self;
 }

@@ -22,8 +22,11 @@
 
 /* global Chat, Log, Console, introJs */
 
-var Help = function(taskCount, prgLangName, prgLangCount){
-    var self = {};
+var Help = function(taskCount, prgLangName, prgLangCount, support_email ){
+    var self = {
+        support_email: support_email,
+    };
+
     self.stepsTexts = {
         problemDescription : 'Read the problem description.',
         tasksTab : 'You can see all the tasks here.'+
@@ -144,39 +147,46 @@ var Help = function(taskCount, prgLangName, prgLangCount){
         return ret;
     }
 
-    self.enableChat = function(chat_options) {
-        self.chat = Chat(chat_options);
+    self.enableChat = function(chat) {
+        self.chat = chat;
     };
 
-    function _addChatToStep() {
+    function _addSupportToStep() {
         var introJs = this;
         var $stepElt = $('.introjs-tooltip');
         // added already
-        if ($stepElt.find('.chat').length > 0)
+        if ($stepElt.find('.support').length > 0)
             return;
 
-        var $chatElt = $('<div class="chat"><br>Problems? <a href="#">Chat with us.</a></div>');
-        $chatElt.find('a').click(function(e) {
-            e.preventDefault();
-            introJs.exit();
-            self.chat.activate();
-        });
+        var $chatElt = $('<div class="support"></div>');
+        if (self.chat) {
+            if (self.chat.available)
+                $chatElt.html('<br>Problems? <a href="#">Chat with us</a>.');
+            else
+                $chatElt.html('<br>Problems? <a href="#">Email us</a>.');
+
+            $chatElt.find('a').click(function(e) {
+                e.preventDefault();
+                introJs.exit();
+                self.chat.activate();
+            });
+        } else if (self.support_email) {
+            $chatElt.html('<br>Problems? Email us at ' +
+                          "<a href='mailto:" + self.support_email +
+                          "' target=_blank>" + self.support_email + "</a>.");
+        }
         $stepElt.append($chatElt);
     }
 
     self.showHelp = function(callback) {
         var intro = introJs();
         intro.setOption('steps', _buildSteps());
-        intro.setOption('disableInteraction', true);
-        
+        intro.setOption('disableInteraction', true);        
         if (typeof callback === 'function'){
             intro.oncomplete(callback);
             intro.onexit(callback);
         }
-        
-        if (self.chat) {
-            intro.onafterchange(_addChatToStep);
-        }
+        intro.onafterchange(_addSupportToStep);
 
         intro.start();
         //Override bug with IE9's enthusiastic onbeforeunload trigger

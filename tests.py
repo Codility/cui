@@ -47,7 +47,20 @@ class CuiJsTestCase(LiveServerTestCase):
         if not os.environ.get('SHOW_SELENIUM'):
             self.display = SmartDisplay(visible=0, size=(1024, 768))
             self.display.start()
-        self.driver = webdriver.Firefox()
+
+        remote_selenium = os.environ.get('REMOTE_SELENIUM')
+        if not remote_selenium:
+            self.driver = webdriver.Firefox()
+        else:
+            self.driver = webdriver.Remote(
+                command_executor=remote_selenium,
+                desired_capabilities={
+                    'browserName': 'unknown',
+                    'javascriptEnabled': True,
+                    'platform': 'ANY',
+                    'version': ''
+                }
+            )
 
     def tearDown(self):
         if hasattr(self, 'driver'):

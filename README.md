@@ -43,6 +43,16 @@ Run against a mock in-browser server:
 
     http://localhost:8001/local/
 
+To see browser while running selenium tests you have to set `SHOW_SELENIUM`
+environment variable.
+
+If you would like to use driver other than Firefox for selenium tests you can
+use selenium remove web driver and specify remote address by `REMOTE_SELENIUM`
+environment variable. For example running tests using [PhantomJS](http://phantomjs.org/):
+
+    phantomjs --webdriver=22222 > /dev/null &
+    REMOTE_SELENIUM="http://localhost:22222" python manage.py test
+
 
 ## License
 
