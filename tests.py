@@ -81,7 +81,7 @@ class SeleniumReporter(object):
         self.write(self.style(result['status'], color) + '\n', indent=False)
 
     def style(self, string, *styles):
-        escape_codes = {
+        codes = {
             'black': '\x1B[30m',
             'red': '\x1B[31m',
             'green': '\x1B[32m',
@@ -102,9 +102,13 @@ class SeleniumReporter(object):
             'none': '\x1B[0m',
             'underline': '\x1B[4m'
         }
+
+        if not self.out.isatty():
+            return string
+
         for style in styles:
-            string = escape_codes[style] + string
-        string += escape_codes['none']
+            string = codes[style] + string
+        string += codes['none']
         return string
 
     def write(self, message, indent=True):
