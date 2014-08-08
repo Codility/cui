@@ -62,35 +62,35 @@ class SeleniumReporter(object):
     def jasmine_done(self, _):
         pass
 
-    def suite_started(self, result):
-        self.not_printed_suites.append(result)
+    def suite_started(self, suite):
+        self.not_printed_suites.append(suite)
 
-    def suite_done(self, result):
-        if len(self.not_printed_suites) > 0 and self.not_printed_suites[-1]['id'] == result['id']:
+    def suite_done(self, suite):
+        if len(self.not_printed_suites) > 0 and self.not_printed_suites[-1]['id'] == suite['id']:
             self.not_printed_suites.pop()
         else:
             self.indent -= 1
 
-    def spec_started(self, result):
+    def spec_started(self, spec):
         pass
 
-    def spec_done(self, result):
+    def spec_done(self, spec):
         self.any_specs = True
 
         self.num_tests += 1
         print_info = True
 
-        if result['status'] == "passed":
+        if spec['status'] == "passed":
             self.num_passed += 1
             color = "green"
-        elif result['status'] == "failed":
-            self.failures.append(result)
+        elif spec['status'] == "failed":
+            self.failures.append(spec)
             color = "red"
-        elif result['status'] == "disabled":
+        elif spec['status'] == "disabled":
             self.num_tests -= 1
             print_info = False
         else:
-            raise Exception("Unknonw test status: '{}'".format(result['status']))
+            raise Exception("Unknonw test status: '{}'".format(spec['status']))
 
         if print_info:
             for suite in self.not_printed_suites:
@@ -98,7 +98,7 @@ class SeleniumReporter(object):
                 self.indent += 1
             self.not_printed_suites = []
 
-            self.write("{} ... {}\n".format(result['description'], self.style(result['status'], color)))
+            self.write("{} ... {}\n".format(spec['description'], self.style(spec['status'], color)))
 
     def style(self, string, *styles):
         codes = {
@@ -158,12 +158,12 @@ class SeleniumReporter(object):
             self.write("\n")
 
             stack = e['stack'].split('\n')
-            height = len(stack) - 1
+            stack_height = len(stack) - 1
             self.write(self.style(stack[0], "bold") + "\n")
-            for i in range(1, min(10, height) + 1):
+            for i in range(1, min(10, stack_height) + 1):
                 self.write(stack[i] + "\n")
-            if height > 10:
-                self.write("{} more...\n".format(height - 10))
+            if stack_height > 10:
+                self.write("{} more...\n".format(stack_height - 10))
             self.write("\n\n")
 
             self.indent = 0
@@ -178,8 +178,8 @@ class SeleniumReporter(object):
             self.write(self.style('\nDidn\'t found any tests, probably syntax error in tests.js\n\n', "red", "bold"))
             return False
 
-        passed = self.num_tests == self.num_passed
-        if passed:
+        passed_tests = self.num_tests == self.num_passed
+        if passed_tests:
             color = "green"
         else:
             color = "red"
@@ -188,7 +188,7 @@ class SeleniumReporter(object):
         for failure in self.failures:
             self.print_failure(failure)
 
-        return passed
+        return passed_tests
 
 
 class CuiJsTestCase(LiveServerTestCase):
