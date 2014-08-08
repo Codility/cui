@@ -1299,7 +1299,7 @@ function CandidateUi(options)
         }
         else if (error){
             var err_diag = $('#ticket_start_error').jqm({modal: true});
-            err_diag.find('.error-message').text(error);
+            err_diag.find('.error-message').html(error);
             err_diag.jqmShow();
         }
         else{
