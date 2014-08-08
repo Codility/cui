@@ -54,6 +54,7 @@ class SeleniumReporter(object):
         self.num_passed = 0
         self.failures = []
         self.any_specs = False
+        self.not_printed_suites = []
 
     def jasmine_started(self, options):
         pass
@@ -62,29 +63,42 @@ class SeleniumReporter(object):
         pass
 
     def suite_started(self, result):
-        self.write(self.style(result['description'], "bold") + "\n")
-        self.indent += 1
+        self.not_printed_suites.append(result)
 
     def suite_done(self, result):
-        self.indent -= 1
+        if len(self.not_printed_suites) > 0 and self.not_printed_suites[-1]['id'] == result['id']:
+            self.not_printed_suites.pop()
+        else:
+            self.indent -= 1
 
     def spec_started(self, result):
-        self.any_specs = True
-        if result['status'] != 'disabled':
-            self.num_tests += 1
-        self.write(result['description'] + " ... ")
+        pass
 
     def spec_done(self, result):
+        self.any_specs = True
+
+        self.num_tests += 1
+        print_info = True
+
         if result['status'] == "passed":
             self.num_passed += 1
             color = "green"
-        elif result['status'] == "disabled":
-            color = "yellow"
-        else:
-            color = "red"
+        elif result['status'] == "failed":
             self.failures.append(result)
+            color = "red"
+        elif result['status'] == "disabled":
+            self.num_tests -= 1
+            print_info = False
+        else:
+            raise Exception("Unknonw test status: '{}'".format(result['status']))
 
-        self.write(self.style(result['status'], color) + '\n', indent=False)
+        if print_info:
+            for suite in self.not_printed_suites:
+                self.write("{}\n".format(self.style(suite['description'], "bold")))
+                self.indent += 1
+            self.not_printed_suites = []
+
+            self.write("{} ... {}\n".format(result['description'], self.style(result['status'], color)))
 
     def style(self, string, *styles):
         codes = {
