@@ -151,7 +151,7 @@ var Help = function(taskCount, prgLangName, prgLangCount, support_email ){
         self.chat = chat;
     };
 
-    function _addSupportToStep() {
+    function _addSupportToStep(exitIntro) {
         var introJs = this;
         var $stepElt = $('.introjs-tooltip');
         // added already
@@ -167,7 +167,9 @@ var Help = function(taskCount, prgLangName, prgLangCount, support_email ){
 
             $chatElt.find('a').click(function(e) {
                 e.preventDefault();
-                introJs.exit();
+                if (exitIntro && typeof exitIntro == 'boolean'){
+                  introJs.exit();
+                }
                 self.chat.activate();
             });
         } else if (self.support_email) {
@@ -183,11 +185,15 @@ var Help = function(taskCount, prgLangName, prgLangCount, support_email ){
         intro.setOption('steps', _buildSteps());
         intro.setOption('disableInteraction', true);        
         if (typeof onClose === 'function'){
-            intro.oncomplete(onClose);
-            intro.onexit(onClose);
+          intro.oncomplete(onClose);
+          intro.onexit(onClose);
+          intro.onafterchange(_addSupportToStep);
         }
-        intro.onafterchange(_addSupportToStep);
-
+        else{
+          intro.onafterchange(function(){
+            _addSupportToStep.call(this, true);
+          });
+        }
         intro.start();
         //Override bug with IE9's enthusiastic onbeforeunload trigger
         //Undesirably causes the next button on introjs to trigger onbeforeunload
