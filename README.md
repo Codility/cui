@@ -50,7 +50,7 @@ If you would like to use driver other than Firefox for selenium tests you can
 use selenium remove web driver and specify remote address by `REMOTE_SELENIUM`
 environment variable. For example running tests using [PhantomJS](http://phantomjs.org/):
 
-    phantomjs --webdriver=22222 > /dev/null &
+    phantomjs --webdriver=22222 < /dev/null > /dev/null &
     REMOTE_SELENIUM="http://localhost:22222" python manage.py test
 
 
