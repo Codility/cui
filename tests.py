@@ -21,7 +21,9 @@
 '''
 
 
-import os, sys
+import os
+import sys
+import json
 
 from django.test.testcases import LiveServerTestCase, TestCase
 from django.test.client import Client
@@ -43,12 +45,13 @@ class CuiTestCase(TestCase):
 
 
 class SeleniumReporter(object):
-    def __init__(self, driver):
+    def __init__(self, driver, out):
         self.driver = driver
+        self.out = out
         self.indent = 0
-        self.tests = 0
-        self.passed = 0
-        self.fails = []
+        self.num_tests = 0
+        self.num_passed = 0
+        self.failures = []
 
     def jasmine_started(self, options):
         pass
@@ -64,16 +67,16 @@ class SeleniumReporter(object):
         self.indent -= 1
 
     def spec_started(self, result):
-        self.tests += 1
+        self.num_tests += 1
         self.write(result['description'] + " ... ")
 
     def spec_done(self, result):
         if result['status'] == "passed":
-            self.passed += 1
+            self.num_passed += 1
             color = "green"
         else:
             color = "red"
-            self.fails.append(result)
+            self.failures.append(result)
 
         self.write(self.style(result['status'], color) + '\n', indent=False)
 
@@ -106,15 +109,15 @@ class SeleniumReporter(object):
 
     def write(self, message, indent=True):
         if indent:
-            sys.stderr.write('    ' * self.indent)
-        sys.stderr.write(message)
-        sys.stderr.flush()
+            self.out.write('    ' * self.indent)
+        self.out.write(message)
+        self.out.flush()
 
     def wait_until_expr(self, expr, timeout=60):
         WebDriverWait(self.driver, timeout).until(
             lambda driver: driver.execute_script('return (%s)' % expr))
 
-    def print_fail(self, fail):
+    def print_failure(self, fail):
         self.write(self.style(fail['fullName'], "blue", "bold") + "\n")
         for e in fail['failedExpectations']:
             self.indent = 1
@@ -147,19 +150,19 @@ class SeleniumReporter(object):
         for event in events:
             getattr(self, event['name'])(event['data'])
 
-        if self.tests == 0:
-            sys.stderr.write(self.style('\nDidn\'t found any tests, probably syntax error in tests.js\n\n', "red", "bold").format(self.passed, self.tests))
+        if self.num_tests == 0:
+            self.write(self.style('\nDidn\'t found any tests, probably syntax error in tests.js\n\n', "red", "bold"))
             return False
 
-        passed = self.tests == self.passed
+        passed = self.num_tests == self.num_passed
         if passed:
             color = "green"
         else:
             color = "red"
-        sys.stderr.write(self.style('\n    Passed {}/{} tests.\n\n', color, "bold").format(self.passed, self.tests))
+        self.write(self.style('\n    Passed {}/{} tests.\n\n', color, "bold").format(self.num_passed, self.num_tests))
 
-        for fail in self.fails:
-            self.print_fail(fail)
+        for failure in self.failures:
+            self.print_failure(failure)
 
         return passed
 
@@ -201,5 +204,5 @@ class CuiJsTestCase(LiveServerTestCase):
 
         self.wait_until_expr('window.seleniumReporter')
 
-        reporter = SeleniumReporter(self.driver)
-        self.assertTrue(reporter.run())
+        reporter = SeleniumReporter(self.driver, sys.stderr)
+        self.assertTrue(reporter.run(), 'JS tests failed. See full report on stderr')
