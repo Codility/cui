@@ -28,6 +28,7 @@ import json
 from django.test.testcases import LiveServerTestCase, TestCase
 from django.test.client import Client
 from django.core.urlresolvers import reverse
+from django.utils.http import urlquote
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -52,6 +53,7 @@ class SeleniumReporter(object):
         self.num_tests = 0
         self.num_passed = 0
         self.failures = []
+        self.any_specs = False
 
     def jasmine_started(self, options):
         pass
@@ -67,13 +69,17 @@ class SeleniumReporter(object):
         self.indent -= 1
 
     def spec_started(self, result):
-        self.num_tests += 1
+        self.any_specs = True
+        if result['status'] != 'disabled':
+            self.num_tests += 1
         self.write(result['description'] + " ... ")
 
     def spec_done(self, result):
         if result['status'] == "passed":
             self.num_passed += 1
             color = "green"
+        elif result['status'] == "disabled":
+            color = "yellow"
         else:
             color = "red"
             self.failures.append(result)
@@ -154,7 +160,7 @@ class SeleniumReporter(object):
         for event in events:
             getattr(self, event['name'])(event['data'])
 
-        if self.num_tests == 0:
+        if not self.any_specs:
             self.write(self.style('\nDidn\'t found any tests, probably syntax error in tests.js\n\n', "red", "bold"))
             return False
 
@@ -204,7 +210,12 @@ class CuiJsTestCase(LiveServerTestCase):
     def test(self):
         sys.stderr.write('\n\nRunning candidate UI unit tests...\n')
         sys.stderr.flush()
-        self.driver.get(self.live_server_url+reverse('cui_test'))
+
+        tests_url = self.live_server_url + reverse('cui_test')
+        jasmine_spec = os.environ.get('JASMINE_SPEC')
+        if jasmine_spec:
+            tests_url += "?spec={}".format(urlquote(jasmine_spec))
+        self.driver.get(tests_url)
 
         self.wait_until_expr('window.seleniumReporter')
 

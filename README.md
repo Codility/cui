@@ -53,6 +53,15 @@ environment variable. For example running tests using [PhantomJS](http://phantom
     phantomjs --webdriver=22222 < /dev/null > /dev/null &
     REMOTE_SELENIUM="http://localhost:22222" python manage.py test
 
+Sometimes you might want to run only some tests not all. When you test under
+browser it's rather easy, just specify `spec` get attribute and it will work
+as filter for spec for example `http://localhost:8001/test/?spec=plugins` will
+run only tests containing `"plugins"` in their full name.
+
+To achieve same behavior from terminal using selenium tests you can specify
+`JASMINE_SPEC` environment variable.
+
+    JASMINE_SPEC="plugins" python manage.py test
 
 ## License
 
