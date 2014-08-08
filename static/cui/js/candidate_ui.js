@@ -1298,7 +1298,9 @@ function CandidateUi(options)
             window.location.href = data.redirect;
         }
         else if (error){
-            Console.msg_syserr(error);
+            var err_diag = $('#ticket_start_error').jqm({modal: true});
+            err_diag.find('.error-message').text(error);
+            err_diag.jqmShow();
         }
         else{
             self.initTask();
