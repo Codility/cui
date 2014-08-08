@@ -1363,7 +1363,8 @@ function CandidateUi(options)
             self.initialHelp();
         }
         else{
-            self.initTask();
+            //calling startTicket multiple times on a ticket is safe
+            self.startTicket();
         }
 
     };
