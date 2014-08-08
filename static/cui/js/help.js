@@ -178,13 +178,13 @@ var Help = function(taskCount, prgLangName, prgLangCount, support_email ){
         $stepElt.append($chatElt);
     }
 
-    self.showHelp = function(callback) {
+    self.showHelp = function(onClose) {
         var intro = introJs();
         intro.setOption('steps', _buildSteps());
         intro.setOption('disableInteraction', true);        
-        if (typeof callback === 'function'){
-            intro.oncomplete(callback);
-            intro.onexit(callback);
+        if (typeof onClose === 'function'){
+            intro.oncomplete(onClose);
+            intro.onexit(onClose);
         }
         intro.onafterchange(_addSupportToStep);
 

@@ -1256,7 +1256,7 @@ function CandidateUi(options)
         });
     };
 
-    self.showHelp = function(callback){
+    self.showHelp = function(onClose){
         var task_count, prg_lang_name, prg_lang_count;
         task_count = self.options.task_names.length;
         if(self.current_prg_lang_list !== undefined){
@@ -1270,7 +1270,7 @@ function CandidateUi(options)
         var help = Help(task_count, prg_lang_name, prg_lang_count, self.options.support_email);
         if (self.chat)
             help.enableChat(self.chat);
-        help.showHelp(callback);
+        help.showHelp(onClose);
     };
 
     self.startTicket = function(){
