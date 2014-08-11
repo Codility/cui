@@ -103,7 +103,8 @@ function TestServer() {
             "verify": "/chk/verify/",
             "save": "/chk/save/",
             "timeout_action": "/chk/timeout_action/",
-            "final": "/chk/final/"
+            "final": "/chk/final/",
+            "start_ticket": "/c/_start/"
         },
     };
 
@@ -240,6 +241,12 @@ function TestServer() {
         };
     };
 
+    self.respondStartTicket = function(data) {
+        return {
+            'started': 'OK'
+        };
+    };
+
     self.respondTo = function(req) {
         if (req.url == '/logs/_multilog/') {
             // drop for now
@@ -265,6 +272,9 @@ function TestServer() {
 
         if (req.url == '/c/_get_task/') {
             response = self.respondGetTask(data);
+        }
+        if (req.url == '/c/_start/') {
+            response = self.respondStartTicket(data);
         }
         if (req.url == '/chk/save/') {
             response = self.respondSave(data);

@@ -795,6 +795,10 @@ describe_ui('', {}, function() {
 
     describe('clock widget', function() {
         it('should count down', function() {
+            //start task in a deterministic way
+            server.respond(500);
+            clock.tick(500);
+
             expect(ui.options.time_remaining_sec).toBe(60 * 30);
             expect($('#clock').text()).toBe('00:30:00');
             clock.tick(minutes(15, 12));
@@ -820,6 +824,10 @@ describe_ui('', {}, function() {
 
         it('should show timeout warning', function() {
             // The clock shows warning around 3, 2 and 1-minute mark.
+            
+            //start task in a deterministic way
+            server.respond(500);
+            clock.tick(500);
 
             clock.tick(minutes(27));
 
