@@ -45,7 +45,7 @@ class CuiTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class SeleniumReporter(object):
+class SeleniumRunner(object):
     def __init__(self, driver, out):
         self.driver = driver
         self.out = out
@@ -234,5 +234,6 @@ class CuiJsTestCase(LiveServerTestCase):
 
         self.wait_until_expr('window.seleniumReporter')
 
-        reporter = SeleniumReporter(self.driver, sys.stderr)
-        self.assertTrue(reporter.run(), 'JS tests failed. See full report on stderr')
+        runner = SeleniumRunner(self.driver, sys.stderr)
+        success = runner.run()
+        self.assertTrue(success, 'JS tests failed. See full report on stderr')
