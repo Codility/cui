@@ -8,6 +8,10 @@
  [jasmine-gem]: http://github.com/pivotal/jasmine-gem
  */
 
+/* global jasmineRequire, jasmine */
+/* global exports */
+/* global SeleniumReporter */
+
 (function() {
 
   /**
