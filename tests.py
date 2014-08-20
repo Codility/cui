@@ -56,25 +56,25 @@ class SeleniumReporter(object):
         self.any_specs = False
         self.not_printed_suites = []
 
-    def jasmine_started(self, options):
+    def on_jasmine_started(self, options):
         pass
 
-    def jasmine_done(self, _):
+    def on_jasmine_done(self, _):
         pass
 
-    def suite_started(self, suite):
+    def on_suite_started(self, suite):
         self.not_printed_suites.append(suite)
 
-    def suite_done(self, suite):
+    def on_suite_done(self, suite):
         if len(self.not_printed_suites) > 0 and self.not_printed_suites[-1]['id'] == suite['id']:
             self.not_printed_suites.pop()
         else:
             self.indent -= 1
 
-    def spec_started(self, spec):
+    def on_spec_started(self, spec):
         pass
 
-    def spec_done(self, spec):
+    def on_spec_done(self, spec):
         self.any_specs = True
 
         self.num_tests += 1
@@ -172,7 +172,8 @@ class SeleniumReporter(object):
         self.wait_until_expr('window.seleniumReporter.isFinished()')
         events = self.driver.execute_script('return window.seleniumReporter.getAllEvents();')
         for event in events:
-            getattr(self, event['name'])(event['data'])
+            handler = getattr(self, 'on_' + event['name'])
+            handler(event['data'])
 
         if not self.any_specs:
             self.write(self.style('\nDidn\'t found any tests, probably syntax error in tests.js\n\n', "red", "bold"))
