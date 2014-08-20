@@ -176,7 +176,7 @@ class SeleniumRunner(object):
             handler(event['data'])
 
         if not self.any_specs:
-            self.write(self.style('\nDidn\'t found any tests, probably syntax error in tests.js\n\n', "red", "bold"))
+            self.write(self.style('\nDidn\'t find any tests! There is probably a syntax error in the definition of tests.\n\n', "red", "bold"))
             return False
 
         passed_tests = self.num_tests == self.num_passed
