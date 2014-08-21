@@ -342,6 +342,9 @@ $codility-light-blue: #2b9cd9;
 // Modals
 
 .jqmWindow {
+  position: absolute !important;
+  // default is fixed, but that prevents modals from scrolling on tiny screens
+
   padding: 40px !important;
   text-align: center;
 
