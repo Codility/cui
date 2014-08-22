@@ -919,6 +919,43 @@ describe_ui('', {}, function() {
     });
 });
 
+
+describe_ui(" start ticket", {}, function(){
+    var ui;
+    var server, clock;
+
+    beforeEach(function() {
+        ui = this.ui;
+        server = this.server;
+        clock = this.clock;
+        expect(server.startCalled()).toBe(false);
+    });
+
+    it('should be called', function(){
+        //start ticket
+        server.respond();
+        expect(server.startCalled()).toBe(true);
+    });
+
+    it('should respond properly to errors', function(){
+        //simulate error condition
+        server.triggerStartError();
+        server.respond();
+        
+        expect($('#ticket_start_error .error-message').text()).toMatch('Could not start ticket');
+
+    });
+
+    it('should respond properly to invalid tickets', function(){
+        //simulate error condition
+        server.triggerTicketNotFound();
+        server.respond();
+        expect($('#console').text()).toMatch("Network error encountered while trying to start your test. "+
+            "Try reloading this page.");
+
+    });
+});
+
 describe_ui(' (with show_help enabled)', { 'show_help': true }, function(){
     var ui;
     var server, clock;
@@ -970,7 +1007,7 @@ describe_ui(' (with show_help enabled)', { 'show_help': true }, function(){
 
     });
 
-    it("should exit intro if 'yes' is selected on dialog", function(){
+    it("should exit intro and call start ticket if 'yes' is selected on dialog", function(){
         server.respond();
         clock.tick(seconds(1));
         $('.introjs-overlay').click();
@@ -979,6 +1016,8 @@ describe_ui(' (with show_help enabled)', { 'show_help': true }, function(){
         clock.tick(seconds(1));
         expectVisible('.introjs-overlay', false);
         expectVisible('.introjs-helperLayer', false);
+        server.respond();
+        expect(server.startCalled()).toBe(true);
     });
 });
 

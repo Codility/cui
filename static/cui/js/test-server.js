@@ -242,9 +242,30 @@ function TestServer() {
     };
 
     self.respondStartTicket = function(data) {
+        self._startCalled = true;
+        if (self._startError){
+            return {
+                'error': "Could not start ticket"
+            };
+        }
         return {
             'started': 'OK'
         };
+    };
+
+    self.triggerStartError = function(){
+        self._startError = true;
+    };
+
+    self.triggerTicketNotFound = function(){
+        self._startTicketNotFound = true;
+    };
+
+    self.startCalled = function(){
+        if(self._startCalled){
+            return true;
+        }
+        return false;
     };
 
     self.respondTo = function(req) {
@@ -275,6 +296,11 @@ function TestServer() {
         }
         if (req.url == '/c/_start/') {
             response = self.respondStartTicket(data);
+            if (self._startTicketNotFound){
+                return req.respond(404, 
+                    { "Content-Type": "text/xml" }, 
+                    xmlResponse(response));
+            }
         }
         if (req.url == '/chk/save/') {
             response = self.respondSave(data);
