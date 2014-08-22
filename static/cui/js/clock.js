@@ -52,7 +52,9 @@ var Clock = {
         this.time_from_start = time_elapsed_sec;
         this.time_to_end = time_remaining_sec;
         this.active = true;
-        this.clock_tick();
+        this.setTime();
+        var that = this;
+        setTimeout(function() { that.clock_tick();}, 1000);
         this.refreshClock();
         window.onbeforeunload = function(e) {
             if (Clock.active)
@@ -66,6 +68,7 @@ var Clock = {
 
     clock_tick : function() {
         if (!Clock.active) return;
+        this.time_to_end -= 1;
         this.setTime();
         if (this.time_to_end == 60 || this.time_to_end == 2 * 60 || this.time_to_end == 3 * 60) {
             this.startTimeoutWarning(15);
@@ -76,7 +79,6 @@ var Clock = {
         }
         else {
             var that = this;
-            this.time_to_end -= 1;
             setTimeout(function() { that.clock_tick();}, 1000);
         }
     },
