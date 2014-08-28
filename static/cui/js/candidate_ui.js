@@ -1119,7 +1119,7 @@ function CandidateUi(options)
             self.startTicket();
         });
         $('#exit_intro_no').click(self.initialHelp);
-        
+
         $("#fp_yes").click(self.finalSubmitAction);
         $("#bugfix_yes").click(function() {
             $('#bugfix_no_changes').jqmHide();
@@ -1140,7 +1140,7 @@ function CandidateUi(options)
         $('#resize_console_button').click(self.resizeConsoleAction);
         $('#verify_button').click(self.verifyAction);
         $('#reset_btn').click(self.resetAction);
-        $('#help_btn').click(self.showHelp);
+        $('#help_btn').click(function() { self.showHelp(false, null); });
         $('#survey_skip_button').click(function() {
             $('#survey').parent().jqmHide();
         });
@@ -1256,7 +1256,7 @@ function CandidateUi(options)
         });
     };
 
-    self.showHelp = function(onClose){
+    self.showHelp = function(isInitial, onClose){
         var task_count, prg_lang_name, prg_lang_count;
         task_count = self.options.task_names.length;
         if(self.current_prg_lang_list !== undefined){
@@ -1267,7 +1267,7 @@ function CandidateUi(options)
             prg_lang_count = 2;
         }
 
-        var help = Help(task_count, prg_lang_name, prg_lang_count, self.options.support_email);
+        var help = Help(isInitial, task_count, prg_lang_name, prg_lang_count, self.options.support_email);
         if (self.chat)
             help.enableChat(self.chat);
         help.showHelp(onClose);
@@ -1341,7 +1341,7 @@ function CandidateUi(options)
         self.updateSaveStatus("You will see save status here");
 
         setTimeout(function(){
-            self.showHelp(function(current_step) {
+            self.showHelp(true, function(current_step) {
                 $('#exit_initial_help').jqmShow();
             });
         }, 500);
@@ -1354,13 +1354,13 @@ function CandidateUi(options)
         self.setupSelects();
         if (!self.options.demo && !self.options.cert) self.setupTrackers();
         TestCases.init();
-        
+
         if (self.options.show_chat)
             self.chat = Chat(self.options.support_email);
         //size editor and task description pane properly
         self.updatePageLayout();
-        
-        self.setupResizeEvent();        
+
+        self.setupResizeEvent();
         if (self.options.show_help){
             self.initialHelp();
         }

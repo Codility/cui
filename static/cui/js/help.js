@@ -22,12 +22,15 @@
 
 /* global Chat, Log, Console, introJs */
 
-var Help = function(taskCount, prgLangName, prgLangCount, support_email ){
+var Help = function(isInitial, taskCount, prgLangName, prgLangCount, support_email){
     var self = {
         support_email: support_email,
     };
 
     self.stepsTexts = {
+        introduction: 'Before you begin, we will guide you through the test interface.<br>' +
+            'The timer will start with your confirmation after this presentation is over.<br>' +
+            'You can skip this presentation at any time.',
         problemDescription : 'Read the problem description.',
         tasksTab : 'You can see all the tasks here.'+
                    ' You can switch freely between them.',
@@ -81,21 +84,29 @@ var Help = function(taskCount, prgLangName, prgLangCount, support_email ){
     };
 
     function _buildSteps(){
-        var ret = [
+        var steps = [];
+
+        if (isInitial) {
+            steps.push({ intro:self.stepsTexts.introduction });
+        }
+
+        steps.push(
             { element: "#task_description",
               intro:self.stepsTexts.problemDescription,
               position: "right",
               numberPosition: "right"
-            },
-        ];
-        if (taskCount> 1){
-            ret = ret.concat(
+            }
+        );
+
+        if (taskCount > 1) {
+            steps.push(
                 { element: ".task-list",
                   intro:self.stepsTexts.tasksTab
                 }
-        );}
-        ret = ret.concat([
+            );
+        }
 
+        steps = steps.concat([
             { element: "#clock",
               intro:self.stepsTexts.timer,
               position:"left",
@@ -144,7 +155,7 @@ var Help = function(taskCount, prgLangName, prgLangCount, support_email ){
               intro:self.stepsTexts.exitOverlay
             }
         ]);
-        return ret;
+        return steps;
     }
 
     self.enableChat = function(chat) {
@@ -183,7 +194,7 @@ var Help = function(taskCount, prgLangName, prgLangCount, support_email ){
     self.showHelp = function(onClose) {
         var intro = introJs();
         intro.setOption('steps', _buildSteps());
-        intro.setOption('disableInteraction', true);        
+        intro.setOption('disableInteraction', true);
         if (typeof onClose === 'function'){
           intro.oncomplete(onClose);
           intro.onexit(onClose);
