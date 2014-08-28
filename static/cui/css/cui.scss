@@ -199,6 +199,28 @@ $codility-light-blue: #2b9cd9;
         #task_description {
           overflow: auto;
           padding-right: $padding;
+
+          position: relative;
+          .placeholder {
+            @include position(absolute, 0px 0px 0px 0px);
+            margin: 75px 50px;
+            padding: 10px;
+
+            border: 5px dashed $grey2;
+            border-radius: 10px;
+
+            text-align: center;
+            span {
+              display: inline-block;
+              position: relative;
+              top: 50%;
+              margin-top: -1.5em;
+
+              color: $grey2;
+              font-size: 20px;
+              font-weight: bold;
+            }
+          }
         }
         .under-task {
           // stick to bottom

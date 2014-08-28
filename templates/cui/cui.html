@@ -72,7 +72,15 @@
       <div id="overlay" style="width: 100%; height: 100%; position: absolute; top: 0px; left: 0px; z-index: 9996; background-color: #000000; display:none"></div>
 
       <div id="task"><div>
-        <div id="task_description">{% block task_description %}{% endblock %}</div>
+        <div id="task_description">
+          <div class="placeholder">
+            <span>
+              The problem description<br>
+              will appear here<br>
+              after you start the test.
+            </span>
+          </div>
+        </div>
         <div class="under-task">
           <div id="verification_results">
             <input id="example_input" type="hidden" name="test_case_example" value="" />
