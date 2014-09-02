@@ -247,21 +247,17 @@ $codility-light-blue: #2b9cd9;
             width: 100%;
           }
 
-          #solution, .ace, .CodeMirror {
+          #solution, .ace {
             border: 1px solid $grey2;
             border-bottom: none;
             margin: 0;
             height: 100%;
           }
 
-          #solution, .ace, .CodeMirror pre {
+          #solution, .ace {
             // Override default Ace styles
             font-family: Droid Sans Mono, Courier, monospace !important;
             font-size: 12px !important;
-          }
-          .CodeMirror * {
-            // see https://groups.google.com/forum/#!topic/codemirror/nmeqV2AHB_g
-            @include box-sizing(content-box);
           }
 
           //diff engine css
@@ -300,8 +296,6 @@ $codility-light-blue: #2b9cd9;
           top: 0;
           right: 0;
           margin: $padding;
-          /* go over CodeMirror */
-          z-index: 3;
         }
 
         .under-edit {
