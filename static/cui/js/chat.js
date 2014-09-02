@@ -76,7 +76,7 @@ function Chat(support_email) {
                           "If you require assistance, please contact " +
                           "<a href='mailto:" + self.support_email +
                           "' target=_blank>" + self.support_email + "</a>.");
-        Log.error("couldn't load freshchat", err);
+        Log.error("couldn't load candidate chat", err);
     };
 
     // DWIM: show Olark chat and attract user's attention.
