@@ -297,8 +297,8 @@ function TestServer() {
         if (req.url == '/c/_start/') {
             response = self.respondStartTicket(data);
             if (self._startTicketNotFound){
-                return req.respond(404, 
-                    { "Content-Type": "text/xml" }, 
+                return req.respond(404,
+                    { "Content-Type": "text/xml" },
                     xmlResponse(response));
             }
         }

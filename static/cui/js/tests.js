@@ -797,7 +797,7 @@ describe_ui('', {}, function() {
 
     describe('clock widget', function() {
         it('should count down', function() {
-            
+
             expect(ui.options.time_remaining_sec).toBe(60 * 30);
             expect($('#clock').text()).toBe('00:30:00');
             clock.tick(minutes(15, 12));
@@ -941,7 +941,7 @@ describe_ui(" start ticket", {}, function(){
         //simulate error condition
         server.triggerStartError();
         server.respond();
-        
+
         expect($('#ticket_start_error .error-message').text()).toMatch('Could not start ticket');
 
     });
