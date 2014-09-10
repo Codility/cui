@@ -15,6 +15,7 @@ body {
 }
 
 * { @include box-sizing(border-box); }
+.introjs-helperNumberLayer { @include box-sizing(content-box); }
 
 h1, h2, h3, h4, p, form, ul {
   margin: 0px;
@@ -117,16 +118,21 @@ $codility-light-blue: #2b9cd9;
           height: 25px;
           margin-right: 10px;
         }
-      }
-      > .test-logo {
-        font-family: Droid Sans Mono, Courier, monospace;
-        font-weight: bold;
-        font-size: 21px;
-        > span { color: $codility-light-blue; }
+        > .test-logo {
+          font-family: Droid Sans Mono, Courier, monospace;
+          font-weight: bold;
+          font-size: 21px;
+          text-decoration: none;
+          color: white;
+          > span { color: $codility-light-blue; }
+        }
       }
       #clock {
         font-size: 140%;
         padding: 5px $padding;
+        &.introjs-showElement{
+          color:black
+        }
       }
     }
 
@@ -193,6 +199,26 @@ $codility-light-blue: #2b9cd9;
         #task_description {
           overflow: auto;
           padding-right: $padding;
+
+          position: relative;
+          .placeholder {
+            @include position(absolute, 0px 0px 0px 0px);
+            margin: 75px 50px;
+            padding: 10px;
+
+            border: 5px dashed $grey2;
+            border-radius: 10px;
+
+            span {
+              @include position(absolute, 40% 0px 0 0px);
+              display: block;
+              text-align: center;
+
+              color: $grey2;
+              font-size: 20px;
+              font-weight: bold;
+            }
+          }
         }
         .under-task {
           // stick to bottom
@@ -201,6 +227,9 @@ $codility-light-blue: #2b9cd9;
           #verification_results {
             max-height: 200px;
             overflow: auto;
+          }
+          #add_test_case {
+            display: inline-block;
           }
         }
       }
@@ -218,21 +247,17 @@ $codility-light-blue: #2b9cd9;
             width: 100%;
           }
 
-          #solution, .ace, .CodeMirror {
+          #solution, .ace {
             border: 1px solid $grey2;
             border-bottom: none;
             margin: 0;
             height: 100%;
           }
 
-          #solution, .ace, .CodeMirror pre {
+          #solution, .ace {
             // Override default Ace styles
             font-family: Droid Sans Mono, Courier, monospace !important;
             font-size: 12px !important;
-          }
-          .CodeMirror * {
-            // see https://groups.google.com/forum/#!topic/codemirror/nmeqV2AHB_g
-            @include box-sizing(content-box);
           }
 
           //diff engine css
@@ -271,8 +296,6 @@ $codility-light-blue: #2b9cd9;
           top: 0;
           right: 0;
           margin: $padding;
-          /* go over CodeMirror */
-          z-index: 3;
         }
 
         .under-edit {
@@ -311,6 +334,10 @@ $codility-light-blue: #2b9cd9;
             border: 1px solid $grey2;
             background: $grey1;
 
+            a, a:visited {
+              color: inherit;
+            }
+
             // Easter eggs
             .quote {
               color: blue;
@@ -329,6 +356,9 @@ $codility-light-blue: #2b9cd9;
 // Modals
 
 .jqmWindow {
+  position: absolute !important;
+  // default is fixed, but that prevents modals from scrolling on tiny screens
+
   padding: 40px !important;
   text-align: center;
 
@@ -348,7 +378,7 @@ $codility-light-blue: #2b9cd9;
     input {
       border: 1px solid #aaa;
       border-radius: 5px;
-      padding: 10px;
+      padding: .6em;
       margin-left: 20px;
       margin-right: 20px;
       font-size: 150%;
@@ -399,8 +429,7 @@ $codility-light-blue: #2b9cd9;
 // Survey form
 
 #survey_form > table {
-  width: 80%;
-  margin: auto;
+  width: 100%;
 }
 
 #survey {
@@ -413,6 +442,7 @@ $codility-light-blue: #2b9cd9;
     text-align: left;
   }
   .choice_answer_radio {
+    min-width: 30px;
     max-width: 40px;
     text-align: center;
   }
@@ -421,6 +451,15 @@ $codility-light-blue: #2b9cd9;
   }
   .question_spacer {
     height: 2em;
+  }
+
+  .dialog_buttons {
+    text-align: right;
+  }
+  #survey_skip_button {
+    font-size: 120%;
+    float: left;
+    margin-top: 5px;
   }
 }
 
@@ -479,19 +518,5 @@ $codility-light-blue: #2b9cd9;
     -moz-user-select: text;
     -ms-user-select: text;
     user-select: text;
-}
-
-// Help
-
-.help {
-    z-index: 9997;
-    position:absolute;
-    top:0px;left:0px;
-    border: 1px solid #aaa;
-    background: #fff;
-    padding: 10px;
-    width: 200px;
-    height: auto;
-    margin:0px; font-size: 90%;
 }
 .num { z-index:9998;position:absolute;top:0px;left:0px;margin:0px;}

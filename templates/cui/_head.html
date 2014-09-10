@@ -1,3 +1,25 @@
+{% comment %}
+
+    Copyright (C) 2014 Codility Limited. <https://codility.com>
+
+    This file is part of Candidate User Interface (CUI).
+
+    CUI is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version accepted in a public statement
+    by Codility Limited.
+
+    CUI is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with CUI.  If not, see <http://www.gnu.org/licenses/>.
+
+{% endcomment %}
+
 {% load compress %}
 
 {% comment %}
@@ -20,6 +42,7 @@
   <link rel="stylesheet" href="{{ STATIC_URL }}cui/vendor/normalize.css"/>
   <link rel="stylesheet" href="{{ STATIC_URL }}cui/css/cui.scss" type="text/x-scss"/>
   <link rel="stylesheet" href="{{ STATIC_URL }}cui/vendor/jquery/jquery.jqModal.css"/>
+  <link rel="stylesheet" href="{{ STATIC_URL }}cui/vendor/introjs_fork/introjs.css">
 {% endcompress %}
 {% if in_test %}
   <link rel="stylesheet" href="{{STATIC_URL}}cui/vendor/jasmine-2.0.0/jasmine.css?{{ VERSION }}" />
@@ -33,9 +56,11 @@
   <script src="{{ STATIC_URL }}cui/vendor/jquery/jquery-migrate-1.2.1.js"></script>
 
   <script src="{{ STATIC_URL }}cui/vendor/jquery/jquery.jqModal.js"></script>
-  <script src="{{ STATIC_URL }}cui/vendor/jquery/jquery.dimscreen.js"></script>
+  <script src="{{ STATIC_URL }}cui/vendor/jquery/jquery.transform2d.js"></script>
 
   <script src="{{ STATIC_URL }}cui/vendor/webfont/webfont.js"></script>
+
+  <script src="{{ STATIC_URL }}cui/vendor/introjs_fork/intro.js"></script>
 {% endcompress %}
 
 {# WARNING: Ace has to remain outside compress, because it depends on the file path. #}
@@ -57,6 +82,7 @@
   <script src="{{STATIC_URL}}cui/js/utils.js"></script>
   <script src="{{STATIC_URL}}cui/js/survey.js"></script>
   <script src="{{STATIC_URL}}cui/js/diff_engine.js"></script>
+  <script src="{{STATIC_URL}}cui/js/chat.js"></script>
 
   <script src="{{STATIC_URL}}cui/js/test-server.js"></script>
   <script src="{{STATIC_URL}}cui/js/local-server.js"></script>
@@ -66,9 +92,10 @@
 {# Tests #}
 
 {% if in_test %}
+  <script src="{{STATIC_URL}}cui/js/selenium-reporter.js?{{ VERSION }}"></script>
   <script src="{{STATIC_URL}}cui/vendor/jasmine-2.0.0/jasmine.js?{{ VERSION }}"></script>
   <script src="{{STATIC_URL}}cui/vendor/jasmine-2.0.0/jasmine-html.js?{{ VERSION }}"></script>
-  <script src="{{STATIC_URL}}cui/vendor/jasmine-2.0.0/boot.js?{{ VERSION }}"></script>
+  <script src="{{STATIC_URL}}cui/js/boot.js"></script>
 
   <script src="{{STATIC_URL}}cui/vendor/sinon/sinon-1.10.2.js?{{ VERSION }}"></script>
 

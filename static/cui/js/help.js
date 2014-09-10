@@ -1,174 +1,216 @@
-/* global Log */
-var num_i = 0;
-var helpActive = new Array(10);
+/*!
 
-/**
- * returns offset of the center of the element
- */
-function center(id) {
-    var offs=$(id).offset();
-    if (!offs) return undefined;
-    var w=$(id).width();
-    var h=$(id).height();
-    offs.left+=Math.round(w/2);
-    offs.top+=Math.round(h/2);
-    return offs;
-}
+    Copyright (C) 2014 Codility Limited. <https://codility.com>
 
-function rightEdge(id) {
-    var offs=$(id).offset();
-    if (!offs) return undefined;
-    var w=$(id).width();
-    var h=$(id).height();
-    offs.left+=w;
-    offs.top+=Math.round(h/2);
-    return offs;
-}
+    This file is part of Candidate User Interface (CUI).
 
+    CUI is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version accepted in a public statement
+    by Codility Limited.
 
-function shift(pos, dx, dy) {
-    if (pos===undefined) return undefined;
-    return { left: pos.left + dx,
-             top: pos.top + dy };
-}
+    CUI is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
 
-function computePos(pos, obj, orient) {
-    var res = {};
-    var PADDING = 20; // niestety obj.width()/obj.height() nie wlicza padding
-    var EXTRA = 5;
-    switch(orient) {
-    case 'ur':
-        res.left = pos.left + EXTRA;
-        res.top = pos.top - obj.height() - PADDING - EXTRA;
-        break;
-    case 'ul':
-        res.left = pos.left - obj.width() - PADDING - EXTRA;
-        res.top = pos.top - obj.height() - PADDING - EXTRA;
-        break;
-    case 'lr':
-        res.left = pos.left + EXTRA;
-        res.top = pos.top + EXTRA;
-        break;
-    case 'll':
-        res.left = pos.left - obj.width() - PADDING - EXTRA;
-        res.top = pos.top + EXTRA;
-        break;
-    default: // center
-        res.left = pos.left - Math.round(obj.width()/2);
-        res.top = pos.top - Math.round(obj.height()/2);
-    }
-    return res;
-}
+    You should have received a copy of the GNU Lesser General Public License
+    along with CUI.  If not, see <http://www.gnu.org/licenses/>.
 
-function addToolTip(i, pos, orient) {
-    num_i = num_i + 1;
+*/
 
-    if (pos===undefined) return;
-    Log.debug("addToolTip", "i="+i+" pos"+pos+" orient="+orient);
+/* global Chat, Log, Console, introJs */
 
-    helpActive[i]=num_i;
+var Help = function(isInitial, taskCount, prgLangName, prgLangCount, support_email){
+    var self = {
+        support_email: support_email,
+    };
 
-    var num_obj = $('#num'+num_i);
-    var help_obj = $('#help'+i);
+    self.stepsTexts = {
+        introduction: 'Before you begin, we will guide you through the test interface.<br>' +
+            'The timer will start with your confirmation after this presentation is over.<br>' +
+            'You can skip this presentation at any time.',
+        problemDescription : 'Read the problem description.',
+        tasksTab : 'You can see all the tasks here.'+
+                   ' You can switch freely between them.',
+        timer : 'The timer is counting down the time for the whole test. '+
+                'If you do not manage to submit all the tasks before the '+
+                'time runs out, we will save your latest solution(s) entered '+
+                'and submit it automatically.',
+        prgLang: prgLangCount > 1?
+        /*For tasks with multiple programming language*/
+        'Choose the programming language. If you switch to another '+
+        'programming language in the middle of writing a solution, '+
+        'your solution will disappear. If you, however, switch back '+
+        'to the previous language, your solution will appear again.':
+        /*For tasks with just one programming language*/
+        'You will be solving this problem in '+prgLangName+'.',
+        editor : 'Write the solution for the problem using the editor, '+
+                 'your solution should include the function as defined in '+
+                 'the task description. Your solution can include other '+
+                 'functions, procedures and methods.',
+        solutionSaved : "Your solutions are being saved continuously, "+
+                        "however don't forget to submit your solution for "+
+                        "evaluation once you're done.",
+        runButton : 'Run your solution to see if it a) compiles, '+
+                    'b) returns a correct result given the exemplary '+
+                    'data from the task description, '+
+                    'c) terminates within an acceptable period of time.'+
+                    ' Running your solution will help you to avoid simple'+
+                    ' mistakes. You can verify your solution multiple times.'+
+                    ' The number of "run" requests will not influence '+
+                    'your score. The output window can be increased.',
+        testData : 'You can run your solution on your test data to see '+
+                   'what results it computes, you will not be informed '+
+                   'about the correctness of this result. '+
+                   'You can add a maximum of 5 test cases at once.',
 
-    // console.log("num_i="+num_i+" i="+i);
+        outputWindow : 'Compilation and verification output is visible here.',
+        outputWindowResize : 'The output window can be increased.',
+        submitButton :  taskCount > 1?
+        /*For tests with more than one tasks*/
+        "Submit your solution for final evaluation. "+
+        "This will close the task and you will not be able "+
+        "to make any more changes. You don't have to submit your solution "+
+        "before moving to another task but you need to submit each "+
+        "task solution separately.":
+        /*For tests with just one task*/
+        "This will end this session. You can submit your solution only once.",
+        quitButton : 'Quit will finish this session without sending '+
+                     'your solution for evaluation. You can re-open the '+
+                     'session, but quitting does not put the timer on hold.',
+        exitOverlay : 'Click anywhere to hide the help overlay.'
+    };
 
-    if (!num_obj || !help_obj) return;
+    function _buildSteps(){
+        var steps = [];
 
-    var num_pos = computePos(pos, num_obj, 'c');
-    var help_pos = computePos(pos, help_obj, orient);
-
-    num_obj.css({left:num_pos.left,top:num_pos.top});
-    help_obj.css({left:help_pos.left,top:help_pos.top});
-}
-
-function setupHelp() {
-    Log.debug("setupHelp");
-    var o_e = center('#edit');
-    var o_t = shift(center('#task'),0,-40);
-    var o_vb = shift(center('#verify_button'),0,40);
-    var o_fb = shift(center('#final_button'),0,40);
-    var o_res = shift(center('#quit_button'),60,-10);
-    var o_prg = shift(rightEdge('#prg_lang_list'),-30,30);
-    var o_close = shift($('#header').offset(),5,5);
-    var o_r = shift(center('#test_case_img'),70,-30);
-    o_vb = shift(o_vb,0,-80);
-    o_fb = shift(o_fb,0,-80);
-    o_res = shift(o_res,0,30);
-
-    $('#help2').css({width: "150px"});
-    $('#help4').css({width: "300px"});
-    $('#help5').css({width: "300px"});
-    $('#help6').css({width: "150px"});
-    $('#help7').css({width: "250px"});
-
-    num_i = 0;
-
-    addToolTip('1',o_t,'ur');
-    addToolTip('2',o_prg,'ll');
-    addToolTip('3',o_e,'ul');
-
-
-    if ($('#verify_button').css("display")!='none')
-        addToolTip('4',o_vb,'ul');
-
-    if ($('#run_button').css("display")!='none' &&
-        $('#test_case_img').length>0)
-        addToolTip('5',o_r,'ur');
-
-    if ($('#final_button').css("display")!='none')
-        addToolTip('6',o_fb,'ur');
-
-    addToolTip('7',o_res,'ll');
-
-    num_i = 7;
-    addToolTip('8',o_close,'lr');
-}
-
-var helpbox_count = 8;
-
-function hideHelp() {
-    var i;
-    for(i=1;i<=helpbox_count;i++) {
-        $('#num'+i).fadeOut("fast");
-        $('#help'+i).fadeOut("fast");
-    }
-    $("#overlay").fadeOut("fast");
-}
-
-function showHelp() {
-  /* $(window).resize(function(){
-    setupHelp();
-    var h = $(document).height();
-    if (!h) h=1024;
-    $('#__dimScreen').css({height: h + 'px',width: '100%'});
-  }); */
-    var i;
-    setupHelp();
-
-    for(i=1;i<=helpbox_count;i++) {
-        if (helpActive[i])
-            $('#help'+i).css({display:"block",opacity:0});
-    }
-
-    $("#overlay").fadeTo("fast",0.5, function() {
-        for(i=1;i<=helpbox_count;i++) $('#help'+i).css({display:"none",opacity:1});
-
-        var speed=300;
-        var j;
-
-        for(i=1;i<=helpbox_count;i++) {
-            if (!helpActive[i]) continue;
-            j = helpActive[i];
-            $('#num'+j).fadeIn(speed);
-            $('#help'+i).fadeIn(speed);
+        if (isInitial) {
+            steps.push({ intro:self.stepsTexts.introduction });
         }
 
-        $('#overlay').click(hideHelp);
-        for(i=1;i<=helpbox_count;i++) {
-            j = helpActive[i];
-            $('#num'+j).click(hideHelp);
-            $('#help'+i).click(hideHelp);
+        steps.push(
+            { element: "#task_description",
+              intro:self.stepsTexts.problemDescription,
+              position: "right",
+              numberPosition: "right"
+            }
+        );
+
+        if (taskCount > 1) {
+            steps.push(
+                { element: ".task-list",
+                  intro:self.stepsTexts.tasksTab
+                }
+            );
         }
-    });
-}
+
+        steps = steps.concat([
+            { element: "#clock",
+              intro:self.stepsTexts.timer,
+              position:"left",
+              numberPosition:"bottom",
+              padding: 0
+            },
+            { element: "#prg_lang_list",
+              intro:self.stepsTexts.prgLang,
+              position: "left",
+              numberPosition: "bottom"
+            },
+            { element: "#edit",
+              intro:self.stepsTexts.editor,
+              position: "left"
+            },
+            { element: "#save_status",
+              intro:self.stepsTexts.solutionSaved,
+              position: "top"
+            },
+            { element: "#verify_button",
+              intro:self.stepsTexts.runButton,
+              position: "top"
+            },
+            { element: "#console",
+              intro:self.stepsTexts.outputWindow,
+              position: "top"
+            },
+            { element: "#resize_console_button",
+              intro:self.stepsTexts.outputWindowResize,
+              position: "left"
+            },
+            { element: "#add_test_case",
+              intro:self.stepsTexts.testData,
+              position: "top",
+              numberPosition: "right"
+            },
+            { element: "#final_button",
+              intro:self.stepsTexts.submitButton,
+              position: "top"
+            },
+            { element: "#quit_button",
+              intro:self.stepsTexts.quitButton,
+              position: "left"
+            },
+            {
+              intro:self.stepsTexts.exitOverlay
+            }
+        ]);
+        return steps;
+    }
+
+    self.enableChat = function(chat) {
+        self.chat = chat;
+    };
+
+    function _addSupportToStep(exitIntro) {
+        var introJs = this;
+        var $stepElt = $('.introjs-tooltip');
+        // added already
+        if ($stepElt.find('.support').length > 0)
+            return;
+
+        var $chatElt = $('<div class="support"></div>');
+        if (self.chat) {
+            if (self.chat.available)
+                $chatElt.html('<br>Problems? <a href="#">Chat with us</a>.');
+            else
+                $chatElt.html('<br>Problems? <a href="#">Email us</a>.');
+
+            $chatElt.find('a').click(function(e) {
+                e.preventDefault();
+                if (exitIntro && typeof exitIntro == 'boolean'){
+                  introJs.exit();
+                }
+                self.chat.activate();
+            });
+        } else if (self.support_email) {
+            $chatElt.html('<br>Problems? Email us at ' +
+                          "<a href='mailto:" + self.support_email +
+                          "' target=_blank>" + self.support_email + "</a>.");
+        }
+        $stepElt.append($chatElt);
+    }
+
+    self.showHelp = function(onClose) {
+        var intro = introJs();
+        intro.setOption('steps', _buildSteps());
+        intro.setOption('disableInteraction', true);
+        if (typeof onClose === 'function'){
+          intro.oncomplete(onClose);
+          intro.onexit(onClose);
+          intro.onafterchange(_addSupportToStep);
+        }
+        else{
+          intro.onafterchange(function(){
+            _addSupportToStep.call(this, true);
+          });
+        }
+        intro.start();
+        //Override bug with IE9's enthusiastic onbeforeunload trigger
+        //Undesirably causes the next button on introjs to trigger onbeforeunload
+        //which we listen on in clock.js
+        //http://stackoverflow.com/questions/7263309/onbeforeunload-event-is-too-enthusiastic-in-ie9
+        $("a.introjs-button").click(function (e) { e.preventDefault(); });
+    };
+    return self;
+};

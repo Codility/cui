@@ -1,3 +1,25 @@
+/*!
+
+    Copyright (C) 2014 Codility Limited. <https://codility.com>
+
+    This file is part of Candidate User Interface (CUI).
+
+    CUI is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version accepted in a public statement
+    by Codility Limited.
+
+    CUI is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with CUI.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 /* global Log */
 /* global xmlNodeValue */
 /* global ui */
@@ -8,10 +30,13 @@ var Clock = {
     time_to_end : null,
     active : true,
 
-    setTime : function() {
-        var seconds = this.time_to_end % 60;
-        var minutes = Math.floor(this.time_to_end / 60) % 60;
-        var hours = Math.floor(this.time_to_end / (60 * 60));
+    setTime : function(time_to_end) {
+        if (typeof time_to_end !== 'number'){
+            time_to_end = this.time_to_end;
+        }
+        var seconds = time_to_end % 60;
+        var minutes = Math.floor(time_to_end / 60) % 60;
+        var hours = Math.floor(time_to_end / (60 * 60));
         var time_string = (hours < 10) ? '0' + hours : hours;
         time_string += ":";
         time_string += (minutes < 10) ? '0' + minutes : minutes;
@@ -27,7 +52,9 @@ var Clock = {
         this.time_from_start = time_elapsed_sec;
         this.time_to_end = time_remaining_sec;
         this.active = true;
-        this.clock_tick();
+        this.setTime();
+        var that = this;
+        setTimeout(function() { that.clock_tick();}, 1000);
         this.refreshClock();
         window.onbeforeunload = function(e) {
             if (Clock.active)
@@ -41,6 +68,7 @@ var Clock = {
 
     clock_tick : function() {
         if (!Clock.active) return;
+        this.time_to_end -= 1;
         this.setTime();
         if (this.time_to_end == 60 || this.time_to_end == 2 * 60 || this.time_to_end == 3 * 60) {
             this.startTimeoutWarning(15);
@@ -51,7 +79,6 @@ var Clock = {
         }
         else {
             var that = this;
-            this.time_to_end -= 1;
             setTimeout(function() { that.clock_tick();}, 1000);
         }
     },

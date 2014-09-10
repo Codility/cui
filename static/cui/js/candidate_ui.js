@@ -1,3 +1,25 @@
+/*!
+
+    Copyright (C) 2014 Codility Limited. <https://codility.com>
+
+    This file is part of Candidate User Interface (CUI).
+
+    CUI is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version accepted in a public statement
+    by Codility Limited.
+
+    CUI is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with CUI.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 
 // Suppress dot-notation warnings:
 // for now, we use urls['name'] convention to refer to URLs.
@@ -12,7 +34,8 @@
 /*global Clock */
 /*global Editor, AceEditor */
 /*global surveyShow, surveySubmit, surveyFilled */
-/*global showHelp */
+/*global Help */
+/*global Chat */
 /*global TimeTracker */
 /*global Diff */
 
@@ -64,7 +87,10 @@ function CandidateUi(options)
 
         // Last time new autosave has been *initiated*
         // (so that we don't save too often)
-        last_autosave_time: null
+        last_autosave_time: null,
+
+        // list of plugins
+        plugins: []
     };
 
     self.updatePageLayout = function() {
@@ -123,17 +149,21 @@ function CandidateUi(options)
         self.updateControls();
     };
 
+    self.updateSaveStatus = function(text){
+        $('#save_status').text(text);
+    };
+
     self.updateModified = function() {
         if (self.task.open && self.editor.getValue() != self.task.saved_solution) {
             self.task.last_modify_time = new Date().getTime();
             self.task.modified = true;
             if (self.options.save_often)
-                $('#save_status').text('');
+                self.updateSaveStatus('');
         } else {
             self.task.modified = false;
             self.task.last_modify_time = null;
             if (self.options.save_often)
-                $('#save_status').text('All changes saved.');
+                self.updateSaveStatus('All changes saved.');
         }
     };
 
@@ -796,9 +826,6 @@ function CandidateUi(options)
         if (t_nodename=='TEXTAREA') return true;
         // console.log("t="+t+" t.html="+t.html()+" t.nodeName="+t_nodename);
 
-        //don't disable copy in the console
-        if (t.closest('#console').length) return true;
-
         if (t_nodename=='TT' || (t_nodename=='SPAN' && t.hasClass('number'))) {
             // selection should start in TT block or <span class='number'>
             return true;
@@ -806,12 +833,22 @@ function CandidateUi(options)
             return false;
         }
     };
+    self.selectionRestrictedToConsole = function(){
+        var commonAncestor = $(window.getSelection().getRangeAt(0).commonAncestorContainer);
+        if (commonAncestor.closest('#console').length){
+            return true;
+        }
+        return false;
+    };
 
     // returns TRUE if selected text can be copied
     self.validCopySelection = function(e) {
         if (typeof window.getSelection == "undefined") {
             return false; // IE 8, old browser, disable copy!
         }
+
+        //don't disable copy in the console
+        if(self.selectionRestrictedToConsole()) return true;
 
         var t = $(e.target);
         if (!self.validSelectableNode(t)) return false;
@@ -865,9 +902,9 @@ function CandidateUi(options)
         var example_input = xmlNodeValue(data, 'response example_input');
         var prg_lang = xmlNodeValue(data, 'response prg_lang');
         var human_lang = xmlNodeValue(data, 'response human_lang');
-        var prg_lang_list = JSON.parse(xmlNodeValue(data, 'response prg_lang_list'));
         var human_lang_list = JSON.parse(xmlNodeValue(data, 'response human_lang_list'));
 
+        self.current_prg_lang_list = JSON.parse(xmlNodeValue(data, 'response prg_lang_list'));
         self.task.name = task;
         self.task.type = task_type;
         self.task.solution_template = solution_template;
@@ -893,7 +930,7 @@ function CandidateUi(options)
         $('#current_human_lang').val(human_lang);
 
         $('#current_prg_lang option').remove();
-        $.each(prg_lang_list, function (i, pl) {
+        $.each(self.current_prg_lang_list, function (i, pl) {
             var name = self.options.prg_langs[pl].name;
             var $option = $('<option>').attr('value', pl).text(name);
             $('#current_prg_lang').append($option);
@@ -1034,12 +1071,12 @@ function CandidateUi(options)
         $("#msg_task_completed").jqm({modal: true});
         $('#msg_task_closed').jqm({modal: true});
         $("#bugfix_no_changes").jqm({modal: true});
+        $("#exit_initial_help").jqm({modal: true});
 
         function surveyPopup($elt, logout_reason) {
             if (self.options.show_survey) {
+                $elt.find('.no-survey-continue').hide();
                 $elt.find('.survey-msg').show();
-                $elt.find('.survey-skip').val('skip survey');
-                $elt.find('.survey-skip').parent().css('text-align', 'right');
             }
             $elt.jqm({
                 modal: true,
@@ -1077,6 +1114,12 @@ function CandidateUi(options)
             self.nextTask();
         });
 
+        $('#exit_intro_yes').click(function() {
+            $('#exit_initial_help').jqmHide();
+            self.startTicket();
+        });
+        $('#exit_intro_no').click(self.initialHelp);
+
         $("#fp_yes").click(self.finalSubmitAction);
         $("#bugfix_yes").click(function() {
             $('#bugfix_no_changes').jqmHide();
@@ -1097,10 +1140,14 @@ function CandidateUi(options)
         $('#resize_console_button').click(self.resizeConsoleAction);
         $('#verify_button').click(self.verifyAction);
         $('#reset_btn').click(self.resetAction);
-        $('#help_btn').click(showHelp);
+        $('#help_btn').click(function() { self.showHelp(false, null); });
+        $('#survey_skip_button').click(function() {
+            $('#survey').parent().jqmHide();
+        });
         $('#survey_continue_button').click(function() {
             $(this).val("submit survey");
             $('#survey tbody.hidden_part').removeClass('hidden_part');
+            $('.hide-for-survey').hide();
             $(this).hide();
             $('#survey_submit_button').show();
         });
@@ -1180,16 +1227,101 @@ function CandidateUi(options)
         });
     };
 
-    self.init = function() {
-        self.setupEditor();
-        self.setupModals();
-        self.setupButtons();
-        self.setupSelects();
-        if (!self.options.demo && !self.options.cert) self.setupTrackers();
-        TestCases.init();
+    self.addPlugin = function (plugin) {
+        if (self.plugins.indexOf(plugin) !== -1) {
+            throw new Error("Trying to load previously loaded plugin");
+        }
+        plugin.load(self);
+        self.plugins.push(plugin);
+    };
+
+    self.removePlugin = function (plugin) {
+        var index = self.plugins.indexOf(plugin);
+        if (index === -1) {
+            throw new Error("Trying to unload not loaded plugin");
+        }
+        self.plugins.splice(index, 1);
+        plugin.unload();
+    };
+
+    self.removePlugins = function () {
+        var plugins = self.plugins;
+        self.plugins = [];
+        plugins.forEach(function (plugin) {
+            try {
+                plugin.unload();
+            } catch (err) {
+                Log.error("Failed to unload plugin", err);
+            }
+        });
+    };
+
+    self.showHelp = function(isInitial, onClose){
+        var task_count, prg_lang_name, prg_lang_count;
+        task_count = self.options.task_names.length;
+        if(self.current_prg_lang_list !== undefined){
+            prg_lang_count = self.current_prg_lang_list.length;
+            prg_lang_name = self.current_prg_lang_list[0];
+        }
+        else{//just show message for multiple languages
+            prg_lang_count = 2;
+        }
+
+        var help = Help(isInitial, task_count, prg_lang_name, prg_lang_count, self.options.support_email);
+        if (self.chat)
+            help.enableChat(self.chat);
+        help.showHelp(onClose);
+    };
+
+    self.startTicket = function(){
+        var url = self.options.urls["start_ticket"];
+        var data = {
+            'ticket': self.options.ticket_id,
+        };
+        var xhr = $.ajax({
+            url: url,
+            data: data,
+            type: 'POST',
+            error: self.startTicketError,
+            success: function(data) {
+                self.startTicketSuccess(data);
+            }
+        }).always(self.clearCall);
+
+        self.startCall('startTicket', xhr);
+    };
+
+    self.startTicketSuccess = function(data){
+        var error = xmlNodeValue(data, 'error');
+        if (data.redirect) {
+            // might issue a redirect if a downtime is approaching
+            window.location.href = data.redirect;
+        }
+        else if (error){
+            var err_diag = $('#ticket_start_error').jqm({modal: true});
+            err_diag.find('.error-message').html(error);
+            err_diag.jqmShow();
+        }
+        else{
+            self.initTask();
+        }
+    };
+    self.startTicketError = function(){
+        Console.msg_syserr("Network error encountered while trying to start your test. "+
+            "Try reloading this page.");
+    };
+
+    self.WELCOME_MESSAGE = (
+        'This is <a href="https://github.com/codility/cui" target="_blank">CUI</a>.  ' +
+        'CUI is free software.  ' +
+        'See <a href="https://github.com/Codility/cui/blob/master/COPYING.LESSER" target="_blank">COPYING.LESSER</a> ' +
+        'and <a href="https://github.com/Codility/cui/blob/master/AUTHORS" target="_blank">AUTHORS</a> ' +
+        'for details.'
+    );
+
+    self.initTask = function() {
         Clock.init(self.options.ticket_id, self.options.urls['clock'], self.options.time_remaining_sec, self.options.time_elapsed_sec);
 
-        self.updatePageLayout();
         self.reloadTask();
         if (self.options.save_often)
             setTimeout(self.checkAutoSave, CHECK_AUTOSAVE_PERIOD);
@@ -1197,16 +1329,53 @@ function CandidateUi(options)
             setTimeout(self.oldAutoSave, OLD_AUTOSAVE_PERIOD);
         self.updateControls();
 
-        self.setupResizeEvent();
+        if (self.options.show_welcome) {
+            Console.msg_ok(self.WELCOME_MESSAGE);
+        }
+    };
 
-        if (self.options.show_help)
-            setTimeout(showHelp, 500);
+    self.initialHelp = function() {
+        //show time asigned to task
+        Clock.setTime(self.options.time_remaining_sec);
+        //'all changes saved'
+        self.updateSaveStatus("You will see save status here");
+
+        setTimeout(function(){
+            self.showHelp(true, function(current_step) {
+                $('#exit_initial_help').jqmShow();
+            });
+        }, 500);
+    };
+
+    self.init = function() {
+        self.setupEditor();
+        self.setupModals();
+        self.setupButtons();
+        self.setupSelects();
+        if (!self.options.demo && !self.options.cert) self.setupTrackers();
+        TestCases.init();
+
+        if (self.options.show_chat)
+            self.chat = Chat(self.options.support_email);
+        //size editor and task description pane properly
+        self.updatePageLayout();
+
+        self.setupResizeEvent();
+        if (self.options.show_help){
+            self.initialHelp();
+        }
+        else{
+            //calling startTicket multiple times on a ticket is safe
+            self.startTicket();
+        }
+
     };
 
     // Unpin global events
     self.shutdown = function() {
         $(window).off('focus');
         $(window).off('blur');
+        self.removePlugins();
     };
 
     self.data = {};

@@ -1,3 +1,25 @@
+/*!
+
+    Copyright (C) 2014 Codility Limited. <https://codility.com>
+
+    This file is part of Candidate User Interface (CUI).
+
+    CUI is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version accepted in a public statement
+    by Codility Limited.
+
+    CUI is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with CUI.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 
 /* global jasmine, expect */
 /* global sinon */
@@ -32,6 +54,7 @@ function TestServer() {
                 'n_saves': 0
             },
         },
+        'task_names': ['task1', 'task2', 'task3'],
         'current_task': 'task1',
         'next_task': '',
         'submits': [],
@@ -66,7 +89,8 @@ function TestServer() {
         },
 
         show_survey: true,
-        show_help: true,
+        show_help: false,
+        show_welcome: true,
         sequential: false,
         save_often: true,
 
@@ -79,7 +103,8 @@ function TestServer() {
             "verify": "/chk/verify/",
             "save": "/chk/save/",
             "timeout_action": "/chk/timeout_action/",
-            "final": "/chk/final/"
+            "final": "/chk/final/",
+            "start_ticket": "/c/_start/"
         },
     };
 
@@ -100,7 +125,7 @@ function TestServer() {
 
         var id = task + ',' + human_lang + ',' + prg_lang;
 
-        var solution = self.getTaskStart(id);
+        var solution = self.getTaskStart(task, human_lang, prg_lang);
         if (t.saved && t.saved.prg_lang == prg_lang)
             solution = t.saved.solution;
 
@@ -108,7 +133,7 @@ function TestServer() {
             'task_status': t.status,
             'task_description': 'Description: ' + id,
             'task_type': t.type,
-            'solution_template': self.getTaskStart(id),
+            'solution_template': self.getTaskStart(task, human_lang, prg_lang),
             'current_solution': solution,
             'example_input': 'Example input: ' + id,
             'prg_lang_list': JSON.stringify(t.prg_lang_list),
@@ -118,7 +143,9 @@ function TestServer() {
         };
     };
 
-    self.getTaskStart = function(id) { return 'Start: ' + id; };
+    self.getTaskStart = function(task, human_lang, prg_lang) {
+        return 'Start: ' + task + ',' + human_lang + ',' + prg_lang;
+    };
 
     self.respondSave = function(data) {
         var task = data.task;
@@ -161,6 +188,8 @@ function TestServer() {
             'times_polled': 0
         });
 
+        self.tasks[task].status = 'closed';
+
         return self.submitStatus(submit_id);
     };
 
@@ -189,10 +218,16 @@ function TestServer() {
                 'delay': 5
             };
         }
-        if (submit.mode == 'final')
-            response.next_task = self.next_task;
+        if (submit.mode == 'final') {
+            response.next_task = self.getNextTask();
+        }
 
         return response;
+    };
+
+    // Useful for testing.
+    self.getNextTask = function() {
+        return self.next_task;
     };
 
     self.getRemainingTime = function() {
@@ -204,6 +239,33 @@ function TestServer() {
             'result': 'OK',
             'new_timelimit': self.getRemainingTime()
         };
+    };
+
+    self.respondStartTicket = function(data) {
+        self._startCalled = true;
+        if (self._startError){
+            return {
+                'error': "Could not start ticket"
+            };
+        }
+        return {
+            'started': 'OK'
+        };
+    };
+
+    self.triggerStartError = function(){
+        self._startError = true;
+    };
+
+    self.triggerTicketNotFound = function(){
+        self._startTicketNotFound = true;
+    };
+
+    self.startCalled = function(){
+        if(self._startCalled){
+            return true;
+        }
+        return false;
     };
 
     self.respondTo = function(req) {
@@ -231,6 +293,14 @@ function TestServer() {
 
         if (req.url == '/c/_get_task/') {
             response = self.respondGetTask(data);
+        }
+        if (req.url == '/c/_start/') {
+            response = self.respondStartTicket(data);
+            if (self._startTicketNotFound){
+                return req.respond(404,
+                    { "Content-Type": "text/xml" },
+                    xmlResponse(response));
+            }
         }
         if (req.url == '/chk/save/') {
             response = self.respondSave(data);

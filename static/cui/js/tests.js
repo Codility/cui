@@ -1,3 +1,25 @@
+/*!
+
+    Copyright (C) 2014 Codility Limited. <https://codility.com>
+
+    This file is part of Candidate User Interface (CUI).
+
+    CUI is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version accepted in a public statement
+    by Codility Limited.
+
+    CUI is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with CUI.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
 
 // Jasmine documentation:
 // http://jasmine.github.io/2.0/introduction.html
@@ -7,7 +29,7 @@
 /* global describe,expect,jasmine,it,afterEach,beforeEach*/
 /* global sinon*/
 /* global console*/
-/* global CandidateUi, Clock, TestCases, Diff */
+/* global CandidateUi, Console, Clock, TestCases, Diff */
 /* global AUTOSAVE_MAX_PERIOD */
 /* global TestServer */
 
@@ -60,6 +82,21 @@ function seconds(s) {
 
 var PAGE_HTML;
 
+
+//used to test help button and initial help
+function testHelp(clock) {
+    // wait for help to show
+    clock.tick(seconds(5));
+    expectVisible('.introjs-overlay', true);
+    expectVisible('.introjs-helperLayer', true);
+
+    // click on overlay to hide it
+    $('.introjs-overlay').click();
+    clock.tick(seconds(1));
+    expectVisible('.introjs-overlay', false);
+    expectVisible('.introjs-helperLayer', false);
+}
+
 // Scaffolding for candidate UI
 function describe_ui(suffix, extra_options, f) {
     describe('Candidate UI' + suffix, function() {
@@ -107,6 +144,8 @@ describe_ui('', {}, function() {
         ui = this.ui;
         server = this.server;
         clock = this.clock;
+        //start ticket
+        server.respond();
     });
 
     it("should start", function() {});
@@ -259,26 +298,11 @@ describe_ui('', {}, function() {
     });
 
     it('should show help', function() {
-        function testHelp() {
-            // wait for help to show
-            clock.tick(seconds(5));
-            expectVisible('#overlay', true);
-            expectVisible('#help1', true);
-
-            // click on overlay to hide it
-            $('#overlay').click();
-            clock.tick(seconds(1));
-            expectVisible('#overlay', false);
-            expectVisible('#help1', false);
-        }
-
-        // help is shown initially, after a delay
-        server.respond();
-        clock.tick(seconds(1));
-        testHelp();
-
         $('#help_btn').click();
-        testHelp();
+        testHelp(clock);
+
+        //don't show dialog
+        expectVisible('#exit_initial_help', false);
     });
 
     it('should update ui.task.modified', function() {
@@ -773,6 +797,7 @@ describe_ui('', {}, function() {
 
     describe('clock widget', function() {
         it('should count down', function() {
+
             expect(ui.options.time_remaining_sec).toBe(60 * 30);
             expect($('#clock').text()).toBe('00:30:00');
             clock.tick(minutes(15, 12));
@@ -826,6 +851,173 @@ describe_ui('', {}, function() {
             clock.tick(seconds(10));
             expect($('#clock').text()).toBe('00:00:00');
         });
+    });
+
+    describe("copy restriction", function(){
+        var buildSelection = function(startNode, endNode){
+            var selRange = document.createRange();
+            selRange.setStart(startNode, 0);
+            if (!endNode){
+                selRange.setEnd(startNode, startNode.childNodes.length);
+            }
+            else{
+                selRange.setEndAfter(endNode, endNode.childNodes.length);
+            }
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(selRange);
+
+        };
+        it('should allow copying in console', function(){
+            server.respond();
+            Console.msg("Hello, world");
+            Console.msg_error("This is an error");
+            Console.msg_syserr("This is a system error");
+            Console.msg_ok("This is not an error");
+            //allow copy of the whole console range
+            var c_console = $('#console')[0];
+            buildSelection(c_console);
+            expect(ui.selectionRestrictedToConsole()).toBe(true);
+            //allow copy of a sub element in console
+            var sub_element = c_console.childNodes[4];
+            buildSelection(sub_element);
+            expect(ui.selectionRestrictedToConsole()).toBe(true);
+            //alow copy of overlapping elements within console
+            var sub_element2 = c_console.childNodes[6];
+            buildSelection(sub_element, sub_element2);
+            expect(window.getSelection().getRangeAt(0).commonAncestorContainer.id).toBe('console');
+            expect(ui.selectionRestrictedToConsole()).toBe(true);
+        });
+        it('should not allow copying when overlapping with restricted portions',function(){
+            server.respond();
+            //don't allow copy when console and another is highlighted
+            var c_console = $('#console')[0];
+            var editor_bar = $('#editor_bar')[0];
+            var e = {'target': editor_bar}; //target is usually first node in the selection
+            buildSelection(editor_bar, c_console);
+            expect(ui.selectionRestrictedToConsole()).toBe(false);
+            expect(ui.validCopySelection(e)).toBe(false);
+            //don't allow copy within task description
+            var task_description = $('#task_description')[0];
+            buildSelection(task_description);
+            e.target = task_description;
+            expect(ui.selectionRestrictedToConsole()).toBe(false);
+            expect(ui.validCopySelection(e)).toBe(false);
+        });
+        it('should allow copying of example data from task description', function(){
+            server.respond();
+            var task_description = $('#task_description');
+            task_description.append("<div>Some random descripton text</div>");
+            task_description.append("<tt>This contains example data</tt>");
+            var example_node = $('#task_description tt')[0];
+            var e = {'target': example_node};
+            buildSelection(example_node);
+            expect(ui.selectionRestrictedToConsole()).toBe(false);
+            expect(ui.validCopySelection(e)).toBe(true);
+        });
+
+    });
+});
+
+
+describe_ui(" start ticket", {}, function(){
+    var ui;
+    var server, clock;
+
+    beforeEach(function() {
+        ui = this.ui;
+        server = this.server;
+        clock = this.clock;
+        expect(server.startCalled()).toBe(false);
+    });
+
+    it('should be called', function(){
+        //start ticket
+        server.respond();
+        expect(server.startCalled()).toBe(true);
+    });
+
+    it('should respond properly to errors', function(){
+        //simulate error condition
+        server.triggerStartError();
+        server.respond();
+
+        expect($('#ticket_start_error .error-message').text()).toMatch('Could not start ticket');
+
+    });
+
+    it('should respond properly to invalid tickets', function(){
+        //simulate error condition
+        server.triggerTicketNotFound();
+        server.respond();
+        expect($('#console').text()).toMatch("Network error encountered while trying to start your test. "+
+            "Try reloading this page.");
+
+    });
+});
+
+describe_ui(' (with show_help enabled)', { 'show_help': true }, function(){
+    var ui;
+    var server, clock;
+
+    beforeEach(function() {
+        ui = this.ui;
+        server = this.server;
+        clock = this.clock;
+    });
+
+    afterEach(function() {
+        $('.introjs-overlay').click();
+        clock.tick(seconds(1));
+        $('#exit_intro_yes').click();
+    });
+
+    it('should show initial help', function(){
+        // help is shown initially, after a delay
+        server.respond();
+        clock.tick(seconds(1));
+        testHelp(clock);
+    });
+
+    it('should not count down time while in help', function(){
+        server.respond();
+        clock.tick(seconds(1));
+        var firsttime = $("#clock").text();
+        clock.tick(seconds(20));
+        var secondtime = $("#clock").text();
+        expect(secondtime).toBe(firsttime);
+    });
+
+    it('should bring up dialog upon exit', function(){
+        server.respond();
+        clock.tick(seconds(1));
+        $('.introjs-overlay').click();
+        expectVisible("#exit_initial_help", true);
+    });
+
+    it("should return to help if 'no' is selected on dialog", function(){
+        server.respond();
+        clock.tick(seconds(1));
+        $('.introjs-overlay').click();
+        expectVisible("#exit_initial_help", true);
+        $("#exit_intro_no").click();
+        clock.tick(seconds(1));
+        expectVisible('.introjs-overlay', true);
+        expectVisible('.introjs-helperLayer', true);
+
+    });
+
+    it("should exit intro and call start ticket if 'yes' is selected on dialog", function(){
+        server.respond();
+        clock.tick(seconds(1));
+        $('.introjs-overlay').click();
+        expectVisible("#exit_initial_help", true);
+        $("#exit_intro_yes").click();
+        clock.tick(seconds(1));
+        expectVisible('.introjs-overlay', false);
+        expectVisible('.introjs-helperLayer', false);
+        server.respond();
+        expect(server.startCalled()).toBe(true);
     });
 });
 
@@ -932,6 +1124,117 @@ describe('diff engine', function() {
 
         expect(Diff.analyze(sol('xyzw'), sol('xy zw'))).toEqual(
             { nChanged: 0, highlightChanged: [], highlightRemoved: [] });
+    });
+});
+
+describe('plugins', function () {
+    function Plugin() {
+        var self = {};
+
+        self.load = function (ui) {};
+
+        self.unload = function () {};
+
+        return self;
+    }
+
+    function FailingPlugin() {
+        var self = Plugin();
+
+        self.unload = function () {
+            throw new Error("woo, error");
+        };
+
+        return self;
+    }
+
+
+    describe_ui(' plugins loading and unloading', {}, function() {
+        it('should load and unload plugin', function () {
+            // setup spys
+            var plugin = Plugin();
+            sinon.spy(plugin, 'load');
+            sinon.spy(plugin, 'unload');
+
+            // load plugin
+            this.ui.addPlugin(plugin);
+            console.log(plugin);
+            expect(plugin.load.callCount).toBe(1);
+            expect(plugin.unload.callCount).toBe(0);
+
+            // unload plugin
+            this.ui.removePlugin(plugin);
+            expect(plugin.unload.callCount).toBe(1);
+        });
+
+        it('should throw exceptions if trying to do something illegal', function () {
+            // setup plugin
+            var plugin = Plugin();
+
+            // setup spys
+            sinon.spy(this.ui, "addPlugin");
+            sinon.spy(this.ui, "removePlugin");
+
+            // test behaviour
+            this.ui.addPlugin(plugin);
+            expect(this.ui.addPlugin.threw()).toBe(false);
+
+            try {
+                this.ui.addPlugin(plugin);
+            } catch (e) {
+                // ignore
+            }
+            expect(this.ui.addPlugin.threw()).toBe(true);
+
+            this.ui.removePlugin(plugin);
+            expect(this.ui.removePlugin.threw()).toBe(false);
+
+            try {
+                this.ui.removePlugin(plugin);
+            } catch (e) {
+                // ignore
+            }
+            expect(this.ui.removePlugin.threw()).toBe(true);
+        });
+
+        describe('removePlugins', function () {
+            it('should automaticly unload plugin when shutting down', function () {
+                // setup spys
+                var plugin = Plugin();
+                sinon.spy(plugin, 'unload');
+
+                // load plugin
+                this.ui.addPlugin(plugin);
+
+                // check unloading
+                expect(plugin.unload.callCount).toBe(0);
+                this.ui.shutdown();
+                expect(plugin.unload.callCount).toBe(1);
+            });
+
+            it('should remove all loaded plugins', function () {
+                var that = this;
+
+                // make a few plugins
+                var plugins = new Array(10).join().split('').map(FailingPlugin);
+
+                // setup spys
+                plugins.forEach(function (plugin) {
+                    sinon.spy(plugin, "unload");
+                });
+
+                // load plugins
+                plugins.forEach(this.ui.addPlugin);
+
+                // remove all of them
+                that.ui.removePlugins();
+
+                // check if everyone was unloaded
+                expect(plugins.every(function (plugin) {
+                    return plugin.unload.calledOnce;
+                })).toBe(true);
+            });
+        });
     });
 });
 
