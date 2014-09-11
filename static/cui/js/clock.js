@@ -29,6 +29,7 @@ var Clock = {
     timeout_warning_active : false,
     time_to_end : null,
     active : true,
+    timeout_temp_disabled : false,  // temporarily disable checking timeout, see Trac #2714
 
     setTime : function(time_to_end) {
         if (typeof time_to_end !== 'number'){
@@ -89,8 +90,10 @@ var Clock = {
         if (result == "ERROR") {
             var t = String(xmlNodeValue(data, 'response message'));
             if (t.match("closed") !== null) {
-                Log.info('Ticket closed by server');
-                ui.actionTimeout(true);
+                if (!this.timeout_temp_disabled) {
+                    Log.info('Ticket closed by server');
+                    ui.actionTimeout(true);
+                }
             }
             else {
                 Log.error('Update clock error');
