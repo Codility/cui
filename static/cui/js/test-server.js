@@ -234,7 +234,14 @@ function TestServer() {
         return self.time_at_start - Math.floor(new Date().valueOf() / 1000);
     };
 
+    self.ticket_submitted = false;
     self.respondClock = function(data) {
+        if (self.ticket_submitted) {
+            return {
+                'result': 'ERROR',
+                'message': 'Test is already closed.'
+            };
+        };
         return {
             'result': 'OK',
             'new_timelimit': self.getRemainingTime()
