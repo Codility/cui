@@ -241,7 +241,7 @@ function TestServer() {
                 'result': 'ERROR',
                 'message': 'Test is already closed.'
             };
-        };
+        }
         return {
             'result': 'OK',
             'new_timelimit': self.getRemainingTime()
