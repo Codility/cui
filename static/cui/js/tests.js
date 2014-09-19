@@ -125,8 +125,7 @@ function describe_ui(suffix, extra_options, f) {
         afterEach(function() {
             this.ui.shutdown();
             this.clock.restore();
-            // Don't restore AJAX for now, for easier manual testing in console.
-            // this.server.shutdown();
+            this.server.shutdown();
 
             // remove the modal overlay for convenience
             $('.jqmOverlay').hide();
