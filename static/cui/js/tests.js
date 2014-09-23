@@ -125,8 +125,7 @@ function describe_ui(suffix, extra_options, f) {
         afterEach(function() {
             this.ui.shutdown();
             this.clock.restore();
-            // Don't restore AJAX for now, for easier manual testing in console.
-            // this.server.shutdown();
+            this.server.shutdown();
 
             // remove the modal overlay for convenience
             $('.jqmOverlay').hide();
@@ -526,6 +525,22 @@ describe_ui('', {}, function() {
             ui.saveActionAsync();
             // and then submit happens
             endFinal();
+        });
+
+        it('should block timeout action when we\'re saving', function() {
+            // test Trac #2714
+            beginFinal();
+            finalVerifySuccess();
+            server.respond();
+            // submit happens after 1s
+            Clock.clockAction();
+            clock.tick(seconds(1));
+            server.next_task = '';
+            server.ticket_submitted = true;
+            expect(Clock.timeout_temp_disabled).toBe(true);
+            clock.tick(seconds(1));
+            server.respond();
+            expectVisible('#msg_timeout', false);
         });
 
         it('should block timeout action when we\'re on the last task', function() {

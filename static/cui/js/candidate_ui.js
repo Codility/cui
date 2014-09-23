@@ -614,6 +614,7 @@ function CandidateUi(options)
     };
 
     self.finalSubmitActionError = function(xml) {
+        Clock.timeout_temp_disabled = false;
         var _message = (xml !== null) ? xmlNodeValue(xml,'message') : null;
 
         $('#final_verification .message').html(
@@ -688,6 +689,7 @@ function CandidateUi(options)
         );
         $('#fv_loader').css({display:'block'});
 
+        Clock.timeout_temp_disabled = true; // see Trac #2714
         setTimeout(
                 function() {
                     self.submitSolution(
@@ -727,6 +729,7 @@ function CandidateUi(options)
             self.closed = true;
             $('#msg_final_task_completed').jqmShow();
         }
+        Clock.timeout_temp_disabled = false;
     };
 
     self.finalSubmitForceAction = function() {
