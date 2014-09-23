@@ -334,6 +334,10 @@ $codility-light-blue: #2b9cd9;
             border: 1px solid $grey2;
             background: $grey1;
 
+            &.maximized{
+              height: 400px;
+            }
+
             a, a:visited {
               color: inherit;
             }

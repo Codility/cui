@@ -1047,12 +1047,12 @@ function CandidateUi(options)
     };
 
     self.resizeConsoleAction = function() {
-        if ($("#console").height() < 400) {
-            $("#console").height(400);
-            $("#resize_console_button").prop('value', "↓");
-        } else {
-            $("#console").height(200);
-            $("#resize_console_button").prop('value', "↑");
+        $('#console').toggleClass("maximized");
+        if ($('#console').hasClass("maximized")){
+            $('#resize_console_button').val("↓");
+        }
+        else{
+            $('#resize_console_button').val("↑");
         }
         self.updatePageLayout();
     };
