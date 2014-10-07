@@ -1201,10 +1201,14 @@ function CandidateUi(options)
         $('#edit').on('keypress',function() { key_tracker.tick(); });
         self.trackers.push(key_tracker);
 
+        function clean_line_endings(x) { return x.replace(/\r\n/g, "\n"); }
+
         // tracking copy & paste
-        self.editor.onCopyEvent(function(e) { self.editor.last_copy=e.text; });
+        self.editor.onCopyEvent(function(e) {
+            self.editor.last_copy = clean_line_endings(e.text);
+        });
         self.editor.onPasteEvent(function(e) {
-            var data = e.text;
+            var data = clean_line_endings(e.text);
             if (self.editor.last_copy===data) return;
             self.editor.last_paste=data;
             setTimeout(function() {
