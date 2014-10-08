@@ -106,6 +106,7 @@ function AceEditor() {
     self.ace.setShowPrintMargin(false);
     self.ace.setOptions({ enableBasicAutocompletion: true });
     self.ace.setBehavioursEnabled(false);
+    self.ace.commands.removeCommands(['foldOther', 'foldall']); // fix problems with Swedish keyboards (Alt+0 = `}`)
     var session = self.ace.getSession();
     session.setTabSize(4);
     session.setUseSoftTabs(true);
