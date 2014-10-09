@@ -508,7 +508,10 @@ function CandidateUi(options)
                 }
             }
         }
-        if (verification_ok) {
+
+        if (self.bugfixingNothingChanged()) {
+            Console.msg_error('You haven\'t changed anything in the initial solution. It contains a bug, and the problem asks you to fix it.');
+        } else if (verification_ok) {
             Console.msg_ok(
                     "Your code is syntactically correct and works properly on the example test."
             );
@@ -585,8 +588,7 @@ function CandidateUi(options)
     };
 
     //////////////////FINAL SUBMIT ACTION ////////////////////////////////
-
-    self.finalSubmitButtonAction = function() {
+    self.bugfixingNothingChanged = function() {
         var diff = null;
         if (self.editor.template !== null){
             try {
@@ -599,9 +601,13 @@ function CandidateUi(options)
              }
          }
 
-        if (self.task.type == 'bugfixing' &&
+        return (self.task.type == 'bugfixing' &&
             diff &&
-            diff.nChanged === 0) {
+            diff.nChanged === 0);
+    }
+
+    self.finalSubmitButtonAction = function() {
+        if (self.bugfixingNothingChanged()) {
             $('#bugfix_no_changes').jqmShow();
         } else {
             $('#final_prompt').jqmShow();

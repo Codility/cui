@@ -808,6 +808,17 @@ describe_ui('', {}, function() {
             expectVisible('#bugfix_no_changes', false);
             expectVisible('#final_prompt', true);
         });
+        it('should show a warning when verifying', function() {
+           server.respond();
+           clickTaskTab('task2');
+           server.respond();
+           $('#verify_button').click();
+           server.respond();
+           clock.tick(seconds(1));
+           server.submits[0].result = server.verifyOkResponse();
+           server.respond();
+           expect($('#console').text()).toMatch('haven\'t changed anything');
+        });
     });
 
     describe('clock widget', function() {
