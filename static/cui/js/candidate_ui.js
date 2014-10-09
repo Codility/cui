@@ -1201,14 +1201,28 @@ function CandidateUi(options)
         $('#edit').on('keypress',function() { key_tracker.tick(); });
         self.trackers.push(key_tracker);
 
-        function clean_line_endings(x) { return x.replace(/\r\n/g, "\n"); }
+        function get_text(e) {
+            // The parameter to onCopyEvent and onPasteEvent seems to depend on the weather. Needs investigation.
+            // As a hotfix - try both and coerce to string.
+            var text;
+            if (typeof e === 'string') {
+                text = e;
+            } else if (typeof e.text === 'string') {
+                text = e.text;
+            } else {
+                text = '';
+            }
+            // Clean newlines
+            text = text.replace(/\r\n/g, "\n");
+            return text;
+        }
 
         // tracking copy & paste
         self.editor.onCopyEvent(function(e) {
-            self.editor.last_copy = clean_line_endings(e.text);
+            self.editor.last_copy = get_text(e);
         });
         self.editor.onPasteEvent(function(e) {
-            var data = clean_line_endings(e.text);
+            var data = get_text(e.text);
             if (self.editor.last_copy===data) return;
             self.editor.last_paste=data;
             setTimeout(function() {
