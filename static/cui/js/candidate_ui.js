@@ -440,82 +440,11 @@ function CandidateUi(options)
     self.verifyActionSuccess = function(xml) {
         var verification_ok = false;
         var _message = xmlNodeValue(xml,'response > message');
+        var _html = xmlNodeValue(xml,'response > html');
         if (_message) {
             Console.msg(_message);
-        } else {
-            var _compile = xmlNodeValue(xml,'compile > ok');
-
-            var _compile_msg = (
-                    _compile !== '' ? xmlNodeValue(xml,'compile > message') : ''
-                    );
-
-            if (_compile == '1') {
-                Console.msg_ok(_compile_msg);
-            }
-            else {
-                Console.msg_error(_compile_msg);
-            }
-
-            if (_compile=='1') {
-                var _example = xmlNodeValue(xml,'example > ok');
-
-                var _example_msg = (
-                        _example !== '' ? xmlNodeValue(xml,'example > message') : ''
-                        );
-
-                if (_example == '1') {
-                    verification_ok = true;
-                }
-
-                /*if (_example == '1') {
-                    Console.msg_ok('Example test : '+ _example_msg);
-                }
-                else {
-                    Console.msg_error('Example test : ' + _example_msg);
-                }*/
-
-                $('#test_cases div.testCase').each(function() {
-                    var id = $(this).attr('id');
-                    var test_case = $(this).find('textarea').val();
-                    var _ui = xmlNodeValue(xml, id+'> ok');
-                    var _ui_msg = (
-                            _ui !== '' ? xmlNodeValue(xml, id+' > message') : ''
-                            );
-                    var _st_obj = $(this).find('.testCaseStatus');
-
-                    /* escape HTML */
-                    test_case = $('<span>').text(test_case).html();
-
-                    /*if (_ui == '1') {
-                        Console.msg('<span style="color:blue">'+ 'User test case ' + test_case + ' : ' + '</span>' +_ui_msg);
-                    }
-                    else {
-                        Console.msg_error('User test case ' + test_case + ' : '+_ui_msg);
-                    }*/
-                    Console.msg('<span style="color:blue">'+ 'Your test case ' + test_case + ' : ' + '</span>' +_ui_msg);
-
-                    if (_ui != '1') {
-                        verification_ok = false;
-                    }
-                });
-
-                if (_example == '1') {
-                    //Console.msg_ok('Example test : '+ _example_msg);
-                    Console.msg_ok('Example test <br>' + '<span style="color:black">' + _example_msg + '</span>');
-                }
-                else {
-                    Console.msg_error('Example test <br>' + '<span style="color:black">' + _example_msg + '</span>');
-                }
-            }
-        }
-        if (verification_ok) {
-            Console.msg_ok(
-                    "Your code is syntactically correct and works properly on the example test."
-            );
-        } else {
-            Console.msg_error(
-                    'Detected some errors.'
-            );
+        } else if (_html) {
+            Console.addHtml(_html);
         }
         var quote = xmlNodeValue(xml,'quote');
         Console.msg_quote(quote);

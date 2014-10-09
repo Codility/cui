@@ -75,6 +75,10 @@ var Console = {
         $("#console").scrollTop($("#console").prop("scrollHeight"));
     },
 
+    addHtml : function(html) {
+        $('#console').append(html);
+    },
+
     msg : function(msg) {
         Log.info("candidate console message", msg);
         this._msg(msg, "black");
