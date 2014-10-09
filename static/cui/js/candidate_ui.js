@@ -1130,10 +1130,6 @@ function CandidateUi(options)
         $('#exit_intro_no').click(self.initialHelp);
 
         $("#fp_yes").click(self.finalSubmitAction);
-        $("#bugfix_yes").click(function() {
-            $('#bugfix_no_changes').jqmHide();
-            self.finalSubmitAction();
-        });
         $("#fv_yes").click(self.finalSubmitForceAction);
 
         $('#current_prg_lang').change(self.changePrgLangAction);
