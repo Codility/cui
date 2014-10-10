@@ -408,9 +408,7 @@ describe_ui('', {}, function() {
         clock.tick(seconds(N_ATTEMPTS + 1));
         server.respond();
         expectAllSwitches(true);
-        expect($('#console').text()).toMatch('compiler output');
-        expect($('#console').text()).toMatch('Example test OK');
-        expect($('#console').text()).toMatch('syntactically correct');
+        expect($('#console').text()).toMatch('Verification succeeded');
     });
 
     describe('final task submission', function() {

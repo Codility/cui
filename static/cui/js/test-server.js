@@ -206,10 +206,9 @@ function TestServer() {
         var response;
 
         if (submit.result) {
-            response = {
+            response = $.extend({
                 'result': 'OK',
-                'extra': submit.result
-            };
+            }, submit.result);
         } else {
             response = {
                 'result': 'LATER',
@@ -361,19 +360,17 @@ function TestServer() {
 
     self.verifyOkResponse = function() {
         return {
-            'compile': {'ok': 1,
-                        'message': 'compiler output'},
-            'example': {'ok': 1,
-                        'message': 'OK'}
+            'compile_ok': '1',
+            'tests_ok': '1',
+            'html': 'Verification succeeded',
         };
     };
 
     self.verifyFailedResponse = function() {
         return {
-            'compile': {'ok': 1,
-                        'message': 'compiler output'},
-            'example': {'ok': 0,
-                        'message': 'WRONG ANSWER'}
+            'compile_ok': '1',
+            'tests_ok': '0',
+            'html': 'Verification failed',
         };
     };
 
