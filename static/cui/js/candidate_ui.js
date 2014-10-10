@@ -578,27 +578,30 @@ function CandidateUi(options)
 
     self.finalSubmitActionVerifySuccess = function(xml) {
         $('#fv_loader').css({display:'none'});
-        var _message = xmlNodeValue(xml,'response > message');
-        var _compile_ok = xmlNodeValue(xml,'compile > ok');
-        var _example_ok = xmlNodeValue(xml,'example > ok');
-        var _c_message = xmlNodeValue(xml,'compile > message');
-        var _e_message = xmlNodeValue(xml,'example > message');
-        if (_compile_ok == "1" && _example_ok == "1") {
+        var _message = xmlNodeValue(xml, 'response > message');
+        var _html = xmlNodeValue(xml, 'response > html');
+        var _compile_ok = xmlNodeValue(xml,'response > compile_ok');
+        var _tests_ok = xmlNodeValue(xml,'response > tests_ok');
+
+        if (_compile_ok == "1" && _tests_ok == "1") {
             Log.info("candidate final submit verify", 'solution passed example tests');
             self.finalSubmitActionSave(1);
         } else {
-            Log.info("candidate final submit verify", "solution not passed example tests");
-            if (_message === '' && (_c_message !== '' || _e_message !== '')) {
-                _message = _c_message;
-                if (_e_message !== '') {
-                    _message = _message + '<br>Example test: ' + _e_message;
-                }
+            Log.info("candidate final submit verify", "solution didn't pass example tests");
+            if (_html)
+                _message = _html;
+
+            var $message = $('#final_verification .message');
+            $message.html('<b>ERROR</b><br> Ooops, we found some errors.<br>' +
+                          'Your solution is not correct, do you still want to submit it?<br>');
+            if (_message) {
+                var $details = $('<div style="width:80%;text-align:left;margin-left:10%;margin-right:10%;margin-top:10px;">' +
+                                 '<small><b>evaluation details:</b><br>' +
+                                 '<div class="details" style="border:1px solid black;padding:5px;overflow:auto;max-height:80px;"></div></small>' +
+                                 '</div>');
+                $details.find('.details').html(_message);
+                $message.append($details);
             }
-            $('#final_verification .message').html(
-                    '<b>ERROR</b><br> Ooops, we found some errors.' +
-                            '<br>Your solution is not correct, do you still want to submit it?<br>' +
-                            (_message ? '<div style="width:80%;text-align:left;margin-left:10%;margin-right:10%;margin-top:10px;"><small><b>evaluation details:</b><br><div style="border:1px solid black;padding:5px;overflow:auto;max-height:80px;">'+_message+'</div></small></div>' : '')
-            );
             $('#final_verification .dialog_buttons').css({display: "block"});
         }
     };
