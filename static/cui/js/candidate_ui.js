@@ -604,7 +604,7 @@ function CandidateUi(options)
         return (self.task.type == 'bugfixing' &&
             diff &&
             diff.nChanged === 0);
-    }
+    };
 
     self.finalSubmitButtonAction = function() {
         if (self.bugfixingNothingChanged()) {
