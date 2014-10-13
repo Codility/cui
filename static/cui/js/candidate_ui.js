@@ -510,7 +510,7 @@ function CandidateUi(options)
         }
 
         if (self.bugfixingNothingChanged()) {
-            Console.msg_error('You haven\'t changed anything in the initial solution. It contains a bug, and the problem asks you to fix it.');
+            Console.msg_error('You haven\'t changed anything in the initial solution. It contains a bug, and we ask you to fix it.');
         } else if (verification_ok) {
             Console.msg_ok(
                     "Your code is syntactically correct and works properly on the example test."

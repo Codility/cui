@@ -793,7 +793,7 @@ describe_ui('', {}, function() {
             server.respond();
             $('#final_button').click();
             expectVisible('#bugfix_no_changes', true);
-            $('#bugfix_no_changes [value=ok]').click();
+            $('#bugfix_no_changes [value="I understand"]').click();
             expectVisible('#bugfix_no_changes', false);
 
             // 'Codility is verifying your solution'
