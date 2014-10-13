@@ -64,14 +64,14 @@ var Console = {
         if (log_level == "ERROR") {
             color = "red";
         }
-        $('#console').append('<div style="color:'+color+';font-family:\'Droid Sans Mono\', monospace; font-size: 14px">'+ msgtxt+'</div><br/>');
+        $('#console').append('<div style="color:'+color+';">'+ msgtxt+'</div><br/>');
         $("#console").scrollTop($("#console").prop("scrollHeight"));
     },
 
     _msg : function(msg, color) {
         if (!color)
             color = "black";
-        $('#console').append('<div style="color:'+color+';font-family:\'Droid Sans Mono\', monospace; font-size: 14px">'+ msg+'</div><br/>');
+        $('#console').append('<div style="color:'+color+';">'+ msg+'</div><br/>');
         $("#console").scrollTop($("#console").prop("scrollHeight"));
     },
 
