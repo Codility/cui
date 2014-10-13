@@ -589,21 +589,17 @@ function CandidateUi(options)
 
     //////////////////FINAL SUBMIT ACTION ////////////////////////////////
     self.bugfixingNothingChanged = function() {
-        var diff = null;
-        if (self.editor.template !== null){
-            try {
-                diff = Diff.analyze(self.editor.template, self.editor.getValue());
-            } catch (err) {
-                Log.error('Error computing diff', err);
-                // fail gracefully
-                diff = null;
-                return;
-             }
-         }
+        if ((self.task.type !== 'bugfixing') || (self.editor.template === null))
+            return false;
 
-        return (self.task.type == 'bugfixing' &&
-            diff &&
-            diff.nChanged === 0);
+        var diff = null;
+        try {
+            diff = Diff.analyze(self.editor.template, self.editor.getValue());
+        } catch (err) {
+            Log.error('Error computing diff', err);
+        }
+
+        return diff && diff.nChanged === 0;
     };
 
     self.finalSubmitButtonAction = function() {
