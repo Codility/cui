@@ -377,12 +377,19 @@ $codility-light-blue: #2b9cd9;
     border: none;
   }
 
+  .bugfix_msg {
+    font-size: 20px;
+    padding-bottom:4px;
+    display:inline-block;
+    font-weight: bold;
+  }
+
   .dialog_buttons {
     text-align: center;
     input {
       border: 1px solid #aaa;
       border-radius: 5px;
-      padding: .6em;
+      padding: .6em 1.2em;
       margin-left: 20px;
       margin-right: 20px;
       font-size: 150%;

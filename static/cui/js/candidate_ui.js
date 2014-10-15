@@ -514,23 +514,22 @@ function CandidateUi(options)
     };
 
     //////////////////FINAL SUBMIT ACTION ////////////////////////////////
+    self.bugfixingNothingChanged = function() {
+        if ((self.task.type !== 'bugfixing') || (self.editor.template === null))
+            return false;
+
+        var diff = null;
+        try {
+            diff = Diff.analyze(self.editor.template, self.editor.getValue());
+        } catch (err) {
+            Log.error('Error computing diff', err);
+        }
+
+        return diff && diff.nChanged === 0;
+    };
 
     self.finalSubmitButtonAction = function() {
-        var diff = null;
-        if (self.editor.template !== null){
-            try {
-                diff = Diff.analyze(self.editor.template, self.editor.getValue());
-            } catch (err) {
-                Log.error('Error computing diff', err);
-                // fail gracefully
-                diff = null;
-                return;
-             }
-         }
-
-        if (self.task.type == 'bugfixing' &&
-            diff &&
-            diff.nChanged === 0) {
+        if (self.bugfixingNothingChanged()) {
             $('#bugfix_no_changes').jqmShow();
         } else {
             $('#final_prompt').jqmShow();
@@ -1056,10 +1055,6 @@ function CandidateUi(options)
         $('#exit_intro_no').click(self.initialHelp);
 
         $("#fp_yes").click(self.finalSubmitAction);
-        $("#bugfix_yes").click(function() {
-            $('#bugfix_no_changes').jqmHide();
-            self.finalSubmitAction();
-        });
         $("#fv_yes").click(self.finalSubmitForceAction);
 
         $('#current_prg_lang').change(self.changePrgLangAction);
@@ -1133,14 +1128,28 @@ function CandidateUi(options)
         $('#edit').on('keypress',function() { key_tracker.tick(); });
         self.trackers.push(key_tracker);
 
-        function clean_line_endings(x) { return x.replace(/\r\n/g, "\n"); }
+        function get_text(e) {
+            // The parameter to onCopyEvent and onPasteEvent seems to depend on the weather. Needs investigation.
+            // As a hotfix - try both and coerce to string.
+            var text;
+            if (typeof e === 'string') {
+                text = e;
+            } else if (typeof e.text === 'string') {
+                text = e.text;
+            } else {
+                text = '';
+            }
+            // Clean newlines
+            text = text.replace(/\r\n/g, "\n");
+            return text;
+        }
 
         // tracking copy & paste
         self.editor.onCopyEvent(function(e) {
-            self.editor.last_copy = clean_line_endings(e.text);
+            self.editor.last_copy = get_text(e);
         });
         self.editor.onPasteEvent(function(e) {
-            var data = clean_line_endings(e.text);
+            var data = get_text(e.text);
             if (self.editor.last_copy===data) return;
             self.editor.last_paste=data;
             setTimeout(function() {
