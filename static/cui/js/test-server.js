@@ -362,7 +362,7 @@ function TestServer() {
         return {
             'compile_ok': '1',
             'tests_ok': '1',
-            'html': 'Verification succeeded',
+            'html': '<div class="title summary success">Verification succeeded</div>',
         };
     };
 
@@ -375,7 +375,9 @@ function TestServer() {
     };
 
     function jsonToXml(data) {
-        if (!(data instanceof Object))
+        if (typeof data == 'string')
+            return data.replace(/>/g, '&gt;').replace(/</g, '&lt;');
+        if (typeof data != 'object')
             return data;
         function toXml(tag, content) {
             return '<'+tag+'>'+jsonToXml(content)+'</'+tag+'>';

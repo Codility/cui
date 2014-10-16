@@ -445,6 +445,13 @@ function CandidateUi(options)
             Console.msg(_message);
         } else if (_html) {
             Console.addHtml(_html);
+            // Hack, this probably belongs on the server.
+            if (self.bugfixingNothingChanged()) {
+                var warning = ("You haven't changed anything in the initial solution. " +
+                               "It contains a bug, and we ask you to fix it.");
+                $('#console .summary').replaceWith(
+                    $('<div class="title summary error">').text(warning));
+            }
         }
         var quote = xmlNodeValue(xml,'quote');
         Console.msg_quote(quote);
