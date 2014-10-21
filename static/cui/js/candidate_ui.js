@@ -602,10 +602,10 @@ function CandidateUi(options)
                           'Your solution is not correct, do you still want to submit it?<br>');
             if (_message) {
                 var $details = $('<div style="width:80%;text-align:left;margin-left:10%;margin-right:10%;margin-top:10px;">' +
-                                 '<small><b>evaluation details:</b><br>' +
-                                 '<div class="details" style="border:1px solid black;padding:5px;overflow:auto;max-height:80px;"></div></small>' +
+                                 '<small><b>evaluation details:</b></small><br>' +
+                                 '<div class="verify-details"></div>' +
                                  '</div>');
-                $details.find('.details').html(_message);
+                $details.find('.verify-details').html(_message);
                 $message.append($details);
             }
             $('#final_verification .dialog_buttons').css({display: "block"});

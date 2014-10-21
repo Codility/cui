@@ -384,6 +384,15 @@ $codility-light-blue: #2b9cd9;
     font-weight: bold;
   }
 
+  .verify-details {
+    font-family: Droid Sans Mono, Courier, monospace;
+    border: 1px solid black;
+    padding: 5px;
+    overflow: auto;
+    max-height: 80px;
+    font-size: 12px;
+  }
+
   .dialog_buttons {
     text-align: center;
     input {
