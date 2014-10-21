@@ -376,7 +376,7 @@ function TestServer() {
 
     function jsonToXml(data) {
         if (typeof data == 'string')
-            return data.replace(/>/g, '&gt;').replace(/</g, '&lt;');
+            return data.replace(/>/g, '&gt;').replace(/</g, '&lt;').replace(/&/g, '&amp;');
         if (typeof data != 'object')
             return data;
         function toXml(tag, content) {
