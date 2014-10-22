@@ -194,6 +194,10 @@ class SeleniumRunner(object):
 
 class CuiJsTestCase(LiveServerTestCase):
     def setUp(self):
+        # See https://code.djangoproject.com/ticket/10827
+        from django.contrib.contenttypes.models import ContentType
+        ContentType.objects.clear_cache()
+
         if not os.environ.get('SHOW_SELENIUM'):
             self.display = SmartDisplay(visible=0, size=(1024, 768))
             self.display.start()
