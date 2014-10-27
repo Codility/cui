@@ -180,7 +180,18 @@ function AceEditor() {
     };
 
     self.onCopyEvent = function(f) { self.ace.on('copy',f); };
-    self.onPasteEvent = function(f) { self.ace.on('paste',f); };
+
+    self.onPasteEvent = function(f) {
+        self.ace.getSession().removeAllListeners('paste')
+        function pasteHandler(event){
+            event.text = event.text.replace(/\x01/g, "");
+            if (typeof f === 'function') {
+                f(event);
+            }
+        }
+        self.ace.on('paste',pasteHandler);
+    };
+
     self.onChangeEvent = function(f) {
         self.handleChange = f;
         self.ace.on('change', f);
@@ -297,6 +308,6 @@ function AceEditor() {
     };
 
     self.ace.commands.on("exec", self.enforceReadOnlyRegions);
-
+    self.onPasteEvent(null);
     return self;
 }
