@@ -184,14 +184,14 @@ function AceEditor() {
     self.paste_handlers = [];
     self.onPasteEvent = function(f) {
         if (typeof f === 'function'){
-            self.paste_handlers.push(f)
+            self.paste_handlers.push(f);
         }
     };
 
     self.ace.on('paste', function (event){
         event.text = event.text.replace(/\x01/g, "");
         for (var i = 0; i < self.paste_handlers.length; i++) {
-            self.paste_handlers[i](event)
+            self.paste_handlers[i](event);
         }
     });
 
