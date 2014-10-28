@@ -181,16 +181,19 @@ function AceEditor() {
 
     self.onCopyEvent = function(f) { self.ace.on('copy',f); };
 
+    self.paste_handlers = [];
     self.onPasteEvent = function(f) {
-        self.ace.getSession().removeAllListeners('paste')
-        function pasteHandler(event){
-            event.text = event.text.replace(/\x01/g, "");
-            if (typeof f === 'function') {
-                f(event);
-            }
+        if (typeof f === 'function'){
+            self.paste_handlers.push(f)
         }
-        self.ace.on('paste',pasteHandler);
     };
+
+    self.ace.on('paste', function (event){
+        event.text = event.text.replace(/\x01/g, "");
+        for (var i = 0; i < self.paste_handlers.length; i++) {
+            self.paste_handlers[i](event)
+        }
+    });
 
     self.onChangeEvent = function(f) {
         self.handleChange = f;
@@ -308,6 +311,5 @@ function AceEditor() {
     };
 
     self.ace.commands.on("exec", self.enforceReadOnlyRegions);
-    self.onPasteEvent(null);
     return self;
 }
