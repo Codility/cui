@@ -941,6 +941,76 @@ describe_ui('', {}, function() {
         });
 
     });
+
+    /*
+      This test is intended to guard us against changes in Ace
+      breaking copy-paste detection and possibly even copy-pasting.
+    */
+    describe('copy-paste detection', function() {
+        function make_event(type, text) {
+            var e = new CustomEvent(type);
+            e.clipboardData = { getData: function() { return text; }, setData: function() {} };
+            return e;
+        }
+
+        function trigger(e) {
+            $('.ace_text-input')[0].dispatchEvent(e);
+        }
+
+        function copy_all() {
+            ui.editor.ace.selectAll();
+            trigger(make_event('copy', ui.editor.getValue()));
+        }
+
+        function cut_all() {
+            ui.editor.ace.selectAll();
+            trigger(make_event('cut', ui.editor.getValue()));
+            ui.editor.setValue('');
+        }
+
+        function paste(text) {
+            trigger(make_event('paste', text));
+            // reporting the paste is deferred by 100 ms
+            clock.tick(100);
+        }
+
+        var short_text = 'foo';
+        var long_text = 'foo\nbar';
+        var long_text_crlf = 'foo\r\nbar';
+
+        it('should register pastes longer than one line', function() {
+            ui.editor.setValue('');
+            paste(short_text);
+            expect(ui.pastes_detected).toEqual(0);
+            expect(ui.editor.getValue()).toEqual(short_text);
+
+            paste(long_text);
+            expect(ui.pastes_detected).toEqual(1);
+            expect(ui.editor.getValue()).toEqual(short_text+long_text);
+        });
+
+        it("shouldn't register cuts or pastes from inside editor", function() {
+            ui.editor.setValue(long_text);
+            copy_all();
+            ui.editor.ace.clearSelection();
+            paste(long_text);
+            expect(ui.pastes_detected).toEqual(0);
+            expect(ui.editor.getValue()).toEqual(long_text+long_text);
+
+            ui.editor.setValue(long_text);
+            cut_all();
+            paste(long_text);
+            expect(ui.pastes_detected).toEqual(0);
+            expect(ui.editor.getValue()).toEqual(long_text);
+        });
+
+        it("should handle Windows-style text (CRLF)", function() {
+            ui.editor.setValue(long_text);
+            cut_all();
+            paste(long_text_crlf);
+            expect(ui.pastes_detected).toEqual(0);
+        });
+    });
 });
 
 

@@ -90,7 +90,9 @@ function CandidateUi(options)
         last_autosave_time: null,
 
         // list of plugins
-        plugins: []
+        plugins: [],
+
+        pastes_detected: 0
     };
 
     self.updatePageLayout = function() {
@@ -1168,6 +1170,8 @@ function CandidateUi(options)
                 var ppos = solution.indexOf(last_paste);
                 var plen = last_paste.length;
                 if (ppos==-1) return; // paste can not be found in solution => skip
+
+                self.pastes_detected++;
 
                 self.saveActionAsync(
                     true,
