@@ -1015,6 +1015,7 @@ function CandidateUi(options)
         $('#msg_task_closed').jqm({modal: true});
         $("#bugfix_no_changes").jqm({modal: true});
         $("#exit_initial_help").jqm({modal: true});
+        $("#keyboard_help").jqm({modal: false});
 
         function surveyPopup($elt, logout_reason) {
             if (self.options.show_survey) {
@@ -1092,6 +1093,9 @@ function CandidateUi(options)
         });
         $('#survey_submit_button').click(function() {
             $('#survey').parent().jqmHide();
+        });
+        $('.show-keyboard-help').click(function() {
+            $('#keyboard_help').jqmShow();
         });
     };
 
