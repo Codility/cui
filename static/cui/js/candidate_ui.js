@@ -1097,7 +1097,7 @@ function CandidateUi(options)
         $('.show-keyboard-help').click(function() {
             $('#keyboard_help').jqmShow();
         });
-        if (window.navigator.platform == 'MacIntel') {
+        if (window.navigator.platform === 'MacIntel') {
             $('#keyboard_help .mac').show();
             $('#keyboard_help .no-mac').hide();
         } else {
