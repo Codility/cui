@@ -1015,6 +1015,8 @@ function CandidateUi(options)
         $('#msg_task_closed').jqm({modal: true});
         $("#bugfix_no_changes").jqm({modal: true});
         $("#exit_initial_help").jqm({modal: true});
+        // Note that there is no 'close' button on this one,
+        // only 'click outside to close'.
         $("#keyboard_help").jqm({modal: false});
 
         function surveyPopup($elt, logout_reason) {
