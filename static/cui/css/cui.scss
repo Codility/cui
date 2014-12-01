@@ -545,26 +545,42 @@ $codility-light-blue: #2b9cd9;
 
 #keyboard_help {
   font-size: 12px;
-  width: 850px;
-  margin-left: -425px;
+  width: 750px;
+  margin-left: -375px;
   top: 12%;
   padding: 20px !important;
 
+  h2 {
+    text-align: left;
+    margin: 20px 0px 15px 22px;
+  }
+
   section {
     display: inline-block;
-    width: 400px;
-    h3 { margin-bottom: 0.5em; }
+    width: 350px;
+    margin-left: 20px;
+    h3 {
+      font-size: 16px;
+      font-weight: normal;
+      margin-bottom: 0.3em;
+      text-align: left;
+    }
+    hr {
+      background-color: #999;
+      border: 0;
+      height: 1px;
+      width: 300px;
+      margin: 0px;
+      margin-bottom: 10px;
+    }
     margin-bottom: 1em;
   }
 
   section > div {
     display: table-row;
-    .sep {
-      font-weight: bold;
-    }
     .shortcut, .explanation {
       display: table-cell;
-      padding: 10px 20px;
+      padding: 10px 0px;
       text-align: left;
     }
     .shortcut {
@@ -578,8 +594,15 @@ $codility-light-blue: #2b9cd9;
       }
     }
     .shortcut {
-      width: 200px;
+      width: 150px;
       white-space: nowrap;
     }
+  }
+
+  .dialog_close {
+    color: #999;
+    font-size: 15px;
+    font-style: italic;
+    margin-top: 10px;
   }
 }
