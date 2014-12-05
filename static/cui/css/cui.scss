@@ -229,7 +229,49 @@ $codility-light-blue: #2b9cd9;
             overflow: auto;
           }
           #add_test_case {
-            display: inline-block;
+            height: 34px;
+            width: 100%;
+          }
+          .test-case {
+            height: 34px;
+            line-height: 33px;
+            display: table-row;
+            .left {
+              display: table-cell;
+              min-width: 34px;
+              border: 1px solid $grey3;
+              margin-top: -1px;
+
+              //background: $grey1;
+              border-right: 1px solid $grey3;
+              text-align: center;
+
+              .remove { display: none; }
+            }
+            &:hover .left  {
+              .number { display: none; }
+              .remove { display: inline; }
+              color: white;
+              @include linear-gradient(red, #aa0000);
+              border: 1px solid black;
+              cursor: pointer;
+            }
+
+            .right {
+              display: table-cell;
+              width: 100%;
+              border: 1px solid $grey3;
+              border-left: none;
+              margin-top: -1px;
+              input {
+                margin-top: -1px;
+                height: 32px;
+                width: 300px; // todo
+                border: none;
+                margin-left: 26px;
+                font-family: Droid Sans Mono, Courier, monospace;
+              }
+            }
           }
         }
       }
@@ -355,7 +397,6 @@ $codility-light-blue: #2b9cd9;
     }
   }
 }
-
 
 // Modals
 

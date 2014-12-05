@@ -47,7 +47,7 @@ function Editor() {
 
         var left_h = $('#task > div').outerHeight();
         var left_under_h = $('#task .under-task').outerHeight();
-        var task_descr_h = left_h - left_under_h;
+        var task_descr_h = left_h - left_under_h - 10; //todo
 
         self._updateEditorHeight(editor_h);
         self._updateTaskDescriptionHeight(task_descr_h);

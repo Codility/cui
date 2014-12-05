@@ -45,20 +45,14 @@ var TestCases = {
         if (this.limitReached())
             $('#add_test_case').hide();
 
-        if (this.count == 1) {
-            var help_text = '<div id="test_data_help"><small style="float:left">' +
-                    'include your own test data and use it for testing return values.</small></div>';
-            $('#test_cases').append(help_text);
-        }
-
         var $test_case = $(
-            '<div id="test_data'+num+'" class="testCase">' +
-            '<a style="float:right" href="#">remove</a>' +
-            '<div class="clr"></div>' +
-            '<textarea name="test_data[]" rows=2 cols=50></textarea>'+
+            '<div id="test_data'+num+'" class="test-case">' +
+                '<div class="left"><span class="number">' + num + '.</span>' +
+                '<span class="remove">-</span></div>' +
+                '<div class="right"><input name="test_data[]"></input></div>'+
             '</div>');
-        var $textarea = $test_case.find('textarea');
-        $textarea.val(value);
+        var $input = $test_case.find('input');
+        $input.val('[1, 2, 3, 4]');
 
         $('#test_cases').append($test_case);
         $test_case.find('a').click(function(e) {
