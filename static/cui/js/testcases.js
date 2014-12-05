@@ -33,32 +33,50 @@ var TestCases = {
             e.preventDefault();
             TestCases.add();
         });
+
+        this.update();
+    },
+
+    update: function() {
+        $('#add_test_case .counter').text(this.count + '/' + this.limit);
+        if (this.count === 0)
+            $('#add_test_case .title').text('ADD CUSTOM TEST CASE');
+        else if (this.count < this.limit)
+            $('#add_test_case .title').text('ADD ANOTHER CUSTOM TEST CASE');
+        else
+            $('#add_test_case .title').text('CUSTOM TEST CASES');
+
+        if (this.count >= this.limit)
+            $('#add_test_case').addClass('limit-reached');
+        else
+            $('#add_test_case').removeClass('limit-reached');
+
+        var $test_cases = $('.test-case:visible');
+        for (var i = 0; i < $test_cases.length; i++)
+            $($test_cases[i]).find('.number').text((i+1)+'.');
     },
 
     add : function(value) {
+        if (this.count >= this.limit)
+            return;
+
         Log.info("candidate add test case");
         value = value || $('input[name=test_case_example]').val();
         var num = this.nextID;
         this.nextID++;
         this.count++;
 
-        if (this.limitReached())
-            $('#add_test_case').hide();
-
-        var $test_case = $(
-            '<div id="test_data'+num+'" class="test-case">' +
-                '<div class="left"><span class="number">' + num + '.</span>' +
-                '<span class="remove">-</span></div>' +
-                '<div class="right"><input name="test_data[]"></input></div>'+
-            '</div>');
-        var $input = $test_case.find('input');
-        $input.val('[1, 2, 3, 4]');
+        var $test_case = $('#example_test_case').clone();
+        $test_case.prop('id', 'test_data'+num);
+        $test_case.find('input').val(value);
 
         $('#test_cases').append($test_case);
-        $test_case.find('a').click(function(e) {
+        $test_case.find('.left').click(function(e) {
             e.preventDefault();
             TestCases.remove(num);
         });
+
+        this.update();
         ui.updatePageLayout();
     },
 
@@ -68,14 +86,9 @@ var TestCases = {
         }
         this.count--;
 
-        if (this.count < this.limit)
-            $('#add_test_case').show();
-
         Log.info("candidate remove test case", "test case num=" + num);
         $('#test_data'+num).remove();
-        if (this.count === 0) {
-            $('#test_data_help').remove();
-        }
+        this.update();
         ui.updatePageLayout();
     },
 
@@ -94,9 +107,4 @@ var TestCases = {
         $("#add_test_case").show();
         ui.updatePageLayout();
     },
-
-    limitReached : function(){
-        return this.count >= this.limit;
-    }
-
 };

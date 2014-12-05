@@ -251,9 +251,9 @@ function CandidateUi(options)
         }
 
         if (mode=="verify") { // add test cases
-            $('#test_cases div.testCase').each(function() {
+            $('.test-case:visible').each(function() {
                 var id = $(this).attr("id");
-                var value = $(this).find('textarea').val();
+                var value = $(this).find('input').val();
                 // Replace unicode minus, found in task descriptions.
                 var value_clean = value.replace('\u2212', '-');
                 // Strip all other non-ASCII characters.
@@ -897,7 +897,7 @@ function CandidateUi(options)
         self.editor.clearHistory();
         $('#example_input').val(example_input);
 
-        var show_test_cases = (task_status == 'open' && prg_lang != 'sql' && !TestCases.limitReached());
+        var show_test_cases = (task_status == 'open' && prg_lang != 'sql');
 
         if (task_status == 'open') {
             self.openTask();

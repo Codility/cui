@@ -228,51 +228,6 @@ $codility-light-blue: #2b9cd9;
             max-height: 200px;
             overflow: auto;
           }
-          #add_test_case {
-            height: 34px;
-            width: 100%;
-          }
-          .test-case {
-            height: 34px;
-            line-height: 33px;
-            display: table-row;
-            .left {
-              display: table-cell;
-              min-width: 34px;
-              border: 1px solid $grey3;
-              margin-top: -1px;
-
-              //background: $grey1;
-              border-right: 1px solid $grey3;
-              text-align: center;
-
-              .remove { display: none; }
-            }
-            &:hover .left  {
-              .number { display: none; }
-              .remove { display: inline; }
-              color: white;
-              @include linear-gradient(red, #aa0000);
-              border: 1px solid black;
-              cursor: pointer;
-            }
-
-            .right {
-              display: table-cell;
-              width: 100%;
-              border: 1px solid $grey3;
-              border-left: none;
-              margin-top: -1px;
-              input {
-                margin-top: -1px;
-                height: 32px;
-                width: 300px; // todo
-                border: none;
-                margin-left: 26px;
-                font-family: Droid Sans Mono, Courier, monospace;
-              }
-            }
-          }
         }
       }
     }
@@ -397,6 +352,91 @@ $codility-light-blue: #2b9cd9;
     }
   }
 }
+
+// Test cases
+
+$tc-size: 34px;
+$tc-padding: 26px;
+
+@mixin fake-button {
+  cursor: pointer;
+  @include user-select(none);
+}
+
+.test-case-row {
+  height: $tc-size;
+  width: 100%;
+  display: table;
+  text-align: left;
+  padding: 0px;
+
+  img { margin-top: 3px; }
+
+  > * {
+    display: table-cell;
+    height: 100%;
+    vertical-align: middle;
+  }
+  .left, .right {
+    min-width: $tc-size;
+    text-align: center;
+  }
+
+  .wide {
+    width: 100%;
+    padding: 0 $tc-padding;
+  }
+}
+
+#example_test_case { display: none; }
+
+#add_test_case {
+  @include fake-button;
+  @include linear-gradient($grey1, #ddd);
+  &:hover { @include linear-gradient(#eee, #ccc); }
+  border: 1px solid $grey3;
+
+  .counter {
+    padding-right: $tc-padding;
+  }
+
+  &.limit-reached img { display: none; }
+}
+
+.test-case {
+  margin-top: -1px;
+  .left {
+    border: 1px solid $grey3;
+
+    background: $grey1;
+
+    .remove { display: none; }
+  }
+  &:hover .left  {
+    .number { display: none; }
+    .remove { display: inline; }
+    color: white;
+    @include fake-button;
+    @include linear-gradient(red, #aa0000);
+    border: 1px solid black;
+  }
+
+  .input-container {
+    border: 1px solid $grey3;
+    border-left: none;
+    @include box-shadow(inset 1px 1px 2px rgba(0, 0, 0, 0.4));
+
+    input {
+      border: none;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      font-family: Droid Sans Mono, Courier, monospace;
+      outline: none;
+    }
+  }
+}
+
 
 // Modals
 
