@@ -432,7 +432,7 @@ $tc-padding: 16px;
   .remove {
     display: table-cell;
     text-align: center;
-    padding: 0 2px;
+    padding: 0;
     font-size:18px;
     color: rgb(188,188,188);
     cursor: pointer;
@@ -443,9 +443,7 @@ $tc-padding: 16px;
 
   
   &:hover { 
-    box-shadow: inset 0px 0px 4px rgba(50, 150, 205, 1);
-    box-shadow: inset 0px 0px 4px #188ed4;
-    box-shadow: inset 0px 0px 4px rgba(24, 142, 212, 0.3);
+    box-shadow: inset 0px 0px 5px rgba(24, 142, 212, 0.5);
     border-color: #188ed4;
     .left  {
       .number { display: none; }

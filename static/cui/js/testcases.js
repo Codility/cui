@@ -70,7 +70,15 @@ var TestCases = {
 
         var $test_case = $('#example_test_case').clone();
         $test_case.prop('id', 'test_data'+num);
-        $test_case.find('input').val(value);
+      
+        // ensure exemple test is always accessible
+        var exists = 0;
+        $('#test_cases').find('input').each( function(){
+          if ($(this).val() == value) exists = 1;
+          });
+        if (exists == 0){
+          $test_case.find('input').val(value);
+        }
 
         $('#test_cases').append($test_case);
         $test_case.find('.remove').click(function(e) {
