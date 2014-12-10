@@ -39,7 +39,8 @@ var TestCases = {
 
     update: function() {
         $('#add_test_case .counter').text(this.count + '/' + this.limit);
-        if (this.count === 0)
+        $('#add_test_case .title').text('Custom test cases');
+        /*if (this.count === 0)
             $('#add_test_case .title').text('ADD CUSTOM TEST CASE');
         else if (this.count < this.limit)
             $('#add_test_case .title').text('ADD ANOTHER CUSTOM TEST CASE');
@@ -50,6 +51,7 @@ var TestCases = {
             $('#add_test_case').addClass('limit-reached');
         else
             $('#add_test_case').removeClass('limit-reached');
+          */
 
         var $test_cases = $('.test-case:visible');
         for (var i = 0; i < $test_cases.length; i++)
@@ -71,7 +73,7 @@ var TestCases = {
         $test_case.find('input').val(value);
 
         $('#test_cases').append($test_case);
-        $test_case.find('.left').click(function(e) {
+        $test_case.find('.remove').click(function(e) {
             e.preventDefault();
             TestCases.remove(num);
         });
