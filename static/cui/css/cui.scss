@@ -390,6 +390,10 @@ $tc-padding: 16px;
   .title{
     text-transform: none;
   }
+  .case-format{
+    font-family: Droid Sans Mono, Courier, monospace; 
+    color:#888;
+  }
   .action{
     padding: 0 10px 0 0;
     vertical-align: middle;
@@ -425,7 +429,6 @@ $tc-padding: 16px;
 .test-case {
   margin-top: -1px;
   border: 1px solid $grey3;
-  __border-left: none;
   @include box-shadow(inset 1px 1px 3px rgba(0, 0, 0, 0.2));
 
 
@@ -455,7 +458,6 @@ $tc-padding: 16px;
     }
   }
   input {
-    outline: none;
     border: none;
     width: 100%;
     height: 100%;

@@ -33,26 +33,17 @@ var TestCases = {
             e.preventDefault();
             TestCases.add();
         });
-
+        
         this.update();
     },
 
     update: function() {
         $('#add_test_case .counter').text(this.count + '/' + this.limit);
-        $('#add_test_case .title').text('Custom test cases');
-        /*if (this.count === 0)
-            $('#add_test_case .title').text('ADD CUSTOM TEST CASE');
-        else if (this.count < this.limit)
-            $('#add_test_case .title').text('ADD ANOTHER CUSTOM TEST CASE');
-        else
-            $('#add_test_case .title').text('CUSTOM TEST CASES');
-
-        if (this.count >= this.limit)
-            $('#add_test_case').addClass('limit-reached');
-        else
-            $('#add_test_case').removeClass('limit-reached');
-          */
-
+  
+        $('#add_test_case .case-format').hide();
+        
+        value = '' || $('input[name=test_case_example]').val();
+        $('#add_test_case .case-format').text('format: ' + value); // <---- TODO - cut too long strings and finishthem with - define & control size of container element + text overflow...
         var $test_cases = $('.test-case:visible');
         for (var i = 0; i < $test_cases.length; i++)
             $($test_cases[i]).find('.number').text((i+1)+'.');
@@ -63,7 +54,7 @@ var TestCases = {
             return;
 
         Log.info("candidate add test case");
-        value = value || $('input[name=test_case_example]').val();
+        
         var num = this.nextID;
         this.nextID++;
         this.count++;
@@ -71,23 +62,26 @@ var TestCases = {
         var $test_case = $('#example_test_case').clone();
         $test_case.prop('id', 'test_data'+num);
       
-        // ensure exemple test is always accessible
-        var exists = 0;
-        $('#test_cases').find('input').each( function(){
-          if ($(this).val() == value) exists = 1;
-          });
-        if (exists == 0){
-          $test_case.find('input').val(value);
-        }
-
         $('#test_cases').append($test_case);
         $test_case.find('.remove').click(function(e) {
             e.preventDefault();
             TestCases.remove(num);
         });
+        var $input = $test_case.find('input');
+        $input.focus(function(e) {
+            $('#add_test_case .title').hide();
+            $('#add_test_case .case-format').show();
+        });
+        $input.blur(function(e) {
+            $('#add_test_case .title').show();
+            $('#add_test_case .case-format').hide();
+        });
+        
 
         this.update();
         ui.updatePageLayout();
+        
+        $input.focus();
     },
 
     remove : function(num) {
