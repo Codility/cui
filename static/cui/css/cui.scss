@@ -407,6 +407,7 @@ $tc-padding: 16px;
   .case-format {
     font-family: Droid Sans Mono, Courier, monospace;
     color:#888;
+    white-space: nowrap;
   }
 
   &.limit-reached .plus { visibility: hidden; }

@@ -33,20 +33,30 @@ var TestCases = {
             e.preventDefault();
             TestCases.add();
         });
-        
+
         this.update();
     },
 
     update: function() {
         $('#add_test_case .counter').text(this.count + '/' + this.limit);
-  
-        $('#add_test_case .case-format').hide();
-        
-        value = '' || $('input[name=test_case_example]').val();
-        $('#add_test_case .case-format').text('format: ' + value); // <---- TODO - cut too long strings and finishthem with - define & control size of container element + text overflow...
-        var $test_cases = $('.test-case:visible');
-        for (var i = 0; i < $test_cases.length; i++)
-            $($test_cases[i]).find('.number').text((i+1)+'.');
+        if (this.count >= this.limit) {
+            $('#add_test_case').addClass('limit-reached');
+        } else {
+            $('#add_test_case').removeClass('limit-reached');
+        }
+
+        var value = $('input[name=test_case_example]').val() || '';
+        var format = 'format: ' + value;
+
+        // Hack: truncate the test case string,
+        // assuming hard-coded font width
+        var width = $('#add_test_case .wide').width();
+        var font_width = 8;
+        if (format.length > width / font_width) {
+            var length = Math.floor(width / font_width);
+            format = format.slice (0, length - 1) + '\u2026'; // ellipsis
+        }
+        $('#add_test_case .case-format').text(format);
     },
 
     add : function(value) {
@@ -54,14 +64,14 @@ var TestCases = {
             return;
 
         Log.info("candidate add test case");
-        
+
         var num = this.nextID;
         this.nextID++;
         this.count++;
 
         var $test_case = $('#example_test_case').clone();
         $test_case.prop('id', 'test_data'+num);
-      
+
         $('#test_cases').append($test_case);
         $test_case.find('.remove').click(function(e) {
             e.preventDefault();
@@ -76,11 +86,11 @@ var TestCases = {
             $('#add_test_case .title').show();
             $('#add_test_case .case-format').hide();
         });
-        
+
 
         this.update();
         ui.updatePageLayout();
-        
+
         $input.focus();
     },
 
