@@ -158,7 +158,8 @@ function AceEditor() {
             'rb': 'ruby',
             'scala': 'scala',
             'sql': 'sql',
-            'vb': 'vbscript'
+            'vb': 'vbscript',
+            'go': 'golang'
         };
         return lang_dict[prg_lang] || 'plain_text';
     };
