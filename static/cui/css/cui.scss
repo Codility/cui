@@ -356,7 +356,6 @@ $codility-light-blue: #2b9cd9;
 // Test cases
 
 $tc-size: 34px;
-//$tc-padding: 26px;
 $tc-padding: 16px;
 
 @mixin fake-button {
@@ -386,12 +385,12 @@ $tc-padding: 16px;
   .wide {
     padding: 0 $tc-padding;
   }
-  
+
   .title{
     text-transform: none;
   }
   .case-format{
-    font-family: Droid Sans Mono, Courier, monospace; 
+    font-family: Droid Sans Mono, Courier, monospace;
     color:#888;
   }
   .action{
@@ -404,7 +403,7 @@ $tc-padding: 16px;
     width:34px;
     text-align:center;
   }
-  
+
   .col-margin{
     display:table-cell;
     width: 15px;
@@ -444,8 +443,8 @@ $tc-padding: 16px;
     }
   }
 
-  
-  &:hover { 
+
+  &:hover {
     box-shadow: inset 0px 0px 5px rgba(24, 142, 212, 0.5);
     border-color: #188ed4;
     .left  {
