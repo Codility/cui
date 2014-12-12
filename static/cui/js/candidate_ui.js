@@ -260,9 +260,11 @@ function CandidateUi(options)
                 value_clean = value_clean.replace(/[^\x20-\x7f]/g, '');
                 if (value !== value_clean){
                     $(this).find('textarea').val(value_clean);
-                    Console.msg(value +" was changed to " + value_clean + ". (Illegal Characters removed.)");
+                    Console.msg(value +" was changed to " + value_clean + " (illegal characters removed).");
                 }
-                data[id] = value_clean;
+
+                if (value_clean.trim() !== '')
+                    data[id] = value_clean;
             });
         }
 
