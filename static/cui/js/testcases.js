@@ -125,11 +125,14 @@ var TestCases = {
         if (!test_list_json)
             return;
 
-        var test_list = $.parseJSON(test_list_json);
-        this.removeAll();
-        for (var i = 0; i < test_list.length; i++)
-            this.add(test_list[i]);
-
+        try {
+            var test_list = $.parseJSON(test_list_json);
+            this.removeAll();
+            for (var i = 0; i < test_list.length; i++)
+                this.add(test_list[i]);
+        } catch(e) {
+            Log.error('error loading test cases', e);
+        }
     },
 
     disable : function() {
