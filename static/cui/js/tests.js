@@ -682,6 +682,24 @@ describe_ui('', {}, function() {
             }
             expectVisible('#test_case_link', false);
         });
+
+        it('should remember test cases betweeen tasks', function() {
+            addTestCase();
+            addTestCase();
+            $('.testCase').first().val('foo');
+            expect($('.testCase').length).toBe(2);
+
+            clickTaskTab('task2');
+            addTestCase();
+            expect($('.testCase').length).toBe(1);
+
+            clickTaskTab('task1');
+            expect($('.testCase').length).toBe(2);
+            expect($('.testCase').first().val()).toBe('foo');
+        });
+
+
+
         it('should switch programming language without enabling disabled add test case button', function() {
             for (var i = 0; i < TestCases.limit; i++) {
                 addTestCase();
