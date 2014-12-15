@@ -104,9 +104,11 @@ var TestCases = {
     },
 
     removeAll : function() {
-        $('.testCase').each(function(i, tc) {
-            this.remove($(tc));
-        });
+        this.count = 0;
+        $('.testCase').remove();
+        $('#add_test_case').show();
+        $('#test_data_help').remove();
+        ui.updatePageLayout();
     },
 
     save : function(ticket_id, task_name) {
