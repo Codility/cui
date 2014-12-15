@@ -120,6 +120,8 @@ function describe_ui(suffix, extra_options, f) {
 
             this.exit_url = null;
             this.ui.exit = $.proxy(function(url) { this.exit_url = url; }, this);
+
+            window.localStorage.clear();
         });
 
         afterEach(function() {
@@ -651,9 +653,12 @@ describe_ui('', {}, function() {
             server.respond();
         });
 
-        function addTestCase() {
+        function addTestCase(value) {
             expectVisible('#test_case_link', true);
             $('#test_case_link').click();
+            if (value) {
+                $('.testCase textarea').last().val(value);
+            }
         }
 
         function removeTestCase() {
@@ -684,21 +689,34 @@ describe_ui('', {}, function() {
         });
 
         it('should remember test cases betweeen tasks', function() {
+            addTestCase('foo');
             addTestCase();
-            addTestCase();
-            $('.testCase').first().val('foo');
             expect($('.testCase').length).toBe(2);
 
             clickTaskTab('task2');
+            server.respond();
             addTestCase();
             expect($('.testCase').length).toBe(1);
 
             clickTaskTab('task1');
+            server.respond();
             expect($('.testCase').length).toBe(2);
-            expect($('.testCase').first().val()).toBe('foo');
+            expect($('.testCase textarea').first().val()).toBe('foo');
         });
 
 
+        it('should submit test cases for verification', function() {
+            addTestCase('test case 1');
+            addTestCase('test case 2');
+
+            $('#verify_button').click();
+            server.respond();
+
+            expect(server.submits.length).toBe(1);
+            expect(server.submits[0].mode).toBe('verify');
+            expect(server.submits[0].test_data1).toBe('test case 1');
+            expect(server.submits[0].test_data2).toBe('test case 2');
+        });
 
         it('should switch programming language without enabling disabled add test case button', function() {
             for (var i = 0; i < TestCases.limit; i++) {

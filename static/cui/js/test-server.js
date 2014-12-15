@@ -180,13 +180,21 @@ function TestServer() {
 
         var submit_id = self.submits.length;
 
-        self.submits.push({
+        var submit = {
             'mode': mode,
             'task': task,
             'prg_lang': prg_lang,
             'solution': solution,
-            'times_polled': 0
-        });
+            'times_polled': 0,
+        };
+
+        console.log(data);
+        for (var key in data) {
+            if (/^test_data\d+$/.exec(key))
+                submit[key] = data[key];
+        }
+
+        self.submits.push(submit);
 
         self.tasks[task].status = 'closed';
 
