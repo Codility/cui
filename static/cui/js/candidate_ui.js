@@ -252,6 +252,7 @@ function CandidateUi(options)
 
         if (mode=="verify") {
             // add test cases
+            TestCases.clean();
             var test_list = TestCases.get_list();
             for (var i = 0; i < test_list.length; i++) {
                 var id = "test_case_" + (i+1);
@@ -708,6 +709,8 @@ function CandidateUi(options)
     ///////////////////RELOAD TASK ACTIONS////////////////////////////
 
     self.reloadTask = function(prefer_server_prg_lang) {
+        TestCases.save(self.options.ticket_id, self.task.name);
+
         self.task.loaded = false;
         self.task.solution_template = null;
         self.task.type = null;
@@ -906,6 +909,7 @@ function CandidateUi(options)
 
         if (show_test_cases) {
             TestCases.enable();
+            TestCases.load(self.options.ticket_id, self.task.name);
         } else {
             TestCases.disable();
         }

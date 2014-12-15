@@ -65,8 +65,7 @@ var TestCases = {
         ui.updatePageLayout();
     },
 
-    get_list : function() {
-        var test_list = [];
+    clean : function() {
         $('.testCase').each(function(i, tc) {
             var value = $(tc).find('textarea').val();
 
@@ -78,7 +77,14 @@ var TestCases = {
                 $(tc).find('textarea').val(value_clean);
                 Console.msg(value +" was changed to " + value_clean + ". (Illegal Characters removed.)");
             }
-            test_list.push(value_clean);
+        });
+    },
+
+    get_list : function() {
+        var test_list = [];
+        $('.testCase').each(function(i, tc) {
+            var value = $(tc).find('textarea').val();
+            test_list.push(value);
         });
         return test_list;
     },
@@ -101,6 +107,29 @@ var TestCases = {
         $('.testCase').each(function(i, tc) {
             this.remove($(tc));
         });
+    },
+
+    save : function(ticket_id, task_name) {
+        if (!window.localStorage)
+            return;
+
+        var test_list_json = JSON.stringify(this.get_list());
+        window.localStorage.setItem('test_cases_'+ticket_id+'_'+task_name, test_list_json);
+    },
+
+    load : function(ticket_id, task_name) {
+        if (!window.localStorage)
+            return;
+
+        var test_list_json = window.localStorage.getItem('test_cases_'+ticket_id+'_'+task_name);
+        if (!test_list_json)
+            return;
+
+        var test_list = $.parseJSON(test_list_json);
+        this.removeAll();
+        for (var i = 0; i < test_list.length; i++)
+            this.add(test_list[i]);
+
     },
 
     disable : function() {
