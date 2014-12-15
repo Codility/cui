@@ -255,7 +255,7 @@ function CandidateUi(options)
             TestCases.clean();
             var test_list = TestCases.get_list();
             for (var i = 0; i < test_list.length; i++) {
-                var id = "test_case_" + (i+1);
+                var id = "test_data" + (i+1);
                 var value = test_list[i];
                 data[id] = value;
             }
