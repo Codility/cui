@@ -1087,8 +1087,7 @@ function CandidateUi(options)
             $('#survey').parent().jqmHide();
         });
         $('#survey_continue_button').click(function() {
-            $(this).val("submit survey");
-            $('#survey tbody.hidden_part').removeClass('hidden_part');
+            $('#survey .hidden_part').removeClass('hidden_part');
             $('.hide-for-survey').hide();
             $(this).hide();
             $('#survey_submit_button').show();

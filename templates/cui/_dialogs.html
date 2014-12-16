@@ -179,10 +179,12 @@
 
 <div id='survey' style='display: none; text-align: left;'>
     <form id='survey_form'>
-    {% for field in candidate_form %}
-      <h4>{{ forloop.counter }}. {{ field.help_text }}</h4>
-      <div>{{ field }}</div>
-    {% endfor %}
+        {% for field in candidate_form %}
+        <div class="field {% if field.field.second_page %}hidden_part{% endif %}">
+            <h4>{{ forloop.counter }}. {{ field.help_text }}</h4>
+            <div>{{ field }}</div>
+        </div>
+        {% endfor %}
     </form>
     <div style='height: 10px;'></div>
     <div class='dialog_buttons'>

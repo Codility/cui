@@ -22,11 +22,17 @@
 
 function surveyShow(dialog_element) {
     var survey_placeholder = $('.survey_placeholder', dialog_element);
-    if(survey_placeholder.size() == 1) {
-        var survey = $('#survey');
-        survey[0].parentNode.removeChild(survey[0]);
-        survey_placeholder.replaceWith(survey);
-        survey.show();
+    if(survey_placeholder.size() != 1) {
+        return;
+    }
+    var survey = $('#survey');
+    survey[0].parentNode.removeChild(survey[0]);
+    survey_placeholder.replaceWith(survey);
+    survey.show();
+    if (survey.find('.hidden_part').length == 0) {
+        // One-page survey
+        $('#survey_continue_button').hide();
+        $('#survey_submit_button').show();
     }
 }
 
