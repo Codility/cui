@@ -179,90 +179,10 @@
 
 <div id='survey' style='display: none; text-align: left;'>
     <form id='survey_form'>
-        <table>
-            <tbody>
-            <tr>
-                <td colspan='12'><b>1. Do you think the Codility test gives a fair assessment of your basic coding skills?</b></td>
-            </tr>
-            <tr>
-                <td class='choice_answer_label_left'>no</td>
-                <td class='choice_answer_radio'><input type='radio' name='answer1' value='1' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer1' value='2' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer1' value='3' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer1' value='4' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer1' value='5' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer1' value='6' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer1' value='7' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer1' value='8' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer1' value='9' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer1' value='10' /></td>
-                <td class='choice_answer_label_right'>yes</td>
-            </tr>
-            </tbody>
-            <tbody class='hidden_part'>
-            <tr><td style='height: 5px;'></td></tr>
-            <tr>
-                <td colspan='12'><b>2. Did you understand the problem descriptions as presented during the test?</b></td>
-            </tr>
-            <tr>
-                <td class='choice_answer_label_left'>didn't understand</td>
-                <td class='choice_answer_radio'><input type='radio' name='answer2' value='1' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer2' value='2' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer2' value='3' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer2' value='4' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer2' value='5' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer2' value='6' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer2' value='7' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer2' value='8' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer2' value='9' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer2' value='10' /></td>
-                <td class='choice_answer_label_right'>understood everything</td>
-            </tr>
-            <tr><td style='height: 5px;'></td></tr>
-            <tr>
-                <td colspan='12'><b>3. Did you feel you had enough time to complete the questions?</b></td>
-            </tr>
-            <tr>
-                <td class='choice_answer_label_left'>I didn't have time to finish single task</td>
-                <td class='choice_answer_radio'><input type='radio' name='answer3' value='1' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer3' value='2' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer3' value='3' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer3' value='4' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer3' value='5' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer3' value='6' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer3' value='7' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer3' value='8' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer3' value='9' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer3' value='10' /></td>
-                <td class='choice_answer_label_right'>I had time to do more</td>
-            </tr>
-            <tr><td style='height: 5px;'></td></tr>
-            <tr>
-                <td colspan='12'><b>4. How do you rate the Codility environment for ease of use?</b></td>
-            </tr>
-            <tr>
-                <td class='choice_answer_label_left'>impossible to use</td>
-                <td class='choice_answer_radio'><input type='radio' name='answer4' value='1' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer4' value='2' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer4' value='3' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer4' value='4' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer4' value='5' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer4' value='6' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer4' value='7' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer4' value='8' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer4' value='9' /></td>
-                <td class='choice_answer_radio'><input type='radio' name='answer4' value='10' /></td>
-                <td class='choice_answer_label_right'>it's great!</td>
-            </tr>
-            <tr><td></td></tr>
-            <tr>
-                <td colspan='12'><b>5. If you faced serious problems when solving the Codility test please describe them.</b></td>
-            </tr>
-            <tr>
-                <td colspan='12'><textarea name='answer5' style='width: 100%; height: 75px;'></textarea></td>
-            </tr>
-            </tbody>
-        </table>
+    {% for field in candidate_form %}
+      <h4>{{ forloop.counter }}. {{ field.help_text }}</h4>
+      <div>{{ field }}</div>
+    {% endfor %}
     </form>
     <div style='height: 10px;'></div>
     <div class='dialog_buttons'>
