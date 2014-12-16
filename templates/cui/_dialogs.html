@@ -178,7 +178,7 @@
 </div>
 
 <div id='survey' style='display: none; text-align: left;'>
-    <form id='survey_form'>
+    <form data-name="CandidateIntroSurvey">
         {% for field in candidate_form %}
         <div class="field {% if field.field.second_page %}hidden_part{% endif %}">
             <h4>{{ forloop.counter }}. {{ field.help_text }}</h4>
