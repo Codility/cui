@@ -181,7 +181,9 @@
     {% for name, form in candidate_survey_forms %}
         <form data-name="{{ name }}">
             {% for field in form %}
-            <div class="field {% if field.field.second_page %}hidden_part{% endif %}">
+            <div class="field
+              {% if field.field.second_page %}hidden_part{% endif %}
+              {% if field.field.widget.has_prefix_suffix %}prefix_suffix{% endif %}" >
                 <h4>{{ forloop.counter }}. {{ field.help_text }}</h4>
                 <div>{{ field }}</div>
             </div>

@@ -448,10 +448,6 @@ $codility-light-blue: #2b9cd9;
 
 // Survey form
 
-#survey_form > table {
-  width: 100%;
-}
-
 #survey {
   .choice_answer_label_left {
     max-width: 120px;
@@ -481,6 +477,48 @@ $codility-light-blue: #2b9cd9;
     float: left;
     margin-top: 5px;
   }
+
+  h4 {
+    margin: 1em 0;
+  }
+
+  input[type=radio] {
+    vertical-align: middle;
+  }
+
+  .field.prefix_suffix > div {
+    @include clearfix;
+    .prefix {
+      float: left;
+      width: 22%;
+      margin-right: 3%;
+      text-align: right;
+    }
+    .suffix {
+      float: left;
+      width: 22%;
+      margin-left: 3%;
+    }
+    ul {
+      float: left;
+      width: 50%;
+      li {
+        display: inline;
+      }
+      text-align: justify;
+      &:after {
+        content: '';
+        display: inline-block;
+        width: 100%;
+      }
+    }
+  }
+
+  textarea {
+    width: 100%;
+    height: 75px;
+  }
+
 }
 
 // Anti-cheating
