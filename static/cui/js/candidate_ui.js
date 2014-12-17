@@ -1003,9 +1003,13 @@ function CandidateUi(options)
     };
 
     self.setupModals = function() {
-        if (self.options.demo) {
+        if (self.options.train) {
+            $('.in-train').show();
+            $('.in-default').hide();
+            $('.no-train').hide();
+        } else if (self.options.demo) {
             $('.in-demo').show();
-            $('.no-demo').hide();
+            $('.in-default').hide();
         }
 
         $("#quit_prompt").jqm({modal: true});
