@@ -177,27 +177,6 @@
     <div class='survey_placeholder'></div>
 </div>
 
-<div id='survey' style='display: none; text-align: left;'>
-    {% for name, form in candidate_survey_forms %}
-        <form data-name="{{ name }}">
-            {% for field in form %}
-            <div class="field
-              {% if field.field.second_page %}hidden_part{% endif %}
-              {% if field.field.widget.has_prefix_suffix %}prefix_suffix{% endif %}" >
-                <h4>{{ forloop.counter }}. {{ field.help_text }}</h4>
-                <div>{{ field }}</div>
-            </div>
-            {% endfor %}
-        </form>
-    {% endfor %}
-    <div style='height: 10px;'></div>
-    <div class='dialog_buttons'>
-        <input id="survey_skip_button" type='button' value="skip survey" />
-        <input id='survey_continue_button' type='button' value="continue survey" />
-        <input id='survey_submit_button' type='button' value="submit survey" style='display: none;' />
-    </div>
-</div>
-
 <div id='keyboard_help' style='display: none' class='jqmWindow'>
 
   <h2>KEYBOARD SHORTCUTS</h2>
