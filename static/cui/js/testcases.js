@@ -24,6 +24,8 @@
 /* global ui */
 var TestCases = {
     limit : 5,
+    focus : false,
+		format : '',
 
     init : function() {
         this.nextID = 0;
@@ -56,7 +58,7 @@ var TestCases = {
             var length = Math.floor(width / font_width);
             format = format.slice (0, length - 1) + '\u2026'; // ellipsis
         }
-        $('#add_test_case .case-format').text(format);
+				this.format = format;
     },
 
     add : function(value) {
@@ -77,14 +79,25 @@ var TestCases = {
             e.preventDefault();
             TestCases.remove(num);
         });
+				
         var $input = $test_case.find('input');
+        var $title = $('#add_test_case .title');
+        
         $input.focus(function(e) {
-            $('#add_test_case .title').hide();
-            $('#add_test_case .case-format').show();
+          if (!TestCases.focus){
+            $title.animate( {'opacity':0}, 200, function(){
+							TestCases.focus = true;
+              $title.text(TestCases.format).addClass('case-format').animate({'opacity':1}, 200); 
+            });
+          }else{
+            $title.stop().clearQueue().animate({'opacity':1}, 100);
+          }
         });
         $input.blur(function(e) {
-            $('#add_test_case .title').show();
-            $('#add_test_case .case-format').hide();
+           if (this.focus)$title.animate( {'opacity':0}, 200, function(){
+							TestCases.focus = false;
+							$title.text('Custom test cases').removeClass('case-format').animate({'opacity':1}, 200);
+					 });
         });
 
 

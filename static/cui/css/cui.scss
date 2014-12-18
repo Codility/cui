@@ -413,9 +413,15 @@ $tc-padding: 16px;
   &.limit-reached .plus { visibility: hidden; }
 }
 
+#test_cases .test-case:first-child {
+  border-top:2px solid #777777;
+  border-radius: 2px 2px 0 0;
+}
+
 .test-case {
   margin-top: -1px;
   border: 1px solid $grey3;
+  border-width: 0px 1px;
   @include box-shadow(inset 1px 1px 3px rgba(0, 0, 0, 0.2));
 
   .remove {
@@ -428,9 +434,10 @@ $tc-padding: 16px;
   }
 
   &:hover {
-    box-shadow: inset 0px 0px 5px rgba(24, 142, 212, 0.5);
+    box-shadow: inset 1px 1px 5px rgba(24, 142, 212, 0.5);
     border-color: #188ed4;
   }
+  
   input {
     border: none;
     height: 100%;
