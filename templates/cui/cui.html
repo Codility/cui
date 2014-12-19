@@ -150,6 +150,38 @@
 
   {% include "cui/_dialogs.html" %}
 
+  <div id='survey' style='display: none; text-align: left;'>
+      {% block surveys %}
+      {% if in_test %}
+        {# Example survey, for testing #}
+        <form data-name="ExampleForm">
+          <div class="field">
+            <h4>1. Do you think the Codility test gives a fair assessment of your basic coding skills?</h4>
+            <li><label for="id_answer1_0"><input id="id_answer1_0" name="answer1" type="radio" value="1" />no</label></li>
+            <li><label for="id_answer1_1"><input id="id_answer1_1" name="answer1" type="radio" value="2" />kind of</label></li>
+            <li><label for="id_answer1_2"><input id="id_answer1_2" name="answer1" type="radio" value="3" />yes</label></li>
+          </div>
+          <div class="field hidden_part">
+            <h4>2. Did you understand the problem descriptions as presented during the test?</h4>
+            <li><label for="id_answer2_0"><input id="id_answer2_0" name="answer2" type="radio" value="1" />no</label></li>
+            <li><label for="id_answer2_1"><input id="id_answer2_1" name="answer2" type="radio" value="2" />kind of</label></li>
+            <li><label for="id_answer2_2"><input id="id_answer2_2" name="answer2" type="radio" value="3" />yes</label></li>
+          </div>
+          <div class="field hidden_part">
+            <h4>3. If you faced serious problems when solving the Codility test please describe them.</h4>
+            <div><textarea cols="40" id="id_answer3" name="answer3" rows="10"></textarea></div>
+          </div>
+        </form>
+        {% endif %}
+      {% endblock %}
+      <div style='height: 10px;'></div>
+      <div class='dialog_buttons'>
+          <input id="survey_skip_button" type='button' value="skip survey" />
+          <input id='survey_continue_button' type='button' value="continue survey" />
+          <input id='survey_submit_button' type='button' value="submit survey" style='display: none;' />
+      </div>
+  </div>
+
 </div><!-- #page -->
 {% block body_end %}
 {% endblock %}
