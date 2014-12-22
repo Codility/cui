@@ -24,7 +24,7 @@
 /* global Console, ui */
 var TestCases = {
     limit : 5,
-    storage: window.localStorage,
+    storage: window.sessionStorage,
 
     init : function() {
         this.count = 0;
