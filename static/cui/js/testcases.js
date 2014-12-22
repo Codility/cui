@@ -24,6 +24,7 @@
 /* global Console, ui */
 var TestCases = {
     limit : 5,
+    storage: window.localStorage,
 
     init : function() {
         this.count = 0;
@@ -112,18 +113,18 @@ var TestCases = {
     },
 
     save : function(ticket_id, task_name) {
-        if (!window.localStorage)
+        if (!this.storage)
             return;
 
         var test_list_json = JSON.stringify(this.get_list());
-        window.localStorage.setItem('test_cases_'+ticket_id+'_'+task_name, test_list_json);
+        this.storage.setItem('test_cases_'+ticket_id+'_'+task_name, test_list_json);
     },
 
     load : function(ticket_id, task_name) {
-        if (!window.localStorage)
+        if (!this.storage)
             return;
 
-        var test_list_json = window.localStorage.getItem('test_cases_'+ticket_id+'_'+task_name);
+        var test_list_json = this.storage.getItem('test_cases_'+ticket_id+'_'+task_name);
         if (!test_list_json)
             return;
 
