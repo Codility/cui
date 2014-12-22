@@ -33,6 +33,9 @@ var TestCases = {
             e.preventDefault();
             TestCases.add();
         });
+
+        var that = this;
+        $('#test_cases').on('change keyup paste', 'textarea', function() { that.save(); });
     },
 
     add : function(value) {
@@ -64,6 +67,8 @@ var TestCases = {
             TestCases.remove($(this).closest('.testCase'));
         });
         ui.updatePageLayout();
+
+        this.save();
     },
 
     clean : function() {
@@ -79,6 +84,8 @@ var TestCases = {
                 Console.msg(value +" was changed to " + value_clean + ". (Illegal Characters removed.)");
             }
         });
+
+        this.save();
     },
 
     get_list : function() {
@@ -102,6 +109,8 @@ var TestCases = {
             $('#test_data_help').remove();
         }
         ui.updatePageLayout();
+
+        this.save();
     },
 
     removeAll : function() {
@@ -110,21 +119,23 @@ var TestCases = {
         $('#add_test_case').show();
         $('#test_data_help').remove();
         ui.updatePageLayout();
+
+        this.save();
     },
 
-    save : function(ticket_id, task_name) {
-        if (!this.storage)
+    save : function() {
+        if (!this.storage || !ui.task.loaded)
             return;
 
         var test_list_json = JSON.stringify(this.get_list());
-        this.storage.setItem('test_cases_'+ticket_id+'_'+task_name, test_list_json);
+        this.storage.setItem('test_cases_'+ui.options.ticket_id+'_'+ui.task.name, test_list_json);
     },
 
-    load : function(ticket_id, task_name) {
-        if (!this.storage)
+    load : function() {
+        if (!this.storage || !ui.task.loaded)
             return;
 
-        var test_list_json = this.storage.getItem('test_cases_'+ticket_id+'_'+task_name);
+        var test_list_json = this.storage.getItem('test_cases_'+ui.options.ticket_id+'_'+ui.task.name);
         if (!test_list_json)
             return;
 

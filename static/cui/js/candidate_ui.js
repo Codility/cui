@@ -709,8 +709,6 @@ function CandidateUi(options)
     ///////////////////RELOAD TASK ACTIONS////////////////////////////
 
     self.reloadTask = function(prefer_server_prg_lang) {
-        TestCases.save(self.options.ticket_id, self.task.name);
-
         self.task.loaded = false;
         self.task.solution_template = null;
         self.task.type = null;
@@ -907,13 +905,14 @@ function CandidateUi(options)
             Log.error("candidate reload task success", "unknown task_status " + task_status);
         }
 
+        self.task.loaded = true;
+
         if (show_test_cases) {
             TestCases.enable();
-            TestCases.load(self.options.ticket_id, self.task.name);
+            TestCases.load();
         } else {
             TestCases.disable();
         }
-        self.task.loaded = true;
         self.updateControls();
     };
 
