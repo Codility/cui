@@ -128,7 +128,11 @@ var TestCases = {
             return;
 
         var test_list_json = JSON.stringify(this.get_list());
-        this.storage.setItem('test_cases_'+ui.options.ticket_id+'_'+ui.task.name, test_list_json);
+        try {
+            this.storage.setItem('test_cases_'+ui.options.ticket_id+'_'+ui.task.name, test_list_json);
+        } catch(e) {
+            Log.error('error saving test cases', e);
+        }
     },
 
     load : function() {
