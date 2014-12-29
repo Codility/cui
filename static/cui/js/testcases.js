@@ -33,6 +33,7 @@ var TestCases = {
         $('#add_test_case').click(function(e) {
             e.preventDefault();
             TestCases.add();
+            $('.test-case input').last().focus();
         });
 
         var that = this;
@@ -41,6 +42,7 @@ var TestCases = {
         this.update();
     },
 
+    // Update layout after changing the number of test cases.
     update: function() {
         $('#add_test_case .counter').text(this.count + '/' + this.limit);
         if (this.count >= this.limit) {
@@ -61,6 +63,9 @@ var TestCases = {
             format = format.slice (0, length - 1) + '\u2026'; // ellipsis
         }
 	$('#add_test_case .case-format').text(format);
+
+        ui.updatePageLayout();
+        this.save();
     },
 
     onChangeFocus: function(newFocus) {
@@ -115,11 +120,6 @@ var TestCases = {
         $input.blur(function() { that.onChangeFocus(false); });
 
         this.update();
-        this.save();
-
-        ui.updatePageLayout();
-
-        $input.focus();
     },
 
     clean : function() {
@@ -153,8 +153,6 @@ var TestCases = {
         Log.info("candidate remove test case");
         $elt.remove();
         this.update();
-        this.save();
-        ui.updatePageLayout();
     },
 
     save : function() {
@@ -192,8 +190,7 @@ var TestCases = {
         $('.test-case').remove();
         $('#add_test_case').show();
         $('#test_data_help').remove();
-        ui.updatePageLayout();
-        this.save();
+        this.update();
     },
 
     disable : function() {
