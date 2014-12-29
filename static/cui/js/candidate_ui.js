@@ -251,7 +251,7 @@ function CandidateUi(options)
         }
 
         if (mode=="verify") { // add test cases
-            $('.test-case:visible').each(function() {
+            $('.test-case').each(function() {
                 var id = $(this).attr("id");
                 var value = $(this).find('input').val();
                 // Replace unicode minus, found in task descriptions.
@@ -259,7 +259,7 @@ function CandidateUi(options)
                 // Strip all other non-ASCII characters.
                 value_clean = value_clean.replace(/[^\x20-\x7f]/g, '');
                 if (value !== value_clean){
-                    $(this).find('textarea').val(value_clean);
+                    $(this).find('input').val(value_clean);
                     Console.msg(value +" was changed to " + value_clean + " (illegal characters removed).");
                 }
 

@@ -652,40 +652,40 @@ describe_ui('', {}, function() {
         });
 
         function addTestCase() {
-            expectVisible('#test_case_link', true);
-            $('#test_case_link').click();
+            expectVisible('#add_test_case', true);
+            $('#add_test_case').click();
         }
 
         function removeTestCase() {
-            $('.testCase a').first().click();
+            $('.test-case .remove').first().click();
         }
 
         it('should add test cases', function() {
-            expect($('.testCase').length).toBe(0);
+            expect($('.test-case').length).toBe(0);
             addTestCase();
-            expect($('.testCase').length).toBe(1);
-            expect($('.testCase textarea').val()).toBe('Example input: task1,en,c');
+            expect($('.test-case').length).toBe(1);
+            expect($('.test-case input').val()).toBe('');
         });
 
         it('should remove test cases', function() {
             addTestCase();
             addTestCase();
-            expect($('.testCase').length).toBe(2);
+            expect($('.test-case').length).toBe(2);
             removeTestCase();
-            expect($('.testCase').length).toBe(1);
+            expect($('.test-case').length).toBe(1);
         });
 
         it('should have a limit on number', function() {
             for (var i = 0; i < TestCases.limit; i++) {
                 addTestCase();
-                expect($('.testCase').length).toBe(i+1);
+                expect($('.test-case').length).toBe(i+1);
             }
             expectVisible('#test_case_link', false);
         });
         it('should switch programming language without enabling disabled add test case button', function() {
             for (var i = 0; i < TestCases.limit; i++) {
                 addTestCase();
-                expect($('.testCase').length).toBe(i+1);
+                expect($('.test-case').length).toBe(i+1);
             }
             expectVisible('#test_case_link', false);
             //switch task
@@ -700,16 +700,16 @@ describe_ui('', {}, function() {
 
         it('should replace Unicode minus with a normal one', function() {
             addTestCase();
-            $('#test_data0 textarea').val('\u2212'+'42');
+            $('#test_data0 input').val('\u2212'+'42');
             $('#verify_button').click();
-            expect($('#test_data0 textarea').val()).toBe('-42');
+            expect($('#test_data0 input').val()).toBe('-42');
         });
 
         it('should remove Unicode characters', function() {
             addTestCase();
-            $('#test_data0 textarea').val('bździągwa');
+            $('#test_data0 input').val('bździągwa');
             $('#verify_button').click();
-            expect($('#test_data0 textarea').val()).toBe('bdzigwa');
+            expect($('#test_data0 input').val()).toBe('bdzigwa');
         });
     });
 

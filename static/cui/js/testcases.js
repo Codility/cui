@@ -95,6 +95,7 @@ var TestCases = {
         this.count++;
 
         var $test_case = $('#example_test_case').clone();
+        $test_case.addClass('test-case');
         $test_case.prop('id', 'test_data'+num);
 
         $('#test_cases').append($test_case);
