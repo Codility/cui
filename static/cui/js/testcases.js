@@ -25,7 +25,6 @@
 var TestCases = {
     limit : 5,
     focus : false,
-    format : '',
 
     init : function() {
         this.nextID = 0;
