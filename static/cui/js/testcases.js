@@ -25,7 +25,7 @@
 var TestCases = {
     limit : 5,
     focus : false,
-		format : '',
+    format : '',
 
     init : function() {
         this.nextID = 0;
@@ -58,7 +58,30 @@ var TestCases = {
             var length = Math.floor(width / font_width);
             format = format.slice (0, length - 1) + '\u2026'; // ellipsis
         }
-				this.format = format;
+	$('#add_test_case .case-format').text(format);
+    },
+
+    onChangeFocus: function(newFocus) {
+        var $title = $('#add_test_case .title');
+        var $format = $('#add_test_case .case-format');
+
+        var that = this;
+        function transition($from, $to, requiredFocus) {
+            setTimeout(function() {
+                if (that.focus != requiredFocus)
+                    return;
+                if ($to.is(':visible'))
+                    return;
+                $from.fadeOut(200, function() { $to.fadeIn(200); });
+            }, 500);
+            that.focus = requiredFocus;
+        }
+
+        if (!this.focus && newFocus) {
+            transition($title, $format, true);
+        } else if (this.focus && !newFocus) {
+            transition($format, $title, false);
+        }
     },
 
     add : function(value) {
@@ -79,27 +102,12 @@ var TestCases = {
             e.preventDefault();
             TestCases.remove(num);
         });
-				
-        var $input = $test_case.find('input');
-        var $title = $('#add_test_case .title');
-        
-        $input.focus(function(e) {
-          if (!TestCases.focus){
-            $title.animate( {'opacity':0}, 200, function(){
-							TestCases.focus = true;
-              $title.text(TestCases.format).addClass('case-format').animate({'opacity':1}, 200); 
-            });
-          }else{
-            $title.stop().clearQueue().animate({'opacity':1}, 100);
-          }
-        });
-        $input.blur(function(e) {
-           if (this.focus)$title.animate( {'opacity':0}, 200, function(){
-							TestCases.focus = false;
-							$title.text('Custom test cases').removeClass('case-format').animate({'opacity':1}, 200);
-					 });
-        });
 
+        var $input = $test_case.find('input');
+
+        var that = this;
+        $input.focus(function() { that.onChangeFocus(true); });
+        $input.blur(function() { that.onChangeFocus(false); });
 
         this.update();
         ui.updatePageLayout();
