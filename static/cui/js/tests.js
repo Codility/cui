@@ -700,16 +700,16 @@ describe_ui('', {}, function() {
 
         it('should replace Unicode minus with a normal one', function() {
             addTestCase();
-            $('#test_data0 input').val('\u2212'+'42');
+            $('.test-case input').val('\u2212'+'42');
             $('#verify_button').click();
-            expect($('#test_data0 input').val()).toBe('-42');
+            expect($('.test-case input').val()).toBe('-42');
         });
 
         it('should remove Unicode characters', function() {
             addTestCase();
-            $('#test_data0 input').val('bździągwa');
+            $('.test-case input').val('bździągwa');
             $('#verify_button').click();
-            expect($('#test_data0 input').val()).toBe('bdzigwa');
+            expect($('.test-case input').val()).toBe('bdzigwa');
         });
     });
 

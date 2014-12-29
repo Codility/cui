@@ -251,21 +251,14 @@ function CandidateUi(options)
         }
 
         if (mode=="verify") { // add test cases
-            $('.test-case').each(function() {
-                var id = $(this).attr("id");
-                var value = $(this).find('input').val();
-                // Replace unicode minus, found in task descriptions.
-                var value_clean = value.replace('\u2212', '-');
-                // Strip all other non-ASCII characters.
-                value_clean = value_clean.replace(/[^\x20-\x7f]/g, '');
-                if (value !== value_clean){
-                    $(this).find('input').val(value_clean);
-                    Console.msg(value +" was changed to " + value_clean + " (illegal characters removed).");
-                }
-
-                if (value_clean.trim() !== '')
-                    data[id] = value_clean;
-            });
+            // add test cases
+            TestCases.clean();
+            var test_list = TestCases.get_list();
+            for (var i = 0; i < test_list.length; i++) {
+                var id = "test_data" + (i+1);
+                var value = test_list[i];
+                data[id] = value;
+            }
         }
 
         Log.debug('candidate submit solution', 'ajax started, url=' + url);

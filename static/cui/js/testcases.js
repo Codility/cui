@@ -20,14 +20,13 @@
 
 */
 
-/* global Log */
+/* global Log, Console */
 /* global ui */
 var TestCases = {
     limit : 5,
     focus : false,
 
     init : function() {
-        this.nextID = 0;
         this.count = 0;
 
         $('#add_test_case').click(function(e) {
@@ -95,12 +94,12 @@ var TestCases = {
 
         var $test_case = $('#example_test_case').clone();
         $test_case.addClass('test-case');
-        $test_case.prop('id', 'test_data'+num);
+        $test_case.removeProp('id');
 
         $('#test_cases').append($test_case);
         $test_case.find('.remove').click(function(e) {
             e.preventDefault();
-            TestCases.remove(num);
+            TestCases.remove($(this).closest('.test-case'));
         });
 
         var $input = $test_case.find('input');
@@ -115,22 +114,46 @@ var TestCases = {
         $input.focus();
     },
 
-    remove : function(num) {
-        if ($("#test_data"+num).length === 0) {
-            return;
-        }
+    clean : function() {
+        $('.test-case').each(function(i, tc) {
+            var value = $(tc).find('input').val();
+
+           // Replace unicode minus, found in task descriptions.
+            var value_clean = value.replace('\u2212', '-');
+           // Strip all other non-ASCII characters.
+            value_clean = value_clean.replace(/[^\x20-\x7f]/g, '');
+            if (value !== value_clean){
+                $(tc).find('input').val(value_clean);
+                Console.msg(value +" was changed to " + value_clean + ". (Illegal Characters removed.)");
+            }
+        });
+    },
+
+    get_list : function() {
+        var test_list = [];
+        $('.test-case').each(function(i, tc) {
+            var value = $(tc).find('input').val();
+            test_list.push(value);
+        });
+        return test_list;
+    },
+
+
+    remove : function($elt) {
         this.count--;
 
-        Log.info("candidate remove test case", "test case num=" + num);
-        $('#test_data'+num).remove();
+        Log.info("candidate remove test case");
+        $elt.remove();
         this.update();
         ui.updatePageLayout();
     },
 
     removeAll : function() {
-        for (var i = 0; i < this.nextID; i++) {
-            this.remove(i);
-        }
+        this.count = 0;
+        $('.test-case').remove();
+        $('#add_test_case').show();
+        $('#test_data_help').remove();
+        ui.updatePageLayout();
     },
 
     disable : function() {
