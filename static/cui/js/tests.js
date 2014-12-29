@@ -647,7 +647,7 @@ describe_ui('', {}, function() {
             });
 
             it('should submit when a text question is answered', function() {
-                $('[name=answer5]').val('Bla bla bla');
+                $('[name=answer3]').val('Bla bla bla');
                 $('#msg_timeout').jqmHide();
                 server.respond();
                 expect(this.server.survey_submitted).toBe(true);

@@ -40,7 +40,8 @@ var Help = function(isInitial, taskCount, prgLangName, prgLangCount, support_ema
                 'and submit it automatically.',
         prgLang: prgLangCount > 1?
         /*For tasks with multiple programming language*/
-        'Choose the programming language. If you switch to another '+
+        'Once you start the test, you will be able to choose the programming '+
+        'language here. If you switch to another '+
         'programming language in the middle of writing a solution, '+
         'your solution will disappear. If you, however, switch back '+
         'to the previous language, your solution will appear again.':

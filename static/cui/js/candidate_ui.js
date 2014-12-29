@@ -1000,9 +1000,13 @@ function CandidateUi(options)
     };
 
     self.setupModals = function() {
-        if (self.options.demo) {
+        if (self.options.train) {
+            $('.in-train').show();
+            $('.in-default').hide();
+            $('.no-train').hide();
+        } else if (self.options.demo) {
             $('.in-demo').show();
-            $('.no-demo').hide();
+            $('.in-default').hide();
         }
 
         $("#quit_prompt").jqm({modal: true});
@@ -1084,8 +1088,7 @@ function CandidateUi(options)
             $('#survey').parent().jqmHide();
         });
         $('#survey_continue_button').click(function() {
-            $(this).val("submit survey");
-            $('#survey tbody.hidden_part').removeClass('hidden_part');
+            $('#survey .hidden_part').removeClass('hidden_part');
             $('.hide-for-survey').hide();
             $(this).hide();
             $('#survey_submit_button').show();
