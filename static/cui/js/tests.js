@@ -716,8 +716,9 @@ describe_ui('', {}, function() {
         });
 
 
-        it('should submit test cases for verification', function() {
+        it('should submit non-empty test cases for verification', function() {
             addTestCase('test case 1');
+            addTestCase();
             addTestCase('test case 2');
 
             $('#verify_button').click();
@@ -728,7 +729,6 @@ describe_ui('', {}, function() {
             expect(server.submits[0].test_data1).toBe('test case 1');
             expect(server.submits[0].test_data2).toBe('test case 2');
         });
-
 
         it('should switch programming language without enabling disabled add test case button', function() {
             for (var i = 0; i < TestCases.limit; i++) {
