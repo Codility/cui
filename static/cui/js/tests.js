@@ -100,6 +100,16 @@ function testHelp(clock) {
 // Scaffolding for candidate UI
 function describe_ui(suffix, extra_options, f) {
     describe('Candidate UI' + suffix, function() {
+        function FakeStorage () {
+            var store = {};
+            return {
+                getItem: function(key) { return store[key]; },
+                setItem: function(key, value) { return (store[key] = value + ''); },
+                clear: function() { store = {}; }
+            };
+        }
+
+
         beforeEach(function() {
             // Recover initial HTML. Done before, not after the test,
             // to observer effect of failures.
@@ -110,6 +120,8 @@ function describe_ui(suffix, extra_options, f) {
 
             // mock time (AJAX will be mocked by test server)
             this.clock = sinon.useFakeTimers();
+
+            TestCases.storage = FakeStorage();
 
             this.server = TestServer();
             this.server.init();
@@ -651,9 +663,13 @@ describe_ui('', {}, function() {
             server.respond();
         });
 
-        function addTestCase() {
+        function addTestCase(value) {
             expectVisible('#add_test_case', true);
             $('#add_test_case').click();
+
+            if (value) {
+                $('.test-case input').last().val(value);
+            }
         }
 
         function removeTestCase() {
@@ -682,6 +698,38 @@ describe_ui('', {}, function() {
             }
             expectVisible('#test_case_link', false);
         });
+
+        it('should remember test cases between tasks', function() {
+            addTestCase('foo');
+            addTestCase();
+            expect($('.test-case').length).toBe(2);
+
+            clickTaskTab('task2');
+            server.respond();
+            addTestCase();
+            expect($('.test-case').length).toBe(1);
+
+            clickTaskTab('task1');
+            server.respond();
+            expect($('.test-case').length).toBe(2);
+            expect($('.test-case input').first().val()).toBe('foo');
+        });
+
+
+        it('should submit test cases for verification', function() {
+            addTestCase('test case 1');
+            addTestCase('test case 2');
+
+            $('#verify_button').click();
+            server.respond();
+
+            expect(server.submits.length).toBe(1);
+            expect(server.submits[0].mode).toBe('verify');
+            expect(server.submits[0].test_data1).toBe('test case 1');
+            expect(server.submits[0].test_data2).toBe('test case 2');
+        });
+
+
         it('should switch programming language without enabling disabled add test case button', function() {
             for (var i = 0; i < TestCases.limit; i++) {
                 addTestCase();

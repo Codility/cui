@@ -25,6 +25,7 @@
 var TestCases = {
     limit : 5,
     focus : false,
+    storage: window.sessionStorage,
 
     init : function() {
         this.count = 0;
@@ -33,6 +34,9 @@ var TestCases = {
             e.preventDefault();
             TestCases.add();
         });
+
+        var that = this;
+        $('#test_cases').on('change keyup paste', 'input', function() { that.save(); });
 
         this.update();
     },
@@ -104,11 +108,15 @@ var TestCases = {
 
         var $input = $test_case.find('input');
 
+        $input.val(value);
+
         var that = this;
         $input.focus(function() { that.onChangeFocus(true); });
         $input.blur(function() { that.onChangeFocus(false); });
 
         this.update();
+        this.save();
+
         ui.updatePageLayout();
 
         $input.focus();
@@ -145,7 +153,38 @@ var TestCases = {
         Log.info("candidate remove test case");
         $elt.remove();
         this.update();
+        this.save();
         ui.updatePageLayout();
+    },
+
+    save : function() {
+        if (!this.storage || !ui.task.loaded)
+            return;
+
+        var test_list_json = JSON.stringify(this.get_list());
+        try {
+            this.storage.setItem('test_cases_'+ui.options.ticket_id+'_'+ui.task.name, test_list_json);
+        } catch(e) {
+            Log.error('error saving test cases', e);
+        }
+    },
+
+    load : function() {
+        if (!this.storage || !ui.task.loaded)
+            return;
+
+        var test_list_json = this.storage.getItem('test_cases_'+ui.options.ticket_id+'_'+ui.task.name);
+        if (!test_list_json)
+            return;
+
+        try {
+            var test_list = $.parseJSON(test_list_json);
+            this.removeAll();
+            for (var i = 0; i < test_list.length; i++)
+                this.add(test_list[i]);
+        } catch(e) {
+            Log.error('error loading test cases', e);
+        }
     },
 
     removeAll : function() {
@@ -154,6 +193,7 @@ var TestCases = {
         $('#add_test_case').show();
         $('#test_data_help').remove();
         ui.updatePageLayout();
+        this.save();
     },
 
     disable : function() {

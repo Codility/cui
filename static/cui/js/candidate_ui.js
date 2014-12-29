@@ -905,12 +905,14 @@ function CandidateUi(options)
             Log.error("candidate reload task success", "unknown task_status " + task_status);
         }
 
+        self.task.loaded = true;
+
         if (show_test_cases) {
             TestCases.enable();
+            TestCases.load();
         } else {
             TestCases.disable();
         }
-        self.task.loaded = true;
         self.updateControls();
     };
 
