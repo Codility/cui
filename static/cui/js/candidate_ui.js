@@ -254,15 +254,11 @@ function CandidateUi(options)
             // add test cases
             TestCases.clean();
             var test_list = TestCases.get_list();
-            var counter = 1;
+            test_list = $.grep(test_list, function(t) { return t !== ''; });
             for (var i = 0; i < test_list.length; i++) {
-                if (test_list[i] === '')
-                    continue;
-
-                var id = "test_data" + counter;
+                var id = "test_data" + (i+1);
                 var value = test_list[i];
                 data[id] = value;
-                counter++;
             }
         }
 
