@@ -842,6 +842,7 @@ function CandidateUi(options)
         var prg_lang = xmlNodeValue(data, 'response prg_lang');
         var human_lang = xmlNodeValue(data, 'response human_lang');
         var human_lang_list = JSON.parse(xmlNodeValue(data, 'response human_lang_list'));
+        var allow_user_test_cases = JSON.parse(xmlNodeValue(data, 'response allow_user_test_cases'));
 
         self.current_prg_lang_list = JSON.parse(xmlNodeValue(data, 'response prg_lang_list'));
         self.task.name = task;
@@ -850,6 +851,7 @@ function CandidateUi(options)
         self.task.prg_lang = prg_lang;
         self.task.human_lang = human_lang;
         self.task.saved_solution = current_solution;
+        self.task.allow_user_test_cases = allow_user_test_cases;
 
         $('#task_description').html(task_description);
         if (!self.options.demo && !self.options.cert) self.simpleCopyProtection();
@@ -893,7 +895,7 @@ function CandidateUi(options)
         self.editor.clearHistory();
         $('#example_input').val(example_input);
 
-        var show_test_cases = (task_status == 'open' && prg_lang != 'sql');
+        var show_test_cases = (task_status == 'open' && allow_user_test_cases);
 
         if (task_status == 'open') {
             self.openTask();
