@@ -334,7 +334,6 @@ function TestServer() {
         if (req.url == '/chk/timeout_action/') {
             response = self.respondTimeout(data);
         }
-        console.debug(JSON.stringify(response, null, '\t'));
         req.respond(200, { "Content-Type": "text/xml" }, xmlResponse(response));
     };
 
