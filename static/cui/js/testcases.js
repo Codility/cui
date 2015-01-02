@@ -103,7 +103,7 @@ var TestCases = {
 
         var $test_case = $('#example_test_case').clone();
         $test_case.addClass('test-case');
-        $test_case.removeProp('id');
+        $test_case.removeAttr('id');
 
         $('#test_cases').append($test_case);
         $test_case.find('.remove').click(function(e) {
