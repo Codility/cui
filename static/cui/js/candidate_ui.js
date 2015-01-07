@@ -1235,7 +1235,7 @@ function CandidateUi(options)
         task_count = self.options.task_names.length;
         if(self.current_prg_lang_list !== undefined){
             prg_lang_count = self.current_prg_lang_list.length;
-            prg_lang_name = self.current_prg_lang_list[0];
+            prg_lang_name = self.options.prg_langs[self.current_prg_lang_list[0]].name;
         }
         else{//just show message for multiple languages
             prg_lang_count = 2;
