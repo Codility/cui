@@ -1336,13 +1336,17 @@ function CandidateUi(options)
 
         self.setupResizeEvent();
         if (self.options.show_help){
+            // Show test cases before loading the task
+            // (so that we can mention them during initial help).
+            if (self.options.show_help && self.options.show_test_cases) {
+                TestCases.enable();
+            }
             self.initialHelp();
         }
         else{
             //calling startTicket multiple times on a ticket is safe
             self.startTicket();
         }
-
     };
 
     // Unpin global events
