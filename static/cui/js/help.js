@@ -138,12 +138,18 @@ var Help = function(isInitial, taskCount, prgLangName, prgLangCount, support_ema
             { element: "#resize_console_button",
               intro:self.stepsTexts.outputWindowResize,
               position: "left"
-            },
-            { element: "#add_test_case",
-              intro:self.stepsTexts.testData,
-              position: "top",
-              numberPosition: "right"
-            },
+            }
+        ]);
+
+        if ($('#add_test_case').is(':visible')) {
+            steps.push({ element: "#add_test_case",
+                         intro:self.stepsTexts.testData,
+                         position: "top",
+                         numberPosition: "right"
+                       });
+        }
+
+        steps = steps.concat([
             { element: "#final_button",
               intro:self.stepsTexts.submitButton,
               position: "top"
