@@ -756,7 +756,7 @@ function CandidateUi(options)
     self.nextTask = function() {
         Log.info("candidate next task", "next task="+self.next_task);
         self.setCurrentTask(self.next_task);
-        TestCases.removeAll();
+        TestCases.disable();
         self.reloadTask(true);
     };
 
@@ -912,7 +912,6 @@ function CandidateUi(options)
 
         if (show_test_cases) {
             TestCases.enable();
-            TestCases.load();
         } else {
             TestCases.disable();
         }
@@ -946,7 +945,7 @@ function CandidateUi(options)
         self.saveAction(false,
                         function() { self.reloadTask(true); },
                         self.changeTaskActionError);
-        TestCases.removeAll();
+        TestCases.disable();
     };
 
     self.changeHumanLangAction = function() {

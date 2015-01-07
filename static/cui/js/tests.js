@@ -766,6 +766,14 @@ describe_ui('', {}, function() {
             server.respond();
             expectVisible('#test_cases_area', false);
         });
+
+        it('should not be visible while switching', function() {
+            expectVisible('#test_cases_area', true);
+            clickTaskTab('task2');
+            expectVisible('#test_cases_area', false);
+            server.respond();
+            expectVisible('#test_cases_area', true);
+        });
     });
 
     describe('reset button', function() {
