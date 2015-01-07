@@ -155,8 +155,6 @@ describe_ui('', {}, function() {
         ui = this.ui;
         server = this.server;
         clock = this.clock;
-        //start ticket
-        server.respond();
     });
 
     it("should start", function() {});
@@ -657,12 +655,7 @@ describe_ui('', {}, function() {
         });
     });
 
-
     describe('test cases widget', function () {
-        beforeEach(function() {
-            server.respond();
-        });
-
         function addTestCase(value) {
             expectVisible('#add_test_case', true);
             $('#add_test_case').click();
@@ -677,6 +670,7 @@ describe_ui('', {}, function() {
         }
 
         it('should add test cases', function() {
+            server.respond();
             expect($('.test-case').length).toBe(0);
             addTestCase();
             expect($('.test-case').length).toBe(1);
@@ -684,6 +678,7 @@ describe_ui('', {}, function() {
         });
 
         it('should remove test cases', function() {
+            server.respond();
             addTestCase();
             addTestCase();
             expect($('.test-case').length).toBe(2);
@@ -692,6 +687,7 @@ describe_ui('', {}, function() {
         });
 
         it('should have a limit on number', function() {
+            server.respond();
             for (var i = 0; i < TestCases.limit; i++) {
                 addTestCase();
                 expect($('.test-case').length).toBe(i+1);
@@ -700,6 +696,7 @@ describe_ui('', {}, function() {
         });
 
         it('should remember test cases between tasks', function() {
+            server.respond();
             addTestCase('foo');
             addTestCase();
             expect($('.test-case').length).toBe(2);
@@ -717,6 +714,7 @@ describe_ui('', {}, function() {
 
 
         it('should submit non-empty test cases for verification', function() {
+            server.respond();
             addTestCase('test case 1');
             addTestCase();
             addTestCase('test case 2');
@@ -731,6 +729,7 @@ describe_ui('', {}, function() {
         });
 
         it('should switch programming language without enabling disabled add test case button', function() {
+            server.respond();
             for (var i = 0; i < TestCases.limit; i++) {
                 addTestCase();
                 expect($('.test-case').length).toBe(i+1);
@@ -747,6 +746,7 @@ describe_ui('', {}, function() {
         });
 
         it('should replace Unicode minus with a normal one', function() {
+            server.respond();
             addTestCase();
             $('.test-case input').val('\u2212'+'42');
             $('#verify_button').click();
@@ -754,6 +754,7 @@ describe_ui('', {}, function() {
         });
 
         it('should remove Unicode characters', function() {
+            server.respond();
             addTestCase();
             $('.test-case input').val('bździągwa');
             $('#verify_button').click();
@@ -761,6 +762,7 @@ describe_ui('', {}, function() {
         });
 
         it('should not be visible for SQL tasks', function() {
+            server.respond();
             expectVisible('#test_cases_area', true);
             clickTaskTab('task3');
             server.respond();
@@ -768,8 +770,15 @@ describe_ui('', {}, function() {
         });
 
         it('should not be visible while switching', function() {
+            server.respond();
             expectVisible('#test_cases_area', true);
             clickTaskTab('task2');
+            expectVisible('#test_cases_area', false);
+            server.respond();
+            expectVisible('#test_cases_area', true);
+        });
+
+        it('should be hidden before the task is loaded', function() {
             expectVisible('#test_cases_area', false);
             server.respond();
             expectVisible('#test_cases_area', true);
@@ -884,6 +893,7 @@ describe_ui('', {}, function() {
 
     describe('clock widget', function() {
         it('should count down', function() {
+            server.respond();
 
             expect(ui.options.time_remaining_sec).toBe(60 * 30);
             expect($('#clock').text()).toBe('00:30:00');
@@ -909,6 +919,7 @@ describe_ui('', {}, function() {
         });
 
         it('should show timeout warning', function() {
+            server.respond();
             // The clock shows warning around 3, 2 and 1-minute mark.
 
             clock.tick(minutes(27));
@@ -1042,6 +1053,8 @@ describe_ui('', {}, function() {
         var long_text_crlf = 'foo\r\nbar';
 
         it('should register pastes longer than one line', function() {
+            server.respond();
+
             ui.editor.setValue('');
             paste(short_text);
             expect(ui.pastes_detected).toEqual(0);
@@ -1053,6 +1066,8 @@ describe_ui('', {}, function() {
         });
 
         it("shouldn't register cuts or pastes from inside editor", function() {
+            server.respond();
+
             ui.editor.setValue(long_text);
             copy_all();
             ui.editor.ace.clearSelection();
@@ -1068,6 +1083,8 @@ describe_ui('', {}, function() {
         });
 
         it("should handle Windows-style text (CRLF)", function() {
+            server.respond();
+
             ui.editor.setValue(long_text);
             cut_all();
             paste(long_text_crlf);
