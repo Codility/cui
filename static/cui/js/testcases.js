@@ -188,18 +188,16 @@ var TestCases = {
     removeAll : function() {
         this.count = 0;
         $('.test-case').remove();
-        $('#add_test_case').show();
-        $('#test_data_help').remove();
         this.update();
     },
 
     disable : function() {
-        $('#add_test_case').hide();
+        $('#test_cases_area').hide();
         ui.updatePageLayout();
     },
 
     enable : function() {
-        $("#add_test_case").show();
+        $("#test_cases_area").show();
         ui.updatePageLayout();
     },
 };

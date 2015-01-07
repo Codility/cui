@@ -759,6 +759,13 @@ describe_ui('', {}, function() {
             $('#verify_button').click();
             expect($('.test-case input').val()).toBe('bdzigwa');
         });
+
+        it('should not be visible for SQL tasks', function() {
+            expectVisible('#test_cases_area', true);
+            clickTaskTab('task3');
+            server.respond();
+            expectVisible('#test_cases_area', false);
+        });
     });
 
     describe('reset button', function() {

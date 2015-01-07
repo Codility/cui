@@ -224,7 +224,7 @@ $codility-light-blue: #2b9cd9;
           // stick to bottom
           @include position(absolute, 0 0px 0px 0px);
           padding-top: $padding;
-          #verification_results {
+          #test_cases_area {
             max-height: 200px;
             overflow: auto;
           }
