@@ -107,5 +107,20 @@ var Console = {
     clear : function() {
         Log.info("candidate console clear");
         $('#console').html('');
-    }
+    },
+
+    add_loader : function(msg) {
+        var $loader = $('.loader').clone();
+        $loader.find('.message').text(msg);
+        $('#console').append($loader);
+        $loader.show();
+    },
+
+    add_loader_comment : function(comment) {
+        $('#console .loader .comment').text(comment);
+    },
+
+    remove_loader : function() {
+        $('#console .loader').remove();
+    },
 };

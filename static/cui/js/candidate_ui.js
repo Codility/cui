@@ -361,8 +361,8 @@ function CandidateUi(options)
             var attempt = self.call.attempt;
             Log.debug('candidate submit solution status received', 'result LATER');
             if (attempt < MAX_SUBMIT_SOLUTION_RETRY_COUNT) {
-                if ((attempt + 1) % 5 === 0)
-                    Console.msg('Still working...');
+                if (attempt == 5)
+                    Console.add_loader_comment('This is taking longer than usual...');
                 setTimeout(
                     function() {
                         Log.debug('candidate submitSolutionRecheckStatus','timeout succeeded');
@@ -424,7 +424,8 @@ function CandidateUi(options)
 
     self.verifyAction = function() {
         Console.clear();
-        Console.msg("Running solution...");
+        Console.msg('Running solution...');
+        Console.add_loader("Running solution...");
         Log.info("candidate verify action");
 
         self.submitSolution(
@@ -436,6 +437,8 @@ function CandidateUi(options)
     };
 
     self.verifyActionSuccess = function(xml) {
+        Console.remove_loader();
+
         var verification_ok = false;
         var _message = xmlNodeValue(xml,'response > message');
         var _html = xmlNodeValue(xml,'response > html');
@@ -457,6 +460,8 @@ function CandidateUi(options)
     };
 
     self.verifyActionError = function(xml) {
+        Console.remove_loader();
+
         var _message = "";
         if (xml !== null) {
             _message = xmlNodeValue(xml,'message');
