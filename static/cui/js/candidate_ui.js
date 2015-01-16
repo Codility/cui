@@ -362,7 +362,7 @@ function CandidateUi(options)
             Log.debug('candidate submit solution status received', 'result LATER');
             if (attempt < MAX_SUBMIT_SOLUTION_RETRY_COUNT) {
                 if (attempt == 5)
-                    Console.add_loader_comment('This is taking longer than usual...');
+                    Console.add_loader_comment('Still working, please wait...');
                 setTimeout(
                     function() {
                         Log.debug('candidate submitSolutionRecheckStatus','timeout succeeded');
