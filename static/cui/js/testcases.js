@@ -171,11 +171,10 @@ var TestCases = {
         if (!this.storage || !ui.task.loaded)
             return;
 
-        var test_list_json = this.storage.getItem('test_cases_'+ui.options.ticket_id+'_'+ui.task.name);
-        if (!test_list_json)
-            return;
-
         try {
+            var test_list_json = this.storage.getItem('test_cases_'+ui.options.ticket_id+'_'+ui.task.name);
+            if (!test_list_json)
+                return;
             var test_list = $.parseJSON(test_list_json);
             this.removeAll();
             for (var i = 0; i < test_list.length; i++)
