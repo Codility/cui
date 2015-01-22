@@ -184,8 +184,9 @@ var TestCases = {
         try {
             this.storage.setItem(name, test_list_json);
         } catch(e) {
-            if (e.message.indexOf("QuotaExceededError") > -1) {
-                //use cookie for Safari private mode
+            if (e.message.toLowerCase().indexOf("quota") > -1) {
+                //use cookie on quotaexceedederror in
+                // Safari private mode
                 createCookie(name, test_list_json);
             }
             else {
