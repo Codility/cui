@@ -22,6 +22,26 @@
 
 /* global Log, Console */
 /* global ui */
+
+// http://www.quirksmode.org/js/cookies.html
+// use cookies as fallback for sessionStorage in Safari private mode.
+function createCookie(name,value) {
+    value = encodeURIComponent(value);
+    document.cookie = name+"="+value+"; path=/";
+}
+
+function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i].trim();
+        if (c.indexOf(nameEQ) === 0){
+            return decodeURIComponent(c.substring(nameEQ.length,c.length));
+        }
+    }
+    return null;
+}
+
 var TestCases = {
     limit : 5,
     focus : false,
@@ -160,10 +180,17 @@ var TestCases = {
             return;
 
         var test_list_json = JSON.stringify(this.get_list());
+        var name = 'test_cases_'+ui.options.ticket_id+'_'+ui.task.name;
         try {
-            this.storage.setItem('test_cases_'+ui.options.ticket_id+'_'+ui.task.name, test_list_json);
+            this.storage.setItem(name, test_list_json);
         } catch(e) {
-            Log.error('error saving test cases', e);
+            if (e.message.indexOf("QuotaExceededError") > -1) {
+                //use cookie for Safari private mode
+                createCookie(name, test_list_json);
+            }
+            else {
+                Log.error('error saving test cases', e);
+            }
         }
     },
 
@@ -172,9 +199,15 @@ var TestCases = {
             return;
 
         try {
-            var test_list_json = this.storage.getItem('test_cases_'+ui.options.ticket_id+'_'+ui.task.name);
-            if (!test_list_json)
+            var name = 'test_cases_'+ui.options.ticket_id+'_'+ui.task.name;
+            var test_list_json = this.storage.getItem(name);
+            if (!test_list_json) {
+                //try reading from cookie
+                test_list_json = readCookie(name);
+            }
+            if (!test_list_json) {
                 return;
+            }
             var test_list = $.parseJSON(test_list_json);
             this.removeAll();
             for (var i = 0; i < test_list.length; i++)
