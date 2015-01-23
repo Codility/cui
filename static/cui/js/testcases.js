@@ -184,13 +184,15 @@ var TestCases = {
         try {
             this.storage.setItem(name, test_list_json);
         } catch(e) {
-            if (e.message.toLowerCase().indexOf("quota") > -1) {
-                //use cookie on quotaexceedederror in
-                // Safari private mode
-                createCookie(name, test_list_json);
+            // Don't log an error if it's about exceeded quota
+            // (this might happen in Safari under private mode)
+            if (e.message.toLowerCase().indexOf("quota") == -1) {
+                Log.error('error saving test cases to sessionStorage', e);
             }
-            else {
-                Log.error('error saving test cases', e);
+            try {
+                createCookie(name, test_list_json);
+            } catch(e2) {
+                Log.error('error saving test cases to cookie', e2);
             }
         }
     },
