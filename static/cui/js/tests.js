@@ -32,6 +32,8 @@
 /* global CandidateUi, Console, Clock, TestCases, Diff */
 /* global AUTOSAVE_MAX_PERIOD */
 /* global TestServer */
+/* global Trees */
+
 
 // Don't complain under IE and such
 if (!window.console) {
@@ -1409,6 +1411,37 @@ describe('plugins', function () {
                 })).toBe(true);
             });
         });
+    });
+});
+
+describe('trees module', function() {
+    it('should tokenize strings', function() {
+        expect(Trees.tokenize('')).toEqual([]);
+        expect(Trees.tokenize('  ')).toEqual([]);
+        expect(Trees.tokenize(' (1, None, -2, 3) ')).toEqual(['(', 1, ',', 'None', ',', -2, ',', 3, ')']);
+        expect(function() { Trees.tokenize(' 1.5 '); }).toThrowError();
+    });
+
+    it('should parse trees', function() {
+        expect(Trees.parse_tree('')).toEqual(null);
+        expect(Trees.parse_tree('None')).toEqual(null);
+        expect(Trees.parse_tree('(-1, None, None)')).toEqual({x: -1, l: null, r: null});
+        expect(Trees.parse_tree('(25, (19, (12, (4, None, None), None), (22, None, (23, None, None))), (37, (29, None, (30, None, None)), None))'))
+            .toEqual({
+                l: { l: { l: { l: null, x: 4, r: null },
+                          x: 12,
+                          r: null },
+                     x: 19,
+                     r: { l: null,
+                          x: 22,
+                          r: { l: null, x: 23, r: null } } },
+                x: 25,
+                r: { l: { l: null,
+                          x: 29,
+                          r: { l: null, x: 30, r: null } },
+                     x: 37,
+                     r: null } });
+        // TODO check for error messages
     });
 });
 
