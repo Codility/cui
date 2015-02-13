@@ -24,14 +24,20 @@
 from django.template.response import SimpleTemplateResponse
 from django.conf import settings
 
-def render_cui(context):
+def render_cui(context, template='cui/cui.html'):
     context = context.copy()
     context['STATIC_URL'] = settings.STATIC_URL
     context['DEBUG'] = settings.DEBUG
     context['ticket'] = { 'id': 'TICKET_ID' }
     context['in_devel'] = True
-    return SimpleTemplateResponse('cui/cui.html', context)
+    return SimpleTemplateResponse(template, context)
 
+def cui_sandbox(request):
+    '''Scaffolding to test various components of CUI.'''
+    return render_cui({
+        'in_local': True,
+        'title': 'CUI sandbox'
+    }, template='cui/sandbox.html')
 
 def cui_test(request):
     '''Scaffolding for candidate interface JS tests.'''
