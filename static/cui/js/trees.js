@@ -181,7 +181,7 @@ var TreeEditor = function($elt, tree_string) {
     self.draw_tree = function(tree, parent) {
         if (tree.empty) {
             if (parent)
-                self.draw_edge(parent.x, parent.y, tree.x, tree.y);
+                self.draw_empty_edge(parent.x, parent.y, tree.x, tree.y);
 
             var node_elt = self.draw_empty(tree.x, tree.y);
             node_elt.onclick = function() {
@@ -209,23 +209,45 @@ var TreeEditor = function($elt, tree_string) {
 
     self.draw_node = function(value, x, y) {
         var width = self.get_node_width(value);
-        self.add_element('rect',
-                         {x: x-width/2, y: y-node_width/2,
-                          width: width, height: node_width,
-                          rx: node_width/2, ry: node_width/2,
-                          stroke: 'black', fill: 'white'});
-        self.add_element('text', {x: x, y: y, style: 'text-anchor: middle; dominant-baseline: central;'}, value);
+        var g = self.add_element('g', { 'class': 'node' });
+        g.appendChild(
+            self.create_element('rect',
+                                {x: x-width/2, y: y-node_width/2,
+                                 width: width, height: node_width,
+                                 rx: node_width/2, ry: node_width/2,
+                                 stroke: 'black', fill: 'white'})
+        );
+        g.appendChild(
+            self.create_element('text', {x: x, y: y, style: 'text-anchor: middle; dominant-baseline: central;'}, value)
+        );
+    };
+
+    self.draw_empty_edge = function(x1, y1, x2, y2) {
+        return self.add_element('line', { 'class': 'empty-edge', x1: x1, y1: y1, x2: x2, y2: y2, stroke: 'black'});
     };
 
     self.draw_edge = function(x1, y1, x2, y2) {
-        return self.add_element('line', {x1: x1, y1: y1, x2: x2, y2: y2, stroke: 'black'});
+        var g = self.add_element('g', { 'class': 'edge' });
+        g.appendChild(self.create_element('line', { 'class': 'thin', x1: x1, y1: y1, x2: x2, y2: y2 }));
+        g.appendChild(self.create_element('line', { 'class': 'thick', x1: x1, y1: y1, x2: x2, y2: y2 }));
+        return g;
     };
 
     self.draw_empty = function(x, y) {
-        return self.add_element('rect', {x: x-empty_size/2, y: y-empty_size/2, width: empty_size, height: empty_size, fill: 'black'});
+        return self.add_element('rect', {
+            'class': 'empty',
+            x: x-empty_size/2, y: y-empty_size/2,
+            width: empty_size, height: empty_size,
+        });
     };
 
     self.add_element = function(name, attributes, content) {
+        var elt = self.create_element(name, attributes, content);
+        self.svg.appendChild(elt);
+        return elt;
+    };
+
+    self.create_element = function(name, attributes, content) {
         var elt = document.createElementNS(svgNS, name);
 
         for (var key in attributes) {
@@ -235,8 +257,6 @@ var TreeEditor = function($elt, tree_string) {
         if (content !== undefined) {
             elt.appendChild(document.createTextNode(content));
         }
-
-        self.svg.appendChild(elt);
 
         return elt;
     };

@@ -3,6 +3,37 @@
 
 <head>
   {% include "cui/_head.html" %}
+
+  <style>
+    /* TODO move to the CUI stylesheet */
+
+    .empty {
+      fill: black;
+    }
+
+    .empty:hover {
+      cursor: pointer;
+      fill: green;
+    }
+
+    .edge .thin {
+      stroke: black;
+    }
+
+    .edge .thick {
+      stroke: transparent;
+      stroke-width: 8px;
+    }
+
+    .edge .thick:hover {
+      cursor: pointer;
+      stroke: darkred;
+    }
+
+    .node:hover text {
+      cursor: pointer;
+    }
+  </style>
 </head>
 
 <body>
