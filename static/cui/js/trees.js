@@ -166,7 +166,7 @@ var TreeEditor = function($elt, tree_string) {
     };
 
     self.draw_tree = function(tree, x, y, parent_x) {
-        var root_x, root_y;
+        var root_x, root_y, elt;
         if (tree.empty) {
             root_x = x + empty_width / 2;
             root_y = y + empty_height;
@@ -174,7 +174,7 @@ var TreeEditor = function($elt, tree_string) {
             if (parent_x !== undefined)
                 self.draw_edge(parent_x, y, root_x, root_y);
 
-            var elt = self.draw_empty(root_x, root_y);
+            elt = self.draw_empty(root_x, root_y);
             elt.onclick = function() {
                 tree.empty = false;
                 tree.x = 1;
@@ -190,8 +190,14 @@ var TreeEditor = function($elt, tree_string) {
         root_x = x + left_width + width / 2;
         root_y = y + node_height;
 
-        if (parent_x !== undefined)
-            self.draw_edge(parent_x, y, root_x, root_y);
+        if (parent_x !== undefined) {
+            elt = self.draw_edge(parent_x, y, root_x, root_y);
+            elt.onclick = function() {
+                tree.empty = true;
+                // FIXME remove the rest
+                self.redraw_tree();
+            }
+        }
 
         self.draw_tree(tree.l, x, root_y, root_x);
         self.draw_tree(tree.r, x + left_width + width, root_y, root_x);
@@ -210,7 +216,7 @@ var TreeEditor = function($elt, tree_string) {
     };
 
     self.draw_edge = function(x1, y1, x2, y2) {
-        self.add_element('line', {x1: x1, y1: y1, x2: x2, y2: y2, stroke: 'black'});
+        return self.add_element('line', {x1: x1, y1: y1, x2: x2, y2: y2, stroke: 'black'});
     };
 
     self.draw_empty = function(x, y) {
