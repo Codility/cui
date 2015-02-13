@@ -163,14 +163,14 @@ var TreeEditor = function($elt, tree_string) {
 
     self.calc_positions = function(tree, x, y) {
         if (tree.empty) {
-            tree.root_x = x + empty_width / 2;
-            tree.root_y = y + empty_height;
+            tree.x = x + empty_width / 2;
+            tree.y = y + empty_height;
         } else {
-            tree.root_x = x + tree.l.width + tree.node_width / 2;
-            tree.root_y = y + node_height;
+            tree.x = x + tree.l.width + tree.node_width / 2;
+            tree.y = y + node_height;
 
-            self.calc_positions(tree.l, x, tree.root_y);
-            self.calc_positions(tree.r, x + tree.l.width + tree.node_width, tree.root_y);
+            self.calc_positions(tree.l, x, tree.y);
+            self.calc_positions(tree.r, x + tree.l.width + tree.node_width, tree.y);
         }
     };
 
@@ -181,9 +181,9 @@ var TreeEditor = function($elt, tree_string) {
     self.draw_tree = function(tree, parent) {
         if (tree.empty) {
             if (parent)
-                self.draw_edge(parent.root_x, parent.root_y, tree.root_x, tree.root_y);
+                self.draw_edge(parent.x, parent.y, tree.x, tree.y);
 
-            var node_elt = self.draw_empty(tree.root_x, tree.root_y);
+            var node_elt = self.draw_empty(tree.x, tree.y);
             node_elt.onclick = function() {
                 tree.empty = false;
                 tree.val = 1;
@@ -193,7 +193,7 @@ var TreeEditor = function($elt, tree_string) {
             };
         } else {
             if (parent) {
-                var edge_elt = self.draw_edge(parent.root_x, parent.root_y, tree.root_x, tree.root_y);
+                var edge_elt = self.draw_edge(parent.x, parent.y, tree.x, tree.y);
                 edge_elt.onclick = function() {
                     tree.empty = true;
                     self.redraw_tree();
@@ -203,7 +203,7 @@ var TreeEditor = function($elt, tree_string) {
             self.draw_tree(tree.l, tree);
             self.draw_tree(tree.r, tree);
 
-            self.draw_node(tree.val, tree.root_x, tree.root_y);
+            self.draw_node(tree.val, tree.x, tree.y);
         }
    };
 
