@@ -121,16 +121,28 @@ var TreeEditor = function($elt, tree_string) {
     self.init = function() {
         self.$elt = $elt;
         self.tree = Trees.parse_tree(tree_string);
+        self.width = 1000;
+        self.height = 500;
 
         self.svg = document.createElementNS(svgNS, "svg");
-        self.svg.setAttributeNS(null, 'width', 500);
-        self.svg.setAttributeNS(null, 'height', 500);
+        self.svg.setAttributeNS(null, 'width', self.width);
+        self.svg.setAttributeNS(null, 'height', self.height);
 
         $elt.append(self.svg);
+        self.redraw_tree();
+    };
 
+    self.clear = function() {
+        while (self.svg.firstChild) {
+            self.svg.removeChild(self.svg.firstChild);
+        }
+    };
+
+    self.redraw_tree = function() {
         var width = self.get_width(self.tree);
-        var x = (500 - width) / 2;
+        var x = (self.width - width) / 2;
         var y = 0;
+        self.clear();
         self.draw_tree(self.tree, x, y);
     };
 
@@ -138,8 +150,9 @@ var TreeEditor = function($elt, tree_string) {
         if (tree.empty)
             return empty_width;
 
-        if (tree.width !== undefined)
-            return tree.width;
+        // FIXME
+//        if (tree.width !== undefined)
+//            return tree.width;
 
         var left_width = self.get_width(tree.l);
         var right_width = self.get_width(tree.r);
@@ -161,7 +174,14 @@ var TreeEditor = function($elt, tree_string) {
             if (parent_x !== undefined)
                 self.draw_edge(parent_x, y, root_x, root_y);
 
-            self.draw_empty(root_x, root_y);
+            var elt = self.draw_empty(root_x, root_y);
+            elt.onclick = function() {
+                tree.empty = false;
+                tree.x = 1;
+                tree.l = { empty: true };
+                tree.r = { empty: true };
+                self.redraw_tree();
+            };
             return;
         }
 
@@ -194,7 +214,7 @@ var TreeEditor = function($elt, tree_string) {
     };
 
     self.draw_empty = function(x, y) {
-        var elt = self.add_element('rect', {x: x-empty_size/2, y: y-empty_size/2, width: empty_size, height: empty_size, fill: 'black'});
+        return self.add_element('rect', {x: x-empty_size/2, y: y-empty_size/2, width: empty_size, height: empty_size, fill: 'black'});
     };
 
     self.add_element = function(name, attributes, content) {
