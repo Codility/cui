@@ -60,13 +60,13 @@ var Trees = (function() {
                 return { empty: true };
             } else if (tokens[0] === '(') {
                 read('(');
-                var x = read_int();
+                var val = read_int();
                 read(',');
                 var l = read_tree();
                 read(',');
                 var r = read_tree();
                 read(')');
-                return { x: x, l: l, r: r };
+                return { val: val, l: l, r: r };
             } else {
                 error_parsing('tree');
             }
@@ -99,7 +99,7 @@ var Trees = (function() {
         if (tree.empty)
             return 'None';
         else
-            return ('(' + tree.x + ', ' +
+            return ('(' + tree.val + ', ' +
                     self.serialize_tree(tree.l) + ', ' +
                     self.serialize_tree(tree.r) + ')');
     };
@@ -156,7 +156,7 @@ var TreeEditor = function($elt, tree_string) {
             self.calc_width(tree.l);
             self.calc_width(tree.r);
 
-            tree.node_width = self.get_node_width(tree.x);
+            tree.node_width = self.get_node_width(tree.val);
             tree.width = tree.l.width + tree.r.width + tree.node_width;
         }
     };
@@ -186,7 +186,7 @@ var TreeEditor = function($elt, tree_string) {
             var node_elt = self.draw_empty(tree.root_x, tree.root_y);
             node_elt.onclick = function() {
                 tree.empty = false;
-                tree.x = 1;
+                tree.val = 1;
                 tree.l = { empty: true };
                 tree.r = { empty: true };
                 self.redraw_tree();
@@ -203,7 +203,7 @@ var TreeEditor = function($elt, tree_string) {
             self.draw_tree(tree.l, tree);
             self.draw_tree(tree.r, tree);
 
-            self.draw_node(tree.x, tree.root_x, tree.root_y);
+            self.draw_node(tree.val, tree.root_x, tree.root_y);
         }
    };
 
