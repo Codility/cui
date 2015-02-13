@@ -45,7 +45,7 @@ var Trees = (function() {
         var tokens = self.tokenize(input);
 
         if (tokens.length === 0)
-            return null;
+            return { empty: true };
 
         var t = read_tree();
         end();
@@ -57,7 +57,7 @@ var Trees = (function() {
 
             if (tokens[0] === 'None') {
                 read('None');
-                return null;
+                return { empty: true };
             } else if (tokens[0] === '(') {
                 read('(');
                 var x = read_int();
@@ -96,7 +96,7 @@ var Trees = (function() {
     };
 
     self.serialize_tree = function(tree) {
-        if (tree === null)
+        if (tree.empty)
             return 'None';
         else
             return ('(' + tree.x + ', ' +
@@ -113,10 +113,10 @@ var TreeEditor = function($elt, tree_string) {
 
     var svgNS = "http://www.w3.org/2000/svg";
     var node_width = 30;
-    var null_width = 5;
+    var empty_width = 5;
     var node_height = 50;
-    var null_height = 25;
-    var null_size = 10;
+    var empty_height = 25;
+    var empty_size = 10;
 
     self.init = function() {
         self.$elt = $elt;
@@ -135,8 +135,8 @@ var TreeEditor = function($elt, tree_string) {
     };
 
     self.get_width = function(tree) {
-        if (tree === null)
-            return null_width;
+        if (tree.empty)
+            return empty_width;
 
         if (tree.width !== undefined)
             return tree.width;
@@ -154,14 +154,14 @@ var TreeEditor = function($elt, tree_string) {
 
     self.draw_tree = function(tree, x, y, parent_x) {
         var root_x, root_y;
-        if (tree === null) {
-            root_x = x + null_width / 2;
-            root_y = y + null_height;
+        if (tree.empty) {
+            root_x = x + empty_width / 2;
+            root_y = y + empty_height;
 
             if (parent_x !== undefined)
                 self.draw_edge(parent_x, y, root_x, root_y);
 
-            self.draw_null(root_x, root_y);
+            self.draw_empty(root_x, root_y);
             return;
         }
 
@@ -193,8 +193,8 @@ var TreeEditor = function($elt, tree_string) {
         self.add_element('line', {x1: x1, y1: y1, x2: x2, y2: y2, stroke: 'black'});
     };
 
-    self.draw_null = function(x, y) {
-        self.add_element('rect', {x: x-null_size/2, y: y-null_size/2, width: null_size, height: null_size, fill: 'black'});
+    self.draw_empty = function(x, y) {
+        var elt = self.add_element('rect', {x: x-empty_size/2, y: y-empty_size/2, width: empty_size, height: empty_size, fill: 'black'});
     };
 
     self.add_element = function(name, attributes, content) {
@@ -209,6 +209,8 @@ var TreeEditor = function($elt, tree_string) {
         }
 
         self.svg.appendChild(elt);
+
+        return elt;
     };
 
     // HACK

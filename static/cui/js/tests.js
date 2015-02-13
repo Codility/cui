@@ -1424,31 +1424,31 @@ describe('trees module', function() {
 
     var example_tree_string = '(25, (19, (12, (4, None, None), None), (22, None, (23, None, None))), (37, (29, None, (30, None, None)), None))';
     var example_tree = {
-        l: { l: { l: { l: null, x: 4, r: null },
+        l: { l: { l: { l: { empty: true }, x: 4, r: { empty: true } },
                   x: 12,
-                  r: null },
+                  r: { empty: true } },
              x: 19,
-             r: { l: null,
+             r: { l: { empty: true },
                   x: 22,
-                  r: { l: null, x: 23, r: null } } },
+                  r: { l: { empty: true }, x: 23, r: { empty: true } } } },
         x: 25,
-        r: { l: { l: null,
+        r: { l: { l: { empty: true },
                   x: 29,
-                  r: { l: null, x: 30, r: null } },
+                  r: { l: { empty: true }, x: 30, r: { empty: true } } },
              x: 37,
-             r: null } };
+             r: { empty: true } } };
 
     it('should parse trees', function() {
-        expect(Trees.parse_tree('')).toEqual(null);
-        expect(Trees.parse_tree('None')).toEqual(null);
-        expect(Trees.parse_tree('(-1, None, None)')).toEqual({x: -1, l: null, r: null});
+        expect(Trees.parse_tree('')).toEqual({ empty: true });
+        expect(Trees.parse_tree('None')).toEqual({ empty: true });
+        expect(Trees.parse_tree('(-1, None, None)')).toEqual({x: -1, l: { empty: true }, r: { empty: true }});
         expect(Trees.parse_tree(example_tree_string)).toEqual(example_tree);
         // TODO check for error messages
     });
 
     it('should serialize trees', function() {
-        expect(Trees.serialize_tree(null)).toEqual('None');
-        expect(Trees.serialize_tree({x: -1, l: null, r: null})).toEqual('(-1, None, None)');
+        expect(Trees.serialize_tree({ empty: true })).toEqual('None');
+        expect(Trees.serialize_tree({ x: -1, l: { empty: true }, r: { empty: true } })).toEqual('(-1, None, None)');
         expect(Trees.serialize_tree(example_tree)).toEqual(example_tree_string);
     });
 });
