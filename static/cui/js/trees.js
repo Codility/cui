@@ -139,70 +139,72 @@ var TreeEditor = function($elt, tree_string) {
     };
 
     self.redraw_tree = function() {
-        var width = self.get_width(self.tree);
-        var x = (self.width - width) / 2;
+        self.calc_width(self.tree);
+        var x = (self.width - self.tree.width) / 2;
         var y = 0;
+        self.calc_positions(self.tree, x, y);
+
         self.clear();
-        self.draw_tree(self.tree, x, y);
+        self.draw_tree(self.tree);
     };
 
-    self.get_width = function(tree) {
-        if (tree.empty)
-            return empty_width;
+    self.calc_width = function(tree) {
+        if (tree.empty) {
+            tree.node_width = empty_width;
+            tree.width = empty_width;
+        } else {
+            self.calc_width(tree.l);
+            self.calc_width(tree.r);
 
-        // FIXME
-//        if (tree.width !== undefined)
-//            return tree.width;
+            tree.node_width = self.get_node_width(tree.x);
+            tree.width = tree.l.width + tree.r.width + tree.node_width;
+        }
+    };
 
-        var left_width = self.get_width(tree.l);
-        var right_width = self.get_width(tree.r);
+    self.calc_positions = function(tree, x, y) {
+        if (tree.empty) {
+            tree.root_x = x + empty_width / 2;
+            tree.root_y = y + empty_height;
+        } else {
+            tree.root_x = x + tree.l.width + tree.node_width / 2;
+            tree.root_y = y + node_height;
 
-        tree.width = left_width + right_width + self.get_node_width(tree.x);
-        return tree.width;
+            self.calc_positions(tree.l, x, tree.root_y);
+            self.calc_positions(tree.r, x + tree.l.width + tree.node_width, tree.root_y);
+        }
     };
 
     self.get_node_width = function(value) {
         return Math.max(node_width, self.get_text_width(value) + 10);
     };
 
-    self.draw_tree = function(tree, x, y, parent_x) {
-        var root_x, root_y, elt;
+    self.draw_tree = function(tree, parent) {
         if (tree.empty) {
-            root_x = x + empty_width / 2;
-            root_y = y + empty_height;
+            if (parent)
+                self.draw_edge(parent.root_x, parent.root_y, tree.root_x, tree.root_y);
 
-            if (parent_x !== undefined)
-                self.draw_edge(parent_x, y, root_x, root_y);
-
-            elt = self.draw_empty(root_x, root_y);
-            elt.onclick = function() {
+            var node_elt = self.draw_empty(tree.root_x, tree.root_y);
+            node_elt.onclick = function() {
                 tree.empty = false;
                 tree.x = 1;
                 tree.l = { empty: true };
                 tree.r = { empty: true };
                 self.redraw_tree();
             };
-            return;
-        }
-
-        var left_width = self.get_width(tree.l);
-        var width = self.get_node_width(tree.x);
-        root_x = x + left_width + width / 2;
-        root_y = y + node_height;
-
-        if (parent_x !== undefined) {
-            elt = self.draw_edge(parent_x, y, root_x, root_y);
-            elt.onclick = function() {
-                tree.empty = true;
-                // FIXME remove the rest
-                self.redraw_tree();
+        } else {
+            if (parent) {
+                var edge_elt = self.draw_edge(parent.root_x, parent.root_y, tree.root_x, tree.root_y);
+                edge_elt.onclick = function() {
+                    tree.empty = true;
+                    self.redraw_tree();
+                };
             }
+
+            self.draw_tree(tree.l, tree);
+            self.draw_tree(tree.r, tree);
+
+            self.draw_node(tree.x, tree.root_x, tree.root_y);
         }
-
-        self.draw_tree(tree.l, x, root_y, root_x);
-        self.draw_tree(tree.r, x + left_width + width, root_y, root_x);
-
-        self.draw_node(tree.x, root_x, root_y);
    };
 
     self.draw_node = function(value, x, y) {
