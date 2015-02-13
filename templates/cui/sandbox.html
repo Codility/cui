@@ -9,4 +9,13 @@
 
   <h1>It works!</h1>
 
+  <div class="tree-editor"></div>
+
+  <script>
+    $(function() {
+        var tree_string = '(25, (19, (12, (4, None, None), None), (22, None, (23, None, None))), (37, (29, None, (30, None, None)), None))';
+        var tree_editor = TreeEditor($('.tree-editor'), tree_string);
+    });
+  </script>
+
 </body>

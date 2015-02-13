@@ -1,6 +1,4 @@
 
-
-
 var Trees = (function() {
     var self = {};
 
@@ -108,3 +106,19 @@ var Trees = (function() {
 
     return self;
 })();
+
+
+var TreeEditor = function($elt, tree_string) {
+    var self = {};
+
+    self.init = function() {
+        self.$elt = $elt;
+        self.tree = Trees.parse_tree(tree_string);
+
+        self.$elt.text(JSON.stringify(self.tree));
+    };
+
+    self.init();
+
+    return self;
+};
