@@ -12,9 +12,10 @@
   <div class="tree-editor"></div>
 
   <script>
+    var tree_editor;
     $(function() {
-        var tree_string = '(25, (19, (12, (4, None, None), None), (22, None, (23, None, None))), (37, (29, None, (30, None, None)), None))';
-        var tree_editor = TreeEditor($('.tree-editor'), tree_string);
+        var tree_string = '(25, (1999999, (1222222, (4, None, None), None), (2222222, None, (23, None, None))), (37, (29, None, (30, None, None)), None))';
+        tree_editor = TreeEditor($('.tree-editor'), tree_string);
     });
   </script>
 

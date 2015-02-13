@@ -144,8 +144,12 @@ var TreeEditor = function($elt, tree_string) {
         var left_width = self.get_width(tree.l);
         var right_width = self.get_width(tree.r);
 
-        tree.width = left_width + right_width + node_width;
+        tree.width = left_width + right_width + self.get_node_width(tree.x);
         return tree.width;
+    };
+
+    self.get_node_width = function(value) {
+        return Math.max(node_width, self.get_text_width(value) + 10);
     };
 
     self.draw_tree = function(tree, x, y, parent_x) {
@@ -162,20 +166,26 @@ var TreeEditor = function($elt, tree_string) {
         }
 
         var left_width = self.get_width(tree.l);
-        root_x = x + left_width + node_width / 2;
+        var width = self.get_node_width(tree.x);
+        root_x = x + left_width + width / 2;
         root_y = y + node_height;
 
         if (parent_x !== undefined)
             self.draw_edge(parent_x, y, root_x, root_y);
 
         self.draw_tree(tree.l, x, root_y, root_x);
-        self.draw_tree(tree.r, x + left_width + node_width, root_y, root_x);
+        self.draw_tree(tree.r, x + left_width + width, root_y, root_x);
 
         self.draw_node(tree.x, root_x, root_y);
    };
 
     self.draw_node = function(value, x, y) {
-        self.add_element('circle', {cx: x, cy: y, r: node_width/2, stroke: 'black', fill: 'white'});
+        var width = self.get_node_width(value);
+        self.add_element('rect',
+                         {x: x-width/2, y: y-node_width/2,
+                          width: width, height: node_width,
+                          rx: node_width/2, ry: node_width/2,
+                          stroke: 'black', fill: 'white'});
         self.add_element('text', {x: x, y: y, style: 'text-anchor: middle; dominant-baseline: central;'}, value);
     };
 
@@ -199,6 +209,16 @@ var TreeEditor = function($elt, tree_string) {
         }
 
         self.svg.appendChild(elt);
+    };
+
+    // HACK
+    self.get_text_width = function(content) {
+        var elt = document.createElementNS(svgNS, 'text');
+        elt.appendChild(document.createTextNode(content));
+        self.svg.appendChild(elt);
+        var width = elt.getBoundingClientRect().width;
+        self.svg.removeChild(elt);
+        return width;
     };
 
     self.init();
