@@ -1422,26 +1422,34 @@ describe('trees module', function() {
         expect(function() { Trees.tokenize(' 1.5 '); }).toThrowError();
     });
 
+    var example_tree_string = '(25, (19, (12, (4, None, None), None), (22, None, (23, None, None))), (37, (29, None, (30, None, None)), None))';
+    var example_tree = {
+        l: { l: { l: { l: null, x: 4, r: null },
+                  x: 12,
+                  r: null },
+             x: 19,
+             r: { l: null,
+                  x: 22,
+                  r: { l: null, x: 23, r: null } } },
+        x: 25,
+        r: { l: { l: null,
+                  x: 29,
+                  r: { l: null, x: 30, r: null } },
+             x: 37,
+             r: null } };
+
     it('should parse trees', function() {
         expect(Trees.parse_tree('')).toEqual(null);
         expect(Trees.parse_tree('None')).toEqual(null);
         expect(Trees.parse_tree('(-1, None, None)')).toEqual({x: -1, l: null, r: null});
-        expect(Trees.parse_tree('(25, (19, (12, (4, None, None), None), (22, None, (23, None, None))), (37, (29, None, (30, None, None)), None))'))
-            .toEqual({
-                l: { l: { l: { l: null, x: 4, r: null },
-                          x: 12,
-                          r: null },
-                     x: 19,
-                     r: { l: null,
-                          x: 22,
-                          r: { l: null, x: 23, r: null } } },
-                x: 25,
-                r: { l: { l: null,
-                          x: 29,
-                          r: { l: null, x: 30, r: null } },
-                     x: 37,
-                     r: null } });
+        expect(Trees.parse_tree(example_tree_string)).toEqual(example_tree);
         // TODO check for error messages
+    });
+
+    it('should serialize trees', function() {
+        expect(Trees.serialize_tree(null)).toEqual('None');
+        expect(Trees.serialize_tree({x: -1, l: null, r: null})).toEqual('(-1, None, None)');
+        expect(Trees.serialize_tree(example_tree)).toEqual(example_tree_string);
     });
 });
 

@@ -4,7 +4,6 @@
 var Trees = (function() {
     var self = {};
 
-
     var TOKEN_TYPES = [
         { regex: /^\(/ },
         { regex: /^\)/ },
@@ -96,6 +95,15 @@ var Trees = (function() {
             throw new Error('unexpected ' + (tokens.length > 0 ? "'"+tokens[0]+"'" : 'end of input') +
                             ', required ' + what);
         }
+    };
+
+    self.serialize_tree = function(tree) {
+        if (tree === null)
+            return 'None';
+        else
+            return ('(' + tree.x + ', ' +
+                    self.serialize_tree(tree.l) + ', ' +
+                    self.serialize_tree(tree.r) + ')');
     };
 
     return self;
