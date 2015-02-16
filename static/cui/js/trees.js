@@ -239,10 +239,11 @@ var TreeEditor = function($elt) {
                 tree.empty_tree_part = EmptyTreePart(container, tree, parent);
                 tree.empty_tree_part.node_elt.onclick = function() {
                     tree.empty = false;
-                    tree.val = 1;
+                    tree.val = '0';
                     tree.l = { empty: true };
                     tree.r = { empty: true };
                     self.redraw_tree();
+                    self.make_editable(tree);
                 };
             }
 
