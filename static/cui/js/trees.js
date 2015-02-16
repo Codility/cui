@@ -188,6 +188,7 @@ var TreeEditor = function($elt) {
         var height = self.tree.height;
 
         SVG.update(self.svg, {width: width, height: height});
+        self.$elt.css({width: width+'px', height: height+'px'});
 
         self.draw_tree(self.main, self.tree);
     };
@@ -346,7 +347,7 @@ var EmptyTreePart = function(container, tree, parent) {
     var self = Part(container, 'empty-tree');
 
     if (parent)
-        self.edge_elt = SVG.add(self.group_elt, 'line', { 'class': 'empty-edge', stroke: 'black'});
+        self.edge_elt = SVG.add(self.group_elt, 'line', { 'class': 'empty-edge'});
 
     self.node_elt = SVG.add(self.group_elt, 'rect', {
         'class': 'empty',
@@ -376,10 +377,8 @@ var NonEmptyTreePart = function(container, tree, parent) {
     self.node_elt = SVG.add(self.group_elt, 'g', { 'class': 'node' });
     self.rect_elt = SVG.add(self.node_elt, 'rect',
                             {height: TreeDimensions.NODE_WIDTH,
-                             rx: TreeDimensions.NODE_WIDTH/2, ry: TreeDimensions.NODE_WIDTH/2,
-                             stroke: 'black', fill: 'white'});
-    self.text_elt = SVG.add(self.node_elt, 'text',
-                            { style: 'text-anchor: middle;'});
+                             rx: TreeDimensions.NODE_WIDTH/2, ry: TreeDimensions.NODE_WIDTH/2 });
+    self.text_elt = SVG.add(self.node_elt, 'text', {});
 
     self.update = function () {
         if (parent) {

@@ -830,7 +830,11 @@ g.tree-editor-main {
 
   .empty:hover {
     cursor: pointer;
-    fill: green;
+    fill: #070;
+  }
+
+  .empty-edge {
+    stroke: black;
   }
 
   .edge .thin {
@@ -842,9 +846,27 @@ g.tree-editor-main {
     stroke-width: 8px;
   }
 
-  .edge:hover .thick, .edge:hover .thin {
-    cursor: pointer;
-    stroke: darkred;
+  .edge:hover {
+    line {
+      cursor: pointer;
+      stroke: #a00;
+    }
+
+    & + .children, & + .children + .node {
+      * { stroke: #ccc; }
+      .edge .thick { stroke: $tree-background; }
+      .empty { fill: #ccc; }
+    }
+  }
+
+  .node {
+    rect {
+      stroke: black;
+      fill: white;
+    }
+    text {
+      text-anchor: middle;
+    }
   }
 
   .node:hover {
