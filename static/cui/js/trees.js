@@ -148,15 +148,16 @@ var SVG = (function() {
 })();
 
 
+var TreeDimensions = {
+    NODE_WIDTH: 30,
+    EMPTY_WIDTH: 5,
+    NODE_HEIGHT: 50,
+    EMPTY_HEIGHT: 25,
+    EMPTY_SIZE: 10
+};
+
 var TreeEditor = function($elt) {
     var self = {};
-
-
-    var node_width = 30;
-    var empty_width = 5;
-    var node_height = 50;
-    var empty_height = 25;
-    var empty_size = 10;
 
     self.init = function() {
         self.$elt = $elt;
@@ -181,39 +182,38 @@ var TreeEditor = function($elt) {
     // TODO calc the dimensions properly instead of hard-coding
     self.redraw_tree = function() {
         self.calc_dimensions(self.tree);
-        self.calc_positions(self.tree, 25, -node_height + 30);
+        self.calc_positions(self.tree, 25, -TreeDimensions.NODE_HEIGHT + 30);
 
         var width = self.tree.width + 50;
         var height = self.tree.height;
 
         SVG.update(self.svg, {width: width, height: height});
 
-        self.clear();
         self.draw_tree(self.main, self.tree);
     };
 
     self.calc_dimensions = function(tree) {
         if (tree.empty) {
-            tree.node_width = empty_width;
-            tree.width = empty_width;
-            tree.height = empty_height;
+            tree.node_width = TreeDimensions.EMPTY_WIDTH;
+            tree.width = TreeDimensions.EMPTY_WIDTH;
+            tree.height = TreeDimensions.EMPTY_HEIGHT;
         } else {
             self.calc_dimensions(tree.l);
             self.calc_dimensions(tree.r);
 
             tree.node_width = self.get_node_width(tree.val);
             tree.width = tree.l.width + tree.r.width + tree.node_width;
-            tree.height = node_height + Math.max(tree.l.height, tree.r.height);
+            tree.height = TreeDimensions.NODE_HEIGHT + Math.max(tree.l.height, tree.r.height);
         }
     };
 
     self.calc_positions = function(tree, x, y) {
         if (tree.empty) {
-            tree.x = x + empty_width / 2;
-            tree.y = y + empty_height;
+            tree.x = x + TreeDimensions.EMPTY_WIDTH / 2;
+            tree.y = y + TreeDimensions.EMPTY_HEIGHT;
         } else {
             tree.x = x + tree.l.width + tree.node_width / 2;
-            tree.y = y + node_height;
+            tree.y = y + TreeDimensions.NODE_HEIGHT;
 
             self.calc_positions(tree.l, x, tree.y);
             self.calc_positions(tree.r, x + tree.l.width + tree.node_width, tree.y);
@@ -221,27 +221,23 @@ var TreeEditor = function($elt) {
     };
 
     self.get_node_width = function(value) {
-        return Math.max(node_width, self.get_text_width(value) + 10);
+        return Math.max(TreeDimensions.NODE_WIDTH, self.get_text_width(value) + 10);
     };
 
     self.draw_tree = function(container, tree, parent) {
         function remove(name) {
             if (tree[name]) {
-                container.removeChild(tree[name]);
+                tree[name].remove();
                 tree[name] = null;
             }
         }
 
         if (tree.empty) {
-            remove('tree_elt');
+            remove('tree_part');
 
-            if (!tree.empty_tree_elt) {
-                tree.empty_tree_elt = SVG.add(container, 'g', {'class': 'empty-tree'});
-                if (parent) {
-                    self.draw_empty_edge(tree.empty_tree_elt);
-                }
-                var empty_elt = self.draw_empty(tree.empty_tree_elt);
-                empty_elt.onclick = function() {
+            if (!tree.empty_tree_part) {
+                tree.empty_tree_part = EmptyTreePart(container, tree, parent);
+                tree.empty_tree_part.node_elt.onclick = function() {
                     tree.empty = false;
                     tree.val = 1;
                     tree.l = { empty: true };
@@ -250,42 +246,27 @@ var TreeEditor = function($elt) {
                 };
             }
 
-            if (parent) {
-                self.update_empty_edge(tree.empty_tree_elt, parent.x, parent.y, tree.x, tree.y);
-            }
-
-            self.update_empty(tree.empty_tree_elt, tree.x, tree.y);
+            tree.empty_tree_part.update();
         } else {
-            remove('empty_tree_elt');
+            remove('empty_tree_part');
 
-            var creating = !tree.tree_elt;
-
-            if (creating) {
-                tree.tree_elt = SVG.add(container, 'g', {'class': 'tree'});
+            if (!tree.tree_part) {
+                tree.tree_part = NonEmptyTreePart(container, tree, parent);
                 if (parent) {
-                    var edge_elt = self.draw_edge(tree.tree_elt);
-                    edge_elt.onclick = function() {
+                    tree.tree_part.onclick = function() {
                         tree.empty = true;
                         self.redraw_tree();
                     };
                 }
-            }
-
-            if (creating) {
-                var node_elt = self.draw_node(tree.tree_elt);
-                node_elt.onclick = function() {
-                    self.make_editable(tree);
+                tree.tree_part.node_elt = function() {
+                        self.make_editable(tree);
                 };
             }
 
-            if (parent) {
-                self.update_edge(tree.tree_elt, parent.x, parent.y, tree.x, tree.y);
-            }
+            tree.tree_part.update();
 
-            self.update_node(tree.tree_elt, tree.val, tree.x, tree.y);
-            self.draw_tree(tree.tree_elt, tree.l, tree);
-            self.draw_tree(tree.tree_elt, tree.r, tree);
-
+            self.draw_tree(tree.tree_part.group_elt, tree.l, tree);
+            self.draw_tree(tree.tree_part.group_elt, tree.r, tree);
         }
     };
 
@@ -340,62 +321,6 @@ var TreeEditor = function($elt) {
         $input.on('blur', exit);
     };
 
-    self.draw_node = function(container) {
-        var g = SVG.add(container, 'g', { 'class': 'node' });
-        SVG.add(g, 'rect',
-                {height: node_width,
-                 rx: node_width/2, ry: node_width/2,
-                 stroke: 'black', fill: 'white'});
-        SVG.add(g, 'text',
-                { style: 'text-anchor: middle;'});
-        return g;
-    };
-
-    self.update_node = function(container, value, x, y) {
-        var width = self.get_node_width(value);
-        SVG.update_selector(container, '.node rect',
-                            {x: x-width/2, y: y-node_width/2,
-                             width: width});
-        // HACK: vertical alignment is hardcoded, because
-        // IE doesn't support 'dominant-baseline: central'.
-        SVG.update_selector(container, '.node text', {
-                                x: x, y: y + 5,
-                            }, value);
-    };
-
-    self.draw_empty_edge = function(container) {
-        return SVG.add(container, 'line', { 'class': 'empty-edge', stroke: 'black'});
-    };
-
-    self.update_empty_edge = function(container, x1, y1, x2, y2) {
-        SVG.update_selector(container, '.empty-edge', { x1: x1, y1: y1, x2: x2, y2: y2 });
-    };
-
-    self.draw_edge = function(container) {
-        var g = SVG.add(container, 'g', { 'class': 'edge' });
-        SVG.add(g, 'line', { 'class': 'thick' });
-        SVG.add(g, 'line', { 'class': 'thin' });
-        return g;
-    };
-
-    self.update_edge = function(container, x1, y1, x2, y2) {
-        SVG.update_selector(container, '.edge .thick', { x1: x1, y1: y1, x2: x2, y2: y2 });
-        SVG.update_selector(container, '.edge .thin', { x1: x1, y1: y1, x2: x2, y2: y2 });
-    };
-
-    self.draw_empty = function(container) {
-        return SVG.add(container, 'rect', {
-            'class': 'empty',
-            width: empty_size, height: empty_size
-        });
-    };
-
-    self.update_empty = function(container, x, y) {
-        SVG.update_selector(container, '.empty', {
-            x: x-empty_size/2, y: y-empty_size/2
-        });
-    };
-
     // HACK
     self.get_text_width = function(content) {
         var elt = SVG.add(self.main, 'text', {}, content);
@@ -405,6 +330,73 @@ var TreeEditor = function($elt) {
     };
 
     self.init();
+
+    return self;
+};
+
+var Part = function(container, class_name) {
+    var self = {};
+
+    self.group_elt = SVG.add(container, 'g', {'class': class_name});
+
+    self.remove = function() {
+        container.removeChild(self.group_elt);
+    };
+    return self;
+};
+
+var EmptyTreePart = function(container, tree, parent) {
+    var self = Part(container, 'empty-tree');
+
+    if (parent)
+        self.edge_elt = SVG.add(self.group_elt, 'line', { 'class': 'empty-edge', stroke: 'black'});
+
+    self.node_elt = SVG.add(self.group_elt, 'rect', {
+        'class': 'empty',
+        width: TreeDimensions.EMPTY_SIZE, height: TreeDimensions.EMPTY_SIZE
+    });
+
+    self.update = function() {
+        if (parent)
+            SVG.update(self.edge_elt, {x1: parent.x, y1: parent.y, x2: tree.x, y2: tree.y});
+        SVG.update(self.node_elt, {x: tree.x - TreeDimensions.EMPTY_SIZE/2,
+                                   y: tree.y - TreeDimensions.EMPTY_SIZE/2});
+    };
+    return self;
+};
+
+var NonEmptyTreePart = function(container, tree, parent) {
+    var self = Part(container, 'tree');
+
+    if (parent) {
+        self.edge_elt = SVG.add(self.group_elt, 'g', { 'class': 'edge' });
+        self.thick_elt = SVG.add(self.edge_elt, 'line', { 'class': 'thick' });
+        self.thin_elt = SVG.add(self.edge_elt, 'line', { 'class': 'thin' });
+    }
+
+    self.node_elt = SVG.add(self.group_elt, 'g', { 'class': 'node' });
+    self.rect_elt = SVG.add(self.node_elt, 'rect',
+                            {height: TreeDimensions.NODE_WIDTH,
+                             rx: TreeDimensions.NODE_WIDTH/2, ry: TreeDimensions.NODE_WIDTH/2,
+                             stroke: 'black', fill: 'white'});
+    self.text_elt = SVG.add(self.node_elt, 'text',
+                            { style: 'text-anchor: middle;'});
+
+    self.update = function () {
+        if (parent) {
+            SVG.update(self.thick_elt, { x1: parent.x, y1: parent.y, x2: tree.x, y2: tree.y });
+            SVG.update(self.thin_elt, { x1: parent.x, y1: parent.y, x2: tree.x, y2: tree.y });
+        }
+
+        SVG.update(self.rect_elt,
+                   {x: tree.x-tree.node_width/2, y: tree.y-TreeDimensions.NODE_WIDTH/2,
+                    width: tree.node_width});
+        // HACK: vertical alignment is hardcoded, because
+        // IE doesn't support 'dominant-baseline: central'.
+        SVG.update(self.text_elt, {
+            x: tree.x, y: tree.y + 5,
+        }, tree.val);
+    };
 
     return self;
 };
