@@ -769,3 +769,42 @@ $tc-padding: 16px;
     margin-top: 10px;
   }
 }
+
+// Tree editor
+
+/* ... */
+
+// Tree editor SVG
+
+g.tree-editor-main {
+  .empty {
+    fill: black;
+  }
+
+  .empty:hover {
+    cursor: pointer;
+    fill: green;
+  }
+
+  .edge .thin {
+    stroke: black;
+  }
+
+  .edge .thick {
+    stroke: transparent;
+    stroke-width: 8px;
+  }
+
+  .edge .thick:hover {
+    cursor: pointer;
+    stroke: darkred;
+  }
+
+  .node:hover {
+    cursor: pointer;
+  }
+
+  .node:hover rect {
+    stroke-width: 3px;
+  }
+}

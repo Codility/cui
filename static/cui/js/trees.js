@@ -127,14 +127,17 @@ var TreeEditor = function($elt, tree_string) {
         self.svg = document.createElementNS(svgNS, "svg");
         self.svg.setAttributeNS(null, 'width', self.width);
         self.svg.setAttributeNS(null, 'height', self.height);
-
         $elt.append(self.svg);
+
+        self.main = self.create_element('g', {'class': 'tree-editor-main'});
+        self.svg.appendChild(self.main);
+
         self.redraw_tree();
     };
 
     self.clear = function() {
-        while (self.svg.firstChild) {
-            self.svg.removeChild(self.svg.firstChild);
+        while (self.main.firstChild) {
+            self.main.removeChild(self.main.firstChild);
         }
     };
 
@@ -257,7 +260,7 @@ var TreeEditor = function($elt, tree_string) {
 
     self.add_element = function(name, attributes, content) {
         var elt = self.create_element(name, attributes, content);
-        self.svg.appendChild(elt);
+        self.main.appendChild(elt);
         return elt;
     };
 
@@ -279,9 +282,9 @@ var TreeEditor = function($elt, tree_string) {
     self.get_text_width = function(content) {
         var elt = document.createElementNS(svgNS, 'text');
         elt.appendChild(document.createTextNode(content));
-        self.svg.appendChild(elt);
+        self.main.appendChild(elt);
         var width = elt.getBoundingClientRect().width;
-        self.svg.removeChild(elt);
+        self.main.removeChild(elt);
         return width;
     };
 
