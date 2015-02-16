@@ -183,8 +183,8 @@ var TreeEditor = function($elt, tree_string) {
             if (parent)
                 self.draw_empty_edge(parent.x, parent.y, tree.x, tree.y);
 
-            var node_elt = self.draw_empty(tree.x, tree.y);
-            node_elt.onclick = function() {
+            var empty_elt = self.draw_empty(tree.x, tree.y);
+            empty_elt.onclick = function() {
                 tree.empty = false;
                 tree.val = 1;
                 tree.l = { empty: true };
@@ -203,7 +203,20 @@ var TreeEditor = function($elt, tree_string) {
             self.draw_tree(tree.l, tree);
             self.draw_tree(tree.r, tree);
 
-            self.draw_node(tree.val, tree.x, tree.y);
+            var node_elt = self.draw_node(tree.val, tree.x, tree.y);
+            // TODO a better way of editing
+            // TODO proper validation
+            node_elt.onclick = function() {
+                var val_string, val;
+
+                while (!/^-?\d+$/.exec(val_string)) {
+                    val_string = window.prompt('Enter an integer value:', tree.val);
+                    val = parseInt(val_string, 10);
+                }
+
+                tree.val = val;
+                self.redraw_tree();
+            };
         }
    };
 
@@ -220,6 +233,7 @@ var TreeEditor = function($elt, tree_string) {
         g.appendChild(
             self.create_element('text', {x: x, y: y, style: 'text-anchor: middle; dominant-baseline: central;'}, value)
         );
+        return g;
     };
 
     self.draw_empty_edge = function(x1, y1, x2, y2) {
