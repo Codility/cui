@@ -254,7 +254,7 @@ var TreeEditor = function($elt) {
             if (!tree.tree_part) {
                 tree.tree_part = NonEmptyTreePart(container, tree, parent);
                 if (parent) {
-                    tree.tree_part.onclick = function() {
+                    tree.tree_part.edge_elt.onclick = function() {
                         tree.empty = true;
                         self.redraw_tree();
                     };
