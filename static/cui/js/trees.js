@@ -7,7 +7,7 @@ var Trees = (function() {
         { regex: /^\)/ },
         { regex: /^,/ },
         { regex: /^None/ },
-        { regex: /^-?\d+/, convert: function(s) { return parseInt(s, 10); } }
+        { regex: /^[+-]?(0|[1-9]\d{0,9})/, convert: function(s) { return parseInt(s, 10); } }
     ];
 
     self.tokenize = function(input) {
