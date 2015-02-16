@@ -108,7 +108,7 @@ var Trees = (function() {
 })();
 
 
-var TreeEditor = function($elt, tree_string) {
+var TreeEditor = function($elt) {
     var self = {};
 
     var svgNS = "http://www.w3.org/2000/svg";
@@ -120,18 +120,17 @@ var TreeEditor = function($elt, tree_string) {
 
     self.init = function() {
         self.$elt = $elt;
-        self.tree = Trees.parse_tree(tree_string);
-        self.width = 1000;
-        self.height = 500;
+        self.tree = { empty: true };
 
         self.svg = document.createElementNS(svgNS, "svg");
-        self.svg.setAttributeNS(null, 'width', self.width);
-        self.svg.setAttributeNS(null, 'height', self.height);
         $elt.append(self.svg);
 
         self.main = self.create_element('g', {'class': 'tree-editor-main'});
         self.svg.appendChild(self.main);
+    };
 
+    self.set_tree = function(tree) {
+        self.tree = tree;
         self.redraw_tree();
     };
 
@@ -141,26 +140,34 @@ var TreeEditor = function($elt, tree_string) {
         }
     };
 
+    // TODO calc the dimensions properly instead of hard-coding
     self.redraw_tree = function() {
-        self.calc_width(self.tree);
-        var x = (self.width - self.tree.width) / 2;
-        var y = 0;
-        self.calc_positions(self.tree, x, y);
+        self.calc_dimensions(self.tree);
+        self.calc_positions(self.tree, 25, -node_height + 30);
+
+        var width = self.tree.width + 50;
+        var height = self.tree.height;
+
+        self.svg.setAttributeNS(null, 'width', width);
+        self.svg.setAttributeNS(null, 'height', height);
+
 
         self.clear();
         self.draw_tree(self.tree);
     };
 
-    self.calc_width = function(tree) {
+    self.calc_dimensions = function(tree) {
         if (tree.empty) {
             tree.node_width = empty_width;
             tree.width = empty_width;
+            tree.height = empty_height;
         } else {
-            self.calc_width(tree.l);
-            self.calc_width(tree.r);
+            self.calc_dimensions(tree.l);
+            self.calc_dimensions(tree.r);
 
             tree.node_width = self.get_node_width(tree.val);
             tree.width = tree.l.width + tree.r.width + tree.node_width;
+            tree.height = node_height + Math.max(tree.l.height, tree.r.height);
         }
     };
 

@@ -22,6 +22,7 @@
 
 /* global Log, Console */
 /* global ui */
+/* global Trees, TreeEditor */
 
 // http://www.quirksmode.org/js/cookies.html
 // use cookies as fallback for sessionStorage in Safari private mode.
@@ -52,14 +53,38 @@ var TestCases = {
 
         $('#add_test_case').click(function(e) {
             e.preventDefault();
-            TestCases.add();
-            $('.test-case input').last().focus();
+            if (TestCases.add()) {
+                $('.test-case input').last().focus();
+
+                TestCases.open_tree_editor($('.test-case input').last());
+            }
         });
 
         var that = this;
         $('#test_cases').on('change keyup paste', 'input', function() { that.save(); });
 
+        $('#tree_editor').jqm({ modal: true });
+        this.tree_editor = TreeEditor($('#tree_editor .edit'));
+        $('#tree_editor .ok').click(function() {
+            $('#tree_editor').jqmHide();
+            var tree_string = Trees.serialize_tree(TestCases.tree_editor.tree);
+            TestCases.$current_input.val(tree_string);
+            TestCases.$current_input = null;
+        });
+
         this.update();
+    },
+
+    open_tree_editor: function($input) {
+        // TODO handle errors
+        var tree_string = $input.val();
+        if (tree_string === '')
+            tree_string = $('input[name=test_case_example]').val();
+
+        var tree = Trees.parse_tree(tree_string);
+        this.tree_editor.set_tree(tree);
+        this.$current_input = $input;
+        $('#tree_editor').jqmShow();
     },
 
     // Update layout after changing the number of test cases.
@@ -113,7 +138,7 @@ var TestCases = {
 
     add : function(value) {
         if (this.count >= this.limit)
-            return;
+            return false;
 
         Log.info("candidate add test case");
 
@@ -140,6 +165,7 @@ var TestCases = {
         $input.blur(function() { that.onChangeFocus(false); });
 
         this.update();
+        return true;
     },
 
     clean : function() {
