@@ -784,6 +784,8 @@ $tc-padding: 16px;
 
 // Tree editor
 
+$tree-background: #eee;
+
 // the modal
 #tree_editor {
   width: 800px;
@@ -836,7 +838,7 @@ g.tree-editor-main {
   }
 
   .edge .thick {
-    stroke: white;
+    stroke: $tree-background;
     stroke-width: 8px;
   }
 
