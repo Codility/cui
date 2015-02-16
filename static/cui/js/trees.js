@@ -172,6 +172,7 @@ var TreeEditor = function($elt) {
 
     self.set_tree = function(tree) {
         self.tree = tree;
+        self.clear();
         self.redraw_tree();
     };
 
