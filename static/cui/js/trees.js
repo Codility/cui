@@ -265,8 +265,8 @@ var TreeEditor = function($elt) {
 
             tree.tree_part.update();
 
-            self.draw_tree(tree.tree_part.group_elt, tree.l, tree);
-            self.draw_tree(tree.tree_part.group_elt, tree.r, tree);
+            self.draw_tree(tree.tree_part.children_elt, tree.l, tree);
+            self.draw_tree(tree.tree_part.children_elt, tree.r, tree);
         }
     };
 
@@ -373,6 +373,8 @@ var NonEmptyTreePart = function(container, tree, parent) {
         self.thick_elt = SVG.add(self.edge_elt, 'line', { 'class': 'thick' });
         self.thin_elt = SVG.add(self.edge_elt, 'line', { 'class': 'thin' });
     }
+
+    self.children_elt = SVG.add(self.group_elt, 'g', { 'class': 'children' });
 
     self.node_elt = SVG.add(self.group_elt, 'g', { 'class': 'node' });
     self.rect_elt = SVG.add(self.node_elt, 'rect',
