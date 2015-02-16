@@ -258,7 +258,7 @@ var TreeEditor = function($elt) {
                         self.redraw_tree();
                     };
                 }
-                tree.tree_part.node_elt = function() {
+                tree.tree_part.node_elt.onclick = function() {
                         self.make_editable(tree);
                 };
             }
