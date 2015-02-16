@@ -157,7 +157,7 @@ var TreeEditor = function($elt) {
         });
 
         self.clear();
-        self.draw_tree(self.tree);
+        self.draw_tree(self.main, self.tree);
     };
 
     self.calc_dimensions = function(tree) {
@@ -192,36 +192,68 @@ var TreeEditor = function($elt) {
         return Math.max(node_width, self.get_text_width(value) + 10);
     };
 
-    self.draw_tree = function(tree, parent) {
-        if (tree.empty) {
-            if (parent)
-                self.draw_empty_edge(parent.x, parent.y, tree.x, tree.y);
+    self.draw_tree = function(container, tree, parent) {
+        function remove(name) {
+            if (tree[name]) {
+                container.removeChild(tree[name]);
+                tree[name] = null;
+            }
+        }
 
-            var empty_elt = self.draw_empty(tree.x, tree.y);
-            empty_elt.onclick = function() {
-                tree.empty = false;
-                tree.val = 1;
-                tree.l = { empty: true };
-                tree.r = { empty: true };
-                self.redraw_tree();
-            };
-        } else {
-            if (parent) {
-                var edge_elt = self.draw_edge(parent.x, parent.y, tree.x, tree.y);
-                edge_elt.onclick = function() {
-                    tree.empty = true;
+        if (tree.empty) {
+            remove('tree_elt');
+
+            if (!tree.empty_tree_elt) {
+                tree.empty_tree_elt = self.add_element(container, 'g', {'class': 'empty-tree'});
+                if (parent) {
+                    self.draw_empty_edge(tree.empty_tree_elt);
+                }
+                var empty_elt = self.draw_empty(tree.empty_tree_elt);
+                empty_elt.onclick = function() {
+                    tree.empty = false;
+                    tree.val = 1;
+                    tree.l = { empty: true };
+                    tree.r = { empty: true };
                     self.redraw_tree();
                 };
             }
 
-            self.draw_tree(tree.l, tree);
-            self.draw_tree(tree.r, tree);
+            if (parent) {
+                self.update_empty_edge(tree.empty_tree_elt, parent.x, parent.y, tree.x, tree.y);
+            }
 
-            var node_elt = self.draw_node(tree.val, tree.x, tree.y);
-            // TODO proper validation
-            node_elt.onclick = function() {
-                self.make_editable(tree);
-            };
+            self.update_empty(tree.empty_tree_elt, tree.x, tree.y);
+        } else {
+            remove('empty_tree_elt');
+
+            var creating = !tree.tree_elt;
+
+            if (creating) {
+                tree.tree_elt = self.add_element(container, 'g', {'class': 'tree'});
+                if (parent) {
+                    var edge_elt = self.draw_edge(tree.tree_elt);
+                    edge_elt.onclick = function() {
+                        tree.empty = true;
+                        self.redraw_tree();
+                    };
+                }
+            }
+
+            if (creating) {
+                var node_elt = self.draw_node(tree.tree_elt);
+                node_elt.onclick = function() {
+                    self.make_editable(tree);
+                };
+            }
+
+            if (parent) {
+                self.update_edge(tree.tree_elt, parent.x, parent.y, tree.x, tree.y);
+            }
+
+            self.update_node(tree.tree_elt, tree.val, tree.x, tree.y);
+            self.draw_tree(tree.tree_elt, tree.l, tree);
+            self.draw_tree(tree.tree_elt, tree.r, tree);
+
         }
     };
 
@@ -276,49 +308,70 @@ var TreeEditor = function($elt) {
         $input.on('blur', exit);
     };
 
-    self.draw_node = function(value, x, y) {
-        var width = self.get_node_width(value);
-        var g = self.add_element('g', { 'class': 'node' });
+    self.draw_node = function(container) {
+        var g = self.add_element(container, 'g', { 'class': 'node' });
         g.appendChild(
             self.create_element('rect',
-                                {x: x-width/2, y: y-node_width/2,
-                                 width: width, height: node_width,
+                                {height: node_width,
                                  rx: node_width/2, ry: node_width/2,
                                  stroke: 'black', fill: 'white'})
         );
         g.appendChild(
-            // HACK: vertical alignment is hardcoded, because
-            // IE doesn't support 'dominant-baseline: central'.
             self.create_element('text', {
-                x: x, y: y + 5,
                 style: 'text-anchor: middle;',
-            }, value)
+            })
         );
         return g;
     };
 
-    self.draw_empty_edge = function(x1, y1, x2, y2) {
-        return self.add_element('line', { 'class': 'empty-edge', x1: x1, y1: y1, x2: x2, y2: y2, stroke: 'black'});
+    self.update_node = function(container, value, x, y) {
+        var width = self.get_node_width(value);
+        self.update_element(container, '.node rect',
+                            {x: x-width/2, y: y-node_width/2,
+                             width: width});
+        // HACK: vertical alignment is hardcoded, because
+        // IE doesn't support 'dominant-baseline: central'.
+        self.update_element(container, '.node text', {
+                                x: x, y: y + 5,
+                            }, value);
     };
 
-    self.draw_edge = function(x1, y1, x2, y2) {
-        var g = self.add_element('g', { 'class': 'edge' });
-        g.appendChild(self.create_element('line', { 'class': 'thick', x1: x1, y1: y1, x2: x2, y2: y2 }));
-        g.appendChild(self.create_element('line', { 'class': 'thin', x1: x1, y1: y1, x2: x2, y2: y2 }));
+    self.draw_empty_edge = function(container) {
+        return self.add_element(container, 'line', { 'class': 'empty-edge', stroke: 'black'});
+    };
+
+    self.update_empty_edge = function(container, x1, y1, x2, y2) {
+        self.update_element(container, '.empty-edge', { x1: x1, y1: y1, x2: x2, y2: y2 });
+    };
+
+    self.draw_edge = function(container) {
+        var g = self.add_element(container, 'g', { 'class': 'edge' });
+        g.appendChild(self.create_element('line', { 'class': 'thick' }));
+        g.appendChild(self.create_element('line', { 'class': 'thin' }));
         return g;
     };
 
-    self.draw_empty = function(x, y) {
-        return self.add_element('rect', {
+    self.update_edge = function(container, x1, y1, x2, y2) {
+        self.update_element(container, '.edge .thick', { x1: x1, y1: y1, x2: x2, y2: y2 });
+        self.update_element(container, '.edge .thin', { x1: x1, y1: y1, x2: x2, y2: y2 });
+    };
+
+    self.draw_empty = function(container) {
+        return self.add_element(container, 'rect', {
             'class': 'empty',
-            x: x-empty_size/2, y: y-empty_size/2,
-            width: empty_size, height: empty_size,
+            width: empty_size, height: empty_size
         });
     };
 
-    self.add_element = function(name, attributes, content) {
+    self.update_empty = function(container, x, y) {
+        self.update_element(container, '.empty', {
+            x: x-empty_size/2, y: y-empty_size/2
+        });
+    };
+
+    self.add_element = function(container, name, attributes, content) {
         var elt = self.create_element(name, attributes, content);
-        self.main.appendChild(elt);
+        container.appendChild(elt);
         return elt;
     };
 
@@ -334,6 +387,18 @@ var TreeEditor = function($elt) {
         }
 
         return elt;
+    };
+
+    self.update_element = function(container, query, attributes, content) {
+        var elt = container.querySelector(query);
+        for (var key in attributes) {
+            elt.setAttributeNS(null, key, attributes[key]);
+        }
+
+        if (content !== undefined) {
+            elt.innerHTML = '';
+            elt.appendChild(document.createTextNode(content));
+        }
     };
 
     // HACK
