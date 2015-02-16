@@ -814,6 +814,8 @@ $tc-padding: 16px;
 
     @include box-shadow(inset 1px 1px 3px rgba(0, 0, 0, 0.2));
 
+    // override Chrome default
+    &:focus { outline: none; }
   }
 }
 
