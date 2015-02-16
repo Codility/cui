@@ -303,8 +303,8 @@ var TreeEditor = function($elt) {
 
     self.draw_edge = function(x1, y1, x2, y2) {
         var g = self.add_element('g', { 'class': 'edge' });
-        g.appendChild(self.create_element('line', { 'class': 'thin', x1: x1, y1: y1, x2: x2, y2: y2 }));
         g.appendChild(self.create_element('line', { 'class': 'thick', x1: x1, y1: y1, x2: x2, y2: y2 }));
+        g.appendChild(self.create_element('line', { 'class': 'thin', x1: x1, y1: y1, x2: x2, y2: y2 }));
         return g;
     };
 

@@ -836,11 +836,11 @@ g.tree-editor-main {
   }
 
   .edge .thick {
-    stroke: transparent;
+    stroke: white;
     stroke-width: 8px;
   }
 
-  .edge .thick:hover {
+  .edge:hover .thick, .edge:hover .thin {
     cursor: pointer;
     stroke: darkred;
   }
