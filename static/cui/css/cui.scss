@@ -462,6 +462,16 @@ $tc-padding: 16px;
     }
   }
 
+  .edit {
+    font-size: 14px;
+    line-height: 18px;
+    color: rgb(188,188,188);
+    @include fake-button;
+    &:hover{
+      color: #188ed4;
+    }
+  }
+
   &:hover {
     box-shadow: inset 1px 1px 5px rgba(24, 142, 212, 0.5);
     border-color: #188ed4;
@@ -779,7 +789,8 @@ $tc-padding: 16px;
     width: 100%;
     height: 400px;
     margin-bottom: 20px;
-    border: 1px solid #999;
+    border: 1px solid #999
+    ;
     overflow: auto;
     svg {
       margin: 0 auto;

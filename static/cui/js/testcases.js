@@ -65,7 +65,9 @@ var TestCases = {
 
         $('#tree_editor').jqm({ modal: true });
         this.tree_editor = TreeEditor($('#tree_editor .edit'));
-        $('#tree_editor .ok').click(function() {
+        $('#tree_editor .ok').click(function(e) {
+            e.preventDefault();
+
             $('#tree_editor').jqmHide();
             var tree_string = Trees.serialize_tree(TestCases.tree_editor.tree);
             TestCases.$current_input.val(tree_string);
@@ -150,13 +152,18 @@ var TestCases = {
         $test_case.addClass('test-case');
         $test_case.removeAttr('id');
 
+        var $input = $test_case.find('input');
+
         $('#test_cases').append($test_case);
         $test_case.find('.remove').click(function(e) {
             e.preventDefault();
             TestCases.remove($(this).closest('.test-case'));
         });
 
-        var $input = $test_case.find('input');
+        $test_case.find('.edit').click(function(e) {
+            e.preventDefault();
+            TestCases.open_tree_editor($input);
+        });
 
         $input.val(value);
 
