@@ -120,6 +120,7 @@ var TreeEditor = function($elt) {
 
     self.init = function() {
         self.$elt = $elt;
+        self.$elt.addClass('tree-editor');
         self.tree = { empty: true };
 
         self.svg = document.createElementNS(svgNS, "svg");
@@ -150,7 +151,10 @@ var TreeEditor = function($elt) {
 
         self.svg.setAttributeNS(null, 'width', width);
         self.svg.setAttributeNS(null, 'height', height);
-
+        self.$elt.css({
+            'width': width+'px',
+            'height': height+'px'
+        });
 
         self.clear();
         self.draw_tree(self.tree);
@@ -214,21 +218,63 @@ var TreeEditor = function($elt) {
             self.draw_tree(tree.r, tree);
 
             var node_elt = self.draw_node(tree.val, tree.x, tree.y);
-            // TODO a better way of editing
             // TODO proper validation
             node_elt.onclick = function() {
-                var val_string, val;
-
-                while (!/^-?\d+$/.exec(val_string)) {
-                    val_string = window.prompt('Enter an integer value:', tree.val);
-                    val = parseInt(val_string, 10);
-                }
-
-                tree.val = val;
-                self.redraw_tree();
+                self.make_editable(tree);
             };
         }
-   };
+    };
+
+    self.make_editable = function(tree) {
+        var $input = $('<input>').attr('maxlength', 11).val(tree.val);
+        var width = Math.max(self.get_node_width(tree.val), 76);
+        $input.css({
+            position: 'absolute',
+            left: tree.x + 'px',
+            top: tree.y + 'px',
+            width: width + 'px',
+            'margin-left': -width/2 + 'px'
+        });
+        self.$elt.append($input);
+        $input.focus();
+        $input.select();
+
+        function get_value(s) {
+            if (!/^[+-]?(0|[1-9]\d{0,9})$/.test(s))
+                return null;
+            var n = parseInt(s, 10);
+            if (!(-2147483648 <= n && n <= 2147483647))
+                return null;
+            return n;
+        }
+
+        function exit() {
+            var val = get_value($input.val());
+            // TODO: if we change the value (which triggers a redraw),
+            // and the user clicks another node at the same time,
+            // we lose the event.
+            // We could, for instance, re-use the elements while redrawing.
+            if (val !== null && val !== tree.val) {
+                tree.val = val;
+                self.redraw_tree();
+            }
+            $input.remove();
+        }
+
+        $input.on('change keyup paste', function() {
+            if (get_value($input.val()) === null)
+                $input.addClass('error');
+            else
+                $input.removeClass('error');
+        });
+
+        $input.on('keypress', function(e) {
+            if (e.which == 13) // enter
+                exit();
+        });
+
+        $input.on('blur', exit);
+    };
 
     self.draw_node = function(value, x, y) {
         var width = self.get_node_width(value);
