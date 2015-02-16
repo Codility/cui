@@ -107,11 +107,51 @@ var Trees = (function() {
     return self;
 })();
 
+var SVG = (function() {
+    var self = {};
+
+    var svgNS = "http://www.w3.org/2000/svg";
+    self.create = function(name, attributes, content) {
+        var elt = document.createElementNS(svgNS, name);
+        self.update(elt, attributes, content);
+        return elt;
+    };
+
+    self.add = function(container, name, attributes, content) {
+        var elt = self.create(name, attributes, content);
+        container.appendChild(elt);
+        return elt;
+    };
+
+    self.clear = function(container) {
+        while (container.firstChild) {
+            container.removeChild(container.firstChild);
+        }
+    };
+
+    self.update = function(elt, attributes, content) {
+        for (var key in attributes) {
+            elt.setAttributeNS(null, key, attributes[key]);
+        }
+        if (content !== undefined) {
+            self.clear(elt);
+            elt.appendChild(document.createTextNode(content));
+        }
+    };
+
+    self.update_selector = function(container, selector, attributes, content) {
+        var elt = container.querySelector(selector);
+        self.update(elt, attributes, content);
+    };
+
+    return self;
+})();
+
 
 var TreeEditor = function($elt) {
     var self = {};
 
-    var svgNS = "http://www.w3.org/2000/svg";
+
     var node_width = 30;
     var empty_width = 5;
     var node_height = 50;
@@ -123,11 +163,10 @@ var TreeEditor = function($elt) {
         self.$elt.addClass('tree-editor');
         self.tree = { empty: true };
 
-        self.svg = document.createElementNS(svgNS, "svg");
+        self.svg = SVG.create("svg");
         $elt.append(self.svg);
 
-        self.main = self.create_element('g', {'class': 'tree-editor-main'});
-        self.svg.appendChild(self.main);
+        self.main = SVG.add(self.svg, 'g', {'class': 'tree-editor-main'});
     };
 
     self.set_tree = function(tree) {
@@ -136,9 +175,7 @@ var TreeEditor = function($elt) {
     };
 
     self.clear = function() {
-        while (self.main.firstChild) {
-            self.main.removeChild(self.main.firstChild);
-        }
+        SVG.clear(self.main);
     };
 
     // TODO calc the dimensions properly instead of hard-coding
@@ -149,12 +186,7 @@ var TreeEditor = function($elt) {
         var width = self.tree.width + 50;
         var height = self.tree.height;
 
-        self.svg.setAttributeNS(null, 'width', width);
-        self.svg.setAttributeNS(null, 'height', height);
-        self.$elt.css({
-            'width': width+'px',
-            'height': height+'px'
-        });
+        SVG.update(self.svg, {width: width, height: height});
 
         self.clear();
         self.draw_tree(self.main, self.tree);
@@ -204,7 +236,7 @@ var TreeEditor = function($elt) {
             remove('tree_elt');
 
             if (!tree.empty_tree_elt) {
-                tree.empty_tree_elt = self.add_element(container, 'g', {'class': 'empty-tree'});
+                tree.empty_tree_elt = SVG.add(container, 'g', {'class': 'empty-tree'});
                 if (parent) {
                     self.draw_empty_edge(tree.empty_tree_elt);
                 }
@@ -229,7 +261,7 @@ var TreeEditor = function($elt) {
             var creating = !tree.tree_elt;
 
             if (creating) {
-                tree.tree_elt = self.add_element(container, 'g', {'class': 'tree'});
+                tree.tree_elt = SVG.add(container, 'g', {'class': 'tree'});
                 if (parent) {
                     var edge_elt = self.draw_edge(tree.tree_elt);
                     edge_elt.onclick = function() {
@@ -309,103 +341,64 @@ var TreeEditor = function($elt) {
     };
 
     self.draw_node = function(container) {
-        var g = self.add_element(container, 'g', { 'class': 'node' });
-        g.appendChild(
-            self.create_element('rect',
-                                {height: node_width,
-                                 rx: node_width/2, ry: node_width/2,
-                                 stroke: 'black', fill: 'white'})
-        );
-        g.appendChild(
-            self.create_element('text', {
-                style: 'text-anchor: middle;',
-            })
-        );
+        var g = SVG.add(container, 'g', { 'class': 'node' });
+        SVG.add(g, 'rect',
+                {height: node_width,
+                 rx: node_width/2, ry: node_width/2,
+                 stroke: 'black', fill: 'white'});
+        SVG.add(g, 'text',
+                { style: 'text-anchor: middle;'});
         return g;
     };
 
     self.update_node = function(container, value, x, y) {
         var width = self.get_node_width(value);
-        self.update_element(container, '.node rect',
+        SVG.update_selector(container, '.node rect',
                             {x: x-width/2, y: y-node_width/2,
                              width: width});
         // HACK: vertical alignment is hardcoded, because
         // IE doesn't support 'dominant-baseline: central'.
-        self.update_element(container, '.node text', {
+        SVG.update_selector(container, '.node text', {
                                 x: x, y: y + 5,
                             }, value);
     };
 
     self.draw_empty_edge = function(container) {
-        return self.add_element(container, 'line', { 'class': 'empty-edge', stroke: 'black'});
+        return SVG.add(container, 'line', { 'class': 'empty-edge', stroke: 'black'});
     };
 
     self.update_empty_edge = function(container, x1, y1, x2, y2) {
-        self.update_element(container, '.empty-edge', { x1: x1, y1: y1, x2: x2, y2: y2 });
+        SVG.update_selector(container, '.empty-edge', { x1: x1, y1: y1, x2: x2, y2: y2 });
     };
 
     self.draw_edge = function(container) {
-        var g = self.add_element(container, 'g', { 'class': 'edge' });
-        g.appendChild(self.create_element('line', { 'class': 'thick' }));
-        g.appendChild(self.create_element('line', { 'class': 'thin' }));
+        var g = SVG.add(container, 'g', { 'class': 'edge' });
+        SVG.add(g, 'line', { 'class': 'thick' });
+        SVG.add(g, 'line', { 'class': 'thin' });
         return g;
     };
 
     self.update_edge = function(container, x1, y1, x2, y2) {
-        self.update_element(container, '.edge .thick', { x1: x1, y1: y1, x2: x2, y2: y2 });
-        self.update_element(container, '.edge .thin', { x1: x1, y1: y1, x2: x2, y2: y2 });
+        SVG.update_selector(container, '.edge .thick', { x1: x1, y1: y1, x2: x2, y2: y2 });
+        SVG.update_selector(container, '.edge .thin', { x1: x1, y1: y1, x2: x2, y2: y2 });
     };
 
     self.draw_empty = function(container) {
-        return self.add_element(container, 'rect', {
+        return SVG.add(container, 'rect', {
             'class': 'empty',
             width: empty_size, height: empty_size
         });
     };
 
     self.update_empty = function(container, x, y) {
-        self.update_element(container, '.empty', {
+        SVG.update_selector(container, '.empty', {
             x: x-empty_size/2, y: y-empty_size/2
         });
     };
 
-    self.add_element = function(container, name, attributes, content) {
-        var elt = self.create_element(name, attributes, content);
-        container.appendChild(elt);
-        return elt;
-    };
-
-    self.create_element = function(name, attributes, content) {
-        var elt = document.createElementNS(svgNS, name);
-
-        for (var key in attributes) {
-            elt.setAttributeNS(null, key, attributes[key]);
-        }
-
-        if (content !== undefined) {
-            elt.appendChild(document.createTextNode(content));
-        }
-
-        return elt;
-    };
-
-    self.update_element = function(container, query, attributes, content) {
-        var elt = container.querySelector(query);
-        for (var key in attributes) {
-            elt.setAttributeNS(null, key, attributes[key]);
-        }
-
-        if (content !== undefined) {
-            elt.innerHTML = '';
-            elt.appendChild(document.createTextNode(content));
-        }
-    };
-
     // HACK
     self.get_text_width = function(content) {
-        var elt = document.createElementNS(svgNS, 'text');
-        elt.appendChild(document.createTextNode(content));
-        self.main.appendChild(elt);
+        var elt = SVG.add(self.main, 'text', {}, content);
         var width = elt.getBoundingClientRect().width;
         self.main.removeChild(elt);
         return width;
