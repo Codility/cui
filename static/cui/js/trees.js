@@ -296,10 +296,6 @@ var TreeEditor = function($elt) {
 
         function exit() {
             var val = get_value($input.val());
-            // TODO: if we change the value (which triggers a redraw),
-            // and the user clicks another node at the same time,
-            // we lose the event.
-            // We could, for instance, re-use the elements while redrawing.
             if (val !== null && val !== tree.val) {
                 tree.val = val;
                 self.redraw_tree();
