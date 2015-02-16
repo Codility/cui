@@ -287,7 +287,12 @@ var TreeEditor = function($elt) {
                                  stroke: 'black', fill: 'white'})
         );
         g.appendChild(
-            self.create_element('text', {x: x, y: y, style: 'text-anchor: middle; dominant-baseline: central;'}, value)
+            // HACK: vertical alignment is hardcoded, because
+            // IE doesn't support 'dominant-baseline: central'.
+            self.create_element('text', {
+                x: x, y: y + 5,
+                style: 'text-anchor: middle;',
+            }, value)
         );
         return g;
     };
