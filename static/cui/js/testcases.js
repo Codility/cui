@@ -47,6 +47,8 @@ var TestCases = {
     limit : 5,
     focus : false,
     storage: window.sessionStorage,
+    allow_tree_editor: false,
+    tree_editor: null,
 
     init : function() {
         this.count = 0;
@@ -56,14 +58,27 @@ var TestCases = {
             if (TestCases.add()) {
                 $('.test-case input').last().focus();
 
-                TestCases.open_tree_editor($('.test-case input').last());
+                if (TestCases.allow_tree_editor)
+                    TestCases.open_tree_editor($('.test-case input').last());
             }
         });
 
         var that = this;
         $('#test_cases').on('change keyup paste', 'input', function() { that.save(); });
 
+
+        this.update();
+    },
+
+    enable_tree_editor: function() {
+        this.allow_tree_editor = true;
+        $('#test_cases').removeClass('hide-edit');
+
+        if (this.tree_editor)
+            return;
+
         $('#tree_editor').jqm({ modal: true });
+
         this.tree_editor = TreeEditor($('#tree_editor .edit'));
         $('#tree_editor .ok').click(function(e) {
             e.preventDefault();
@@ -73,8 +88,11 @@ var TestCases = {
             TestCases.$current_input.val(tree_string);
             TestCases.$current_input = null;
         });
+    },
 
-        this.update();
+    disable_tree_editor: function() {
+        this.allow_tree_editor = false;
+        $('#test_cases').addClass('hide-edit');
     },
 
     open_tree_editor: function($input) {
@@ -162,7 +180,8 @@ var TestCases = {
 
         $test_case.find('.edit').click(function(e) {
             e.preventDefault();
-            TestCases.open_tree_editor($input);
+            if (TestCases.allow_tree_editor)
+                TestCases.open_tree_editor($input);
         });
 
         $input.val(value);

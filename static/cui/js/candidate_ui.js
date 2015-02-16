@@ -848,6 +848,7 @@ function CandidateUi(options)
         var human_lang = xmlNodeValue(data, 'response human_lang');
         var human_lang_list = JSON.parse(xmlNodeValue(data, 'response human_lang_list'));
         var allow_user_test_cases = JSON.parse(xmlNodeValue(data, 'response allow_user_test_cases'));
+        var allow_tree_editor = JSON.parse(xmlNodeValue(data, 'response allow_tree_editor'));
 
         self.current_prg_lang_list = JSON.parse(xmlNodeValue(data, 'response prg_lang_list'));
         self.task.name = task;
@@ -917,6 +918,11 @@ function CandidateUi(options)
 
         if (show_test_cases) {
             TestCases.enable();
+            if (allow_tree_editor) {
+                TestCases.enable_tree_editor();
+            } else {
+                TestCases.disable_tree_editor();
+            }
         } else {
             TestCases.disable();
         }

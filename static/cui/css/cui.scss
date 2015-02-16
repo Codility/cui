@@ -470,6 +470,8 @@ $tc-padding: 16px;
     &:hover{
       color: #188ed4;
     }
+
+    .hide-edit & { display: none; }
   }
 
   &:hover {
