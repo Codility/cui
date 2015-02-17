@@ -784,13 +784,14 @@ $tc-padding: 16px;
 
 // Tree editor
 
-$tree-background: #eee;
+$tree-background: #fff;
 
 // the modal
 #tree_editor {
   width: 800px;
   margin-left: -400px;
   .edit {
+    background: $tree-background;
     width: 100%;
     height: 400px;
     margin-bottom: 20px;
@@ -843,17 +844,23 @@ g.tree-editor-main {
 
   .edge .thick {
     stroke: $tree-background;
-    stroke-width: 8px;
+    stroke-width: 30px;
+    // HACK: we want the area not to obscure anything,
+    // but it cannot be completely transparent because Opera
+    // doesn't do :hover then.
+    opacity: 0.01;
   }
 
   .edge:hover {
-    line {
-      cursor: pointer;
+    cursor: pointer;
+    .thin {
       stroke: #a00;
+      stroke-width: 8px;
     }
 
     & + .children, & + .children + .node {
-      * { stroke: #ccc; }
+      line, rect { stroke: #ccc; }
+      text { fill: #ccc; }
       .edge .thick { stroke: $tree-background; }
       .empty { fill: #ccc; }
     }
