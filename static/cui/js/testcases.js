@@ -88,6 +88,14 @@ var TestCases = {
             TestCases.$current_input.val(tree_string);
             TestCases.$current_input = null;
         });
+        $('#tree_editor .cancel').click(function(e) {
+            e.preventDefault();
+
+            $('#tree_editor').jqmHide();
+            if (TestCases.$current_input.val() === '') {
+                TestCases.remove(TestCases.$current_input.closest('.test-case'));
+            }
+        });
     },
 
     disable_tree_editor: function() {
