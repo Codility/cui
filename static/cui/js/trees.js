@@ -192,9 +192,15 @@ var TreeEditor = function($elt, $undo_button) {
     self.redraw_tree = function() {
         self.calc_dimensions(self.tree);
 
-        // We want the root to be drawn in the center of the picture.
-        var left_margin = 25 + Math.max(0, self.tree.r.width - self.tree.l.width);
-        var right_margin = 25 + Math.max(0, self.tree.l.width - self.tree.r.width);
+        var left_margin, right_margin;
+        if (self.tree.empty) {
+            left_margin = right_margin = 25;
+        } else {
+            // We want the root to be drawn in the center of the picture.
+            left_margin = 25 + Math.max(0, self.tree.r.width - self.tree.l.width);
+            right_margin = 25 + Math.max(0, self.tree.l.width - self.tree.r.width);
+        }
+
 
         var width = self.tree.width + left_margin + right_margin;
         var height = self.tree.height;
