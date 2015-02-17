@@ -842,6 +842,10 @@ g.tree-editor-main {
     stroke: black;
   }
 
+  .root > .edge .thin {
+    stroke: $tree-background;
+  }
+
   .edge .thick {
     stroke: $tree-background;
     stroke-width: 30px;
