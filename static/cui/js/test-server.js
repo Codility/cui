@@ -35,7 +35,9 @@ function TestServer() {
                 'prg_lang_list': ['c', 'cpp'],
                 'type': 'algo',
                 'saved': null,
-                'n_saves': 0
+                'n_saves': 0,
+                'allow_tree_editor': false,
+                'example_input': 'Example input: 1'
             },
             'task2': {
                 'status': 'open',
@@ -43,7 +45,9 @@ function TestServer() {
                 'prg_lang_list': ['c', 'cpp'],
                 'type': 'bugfixing',
                 'saved': null,
-                'n_saves': 0
+                'n_saves': 0,
+                'allow_tree_editor': false,
+                'example_input': 'Example input: 2'
             },
             'task3': {
                 'status': 'open',
@@ -51,10 +55,22 @@ function TestServer() {
                 'prg_lang_list': ['sql'],
                 'type': 'sql',
                 'saved': null,
-                'n_saves': 0
+                'n_saves': 0,
+                'allow_tree_editor': false,
+                'example_input': 'Example input: 3'
+            },
+            'task4': {
+                'status': 'open',
+                'human_lang_list': ['en'],
+                'prg_lang_list': ['c'],
+                'type': 'algo',
+                'saved': null,
+                'n_saves': 0,
+                'allow_tree_editor': true,
+                'example_input': '(25, (19, (12, (4, None, None), None), (22, None, (23, None, None))), (37, (29, None, (30, None, None)), None))'
             },
         },
-        'task_names': ['task1', 'task2', 'task3'],
+        'task_names': ['task1', 'task2', 'task3', 'task4'],
         'current_task': 'task1',
         'next_task': '',
         'submits': [],
@@ -76,7 +92,7 @@ function TestServer() {
         current_prg_lang: "c",
         current_task_name: "task1",
 
-        task_names: ["task1", "task2", "task3"],
+        task_names: ["task1", "task2", "task3", "task4"],
 
         human_langs: {
             "en": {"name_in_itself": "English"},
@@ -135,12 +151,13 @@ function TestServer() {
             'task_type': t.type,
             'solution_template': self.getTaskStart(task, human_lang, prg_lang),
             'current_solution': solution,
-            'example_input': 'Example input: ' + id,
+            'example_input': t.example_input,
             'prg_lang_list': JSON.stringify(t.prg_lang_list),
             'human_lang_list': JSON.stringify(t.human_lang_list),
             'prg_lang': prg_lang,
             'human_lang': human_lang,
-            'allow_user_test_cases': t.type != 'sql'
+            'allow_user_test_cases': t.type != 'sql',
+            'allow_tree_editor': t.allow_tree_editor
         };
     };
 

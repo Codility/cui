@@ -1453,4 +1453,26 @@ describe('trees module', function() {
     });
 });
 
+describe_ui(' tree editor', {}, function() {
+
+    var server;
+
+    beforeEach(function() {
+        server = this.server;
+    });
+
+    it("should open when tree editor allowed", function() {
+        server.respond();
+        $('#add_test_case').click();
+        expectVisible('#tree_editor', false);
+        expectVisible('#test_cases .test-case .edit', false);
+        clickTaskTab('task4');
+        server.respond();
+        $('#add_test_case').click();
+        expectVisible('#tree_editor', true);
+        expectVisible('#test_cases .test-case .edit', true);
+    });
+
+});
+
 $.migrateMute = true;
