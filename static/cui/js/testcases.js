@@ -87,6 +87,7 @@ var TestCases = {
             var tree_string = Trees.serialize_tree(TestCases.tree_editor.tree);
             TestCases.$current_input.val(tree_string);
             TestCases.$current_input = null;
+            TestCases.save();
         });
         $('#tree_editor .cancel').click(function(e) {
             e.preventDefault();
@@ -94,6 +95,7 @@ var TestCases = {
             $('#tree_editor').jqmHide();
             if (TestCases.$current_input.val() === '') {
                 TestCases.remove(TestCases.$current_input.closest('.test-case'));
+                TestCases.$current_input = null;
             }
         });
     },
