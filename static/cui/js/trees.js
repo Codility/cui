@@ -275,7 +275,7 @@ var TreeEditor = function($elt, $undo_button) {
         self.remove_from_svg(tree);
 
         tree.empty = false;
-        tree.val = '0';
+        tree.val = 0;
         tree.l = { empty: true };
         tree.r = { empty: true };
         self.redraw_tree();
