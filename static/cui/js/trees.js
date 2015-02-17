@@ -399,10 +399,6 @@ var Part = function(container, class_name) {
 
     self.group_elt = SVG.add(container, 'g', {'class': class_name});
 
-    self.exists = function() {
-        return container.contains(self.group_elt);
-    };
-
     self.remove = function() {
         container.removeChild(self.group_elt);
     };
