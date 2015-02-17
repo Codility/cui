@@ -32,8 +32,12 @@ var Trees = (function() {
                 }
             }
 
-            if (token === null)
-                throw new Error('unexpected input: ' + input);
+            if (token === null) {
+                var s = input;
+                if (s.length > 10)
+                    s = s.substr(0, 10) + '...';
+                throw new Error('unexpected input near \'' + s + '\'');
+            }
 
             tokens.push(token);
         }

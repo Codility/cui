@@ -96,12 +96,19 @@ var TestCases = {
     },
 
     open_tree_editor: function($input) {
-        // TODO handle errors
         var tree_string = $input.val();
         if (tree_string === '')
             tree_string = $('input[name=test_case_example]').val();
 
-        var tree = Trees.parse_tree(tree_string);
+        var tree;
+        try {
+            tree = Trees.parse_tree(tree_string);
+        } catch (e) {
+            Console.msg_error('Could not parse the test case: ' + e.message);
+            return;
+        }
+        // clear any errors
+        Console.clear();
         this.tree_editor.set_tree(tree);
         this.$current_input = $input;
         $('#tree_editor').jqmShow();
