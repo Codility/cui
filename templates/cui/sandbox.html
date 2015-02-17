@@ -5,16 +5,18 @@
   {% include "cui/_head.html" %}
 </head>
 
-<body>
+<body style="padding: 2em">
 
   <h1>It works!</h1>
 
   <div class="tree-editor"></div>
 
+  <input type="button" class="undo" value="Undo" style="padding: 1em 2em" />
+
   <script>
     var tree_editor;
     $(function() {
-        tree_editor = TreeEditor($('.tree-editor'));
+        tree_editor = TreeEditor($('.tree-editor'), $('.undo'));
 
         var tree_string = '(25, (1999999, (1222222, (4, None, None), None), (2222222, None, (23, None, None))), (37, (29, None, (30, None, None)), None))';
         var tree = Trees.parse_tree(tree_string);

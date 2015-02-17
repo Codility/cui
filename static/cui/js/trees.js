@@ -160,11 +160,12 @@ var TreeDimensions = {
     EMPTY_SIZE: 10
 };
 
-var TreeEditor = function($elt) {
+var TreeEditor = function($elt, $undo_button) {
     var self = {};
 
     self.init = function() {
         self.$elt = $elt;
+        self.$undo_button = $undo_button;
         self.$elt.addClass('tree-editor');
         self.tree = { empty: true };
 
@@ -172,12 +173,15 @@ var TreeEditor = function($elt) {
         $elt.append(self.svg);
 
         self.main = SVG.add(self.svg, 'g', {'class': 'tree-editor-main'});
+
+        self.$undo_button.click(self.undo);
     };
 
     self.set_tree = function(tree) {
         self.tree = tree;
         self.clear();
         self.redraw_tree();
+        self.setup_undo();
     };
 
     self.clear = function() {
@@ -237,49 +241,66 @@ var TreeEditor = function($elt) {
     };
 
     self.draw_tree = function(container, tree, parent) {
-        function remove(name) {
-            if (tree[name]) {
-                tree[name].remove();
-                tree[name] = null;
-            }
-        }
-
         if (tree.empty) {
-            remove('tree_part');
-
-            if (!tree.empty_tree_part) {
-                tree.empty_tree_part = EmptyTreePart(container, tree, parent);
-                tree.empty_tree_part.node_elt.onclick = function() {
-                    tree.empty = false;
-                    tree.val = '0';
-                    tree.l = { empty: true };
-                    tree.r = { empty: true };
-                    self.redraw_tree();
-                    self.make_editable(tree);
+            if (!tree.part) {
+                tree.part = EmptyTreePart(container, tree, parent);
+                tree.part.node_elt.onclick = function() {
+                    self.add_node(tree);
                 };
             }
 
-            tree.empty_tree_part.update();
+            tree.part.update();
         } else {
-            remove('empty_tree_part');
-
-            if (!tree.tree_part) {
-                tree.tree_part = NonEmptyTreePart(container, tree, parent);
+            if (!tree.part) {
+                tree.part = NonEmptyTreePart(container, tree, parent);
                 if (parent) {
-                    tree.tree_part.edge_elt.onclick = function() {
-                        tree.empty = true;
-                        self.redraw_tree();
+                    tree.part.edge_elt.onclick = function() {
+                        self.remove_node(tree);
                     };
                 }
-                tree.tree_part.node_elt.onclick = function() {
+                tree.part.node_elt.onclick = function() {
                         self.make_editable(tree);
                 };
             }
 
-            tree.tree_part.update();
+            tree.part.update();
 
-            self.draw_tree(tree.tree_part.children_elt, tree.l, tree);
-            self.draw_tree(tree.tree_part.children_elt, tree.r, tree);
+            self.draw_tree(tree.part.children_elt, tree.l, tree);
+            self.draw_tree(tree.part.children_elt, tree.r, tree);
+        }
+    };
+
+    self.add_node = function(tree) {
+        self.add_undo_action(tree);
+        self.remove_from_svg(tree);
+
+        tree.empty = false;
+        tree.val = '0';
+        tree.l = { empty: true };
+        tree.r = { empty: true };
+        self.redraw_tree();
+        self.make_editable(tree);
+    };
+
+    self.remove_node = function(tree) {
+        self.add_undo_action(tree);
+        self.remove_from_svg(tree);
+
+        tree.empty = true;
+        tree.l = null;
+        tree.r = null;
+        self.redraw_tree();
+    };
+
+    // Remove all tree parts
+    self.remove_from_svg = function(tree) {
+        if (!tree.empty) {
+            self.remove_from_svg(tree.l);
+            self.remove_from_svg(tree.r);
+        }
+        if (tree.part) {
+            tree.part.remove();
+            tree.part = null;
         }
     };
 
@@ -309,6 +330,8 @@ var TreeEditor = function($elt) {
         function exit() {
             var val = get_value($input.val());
             if (val !== null && val !== tree.val) {
+                self.add_undo_action(tree);
+
                 tree.val = val;
                 self.redraw_tree();
             }
@@ -330,6 +353,34 @@ var TreeEditor = function($elt) {
         $input.on('blur', exit);
     };
 
+    self.setup_undo = function() {
+        self.undo_actions = [];
+        self.$undo_button.prop('disabled', true);
+    };
+
+    self.add_undo_action = function(tree) {
+        self.undo_actions.push({ tree: tree,
+                                 empty: tree.empty, l: tree.l, r: tree.r, val: tree.val });
+        self.$undo_button.prop('disabled', false);
+    };
+
+    self.undo = function() {
+        if (self.undo_actions.length === 0)
+            return;
+
+        var action = self.undo_actions.pop();
+
+        self.remove_from_svg(action.tree);
+        action.tree.empty = action.empty;
+        action.tree.l = action.l;
+        action.tree.r = action.r;
+        action.tree.val = action.val;
+
+        self.redraw_tree();
+
+        self.$undo_button.prop('disabled', self.undo_actions.length === 0);
+    };
+
     // HACK
     self.get_text_width = function(content) {
         var elt = SVG.add(self.main, 'text', {}, content);
@@ -347,6 +398,10 @@ var Part = function(container, class_name) {
     var self = {};
 
     self.group_elt = SVG.add(container, 'g', {'class': class_name});
+
+    self.exists = function() {
+        return container.contains(self.group_elt);
+    };
 
     self.remove = function() {
         container.removeChild(self.group_elt);
