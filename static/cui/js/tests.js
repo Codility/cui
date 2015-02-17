@@ -1463,7 +1463,7 @@ describe_ui(' tree editor', {}, function() {
         server.respond();
     });
 
-    it("should open when tree editor allowed", function() {
+    it("should open tree editor when allowed", function() {
         clickTaskTab('task1');
         server.respond();
         $('#add_test_case').click();
@@ -1491,36 +1491,145 @@ describe_ui(' tree editor', {}, function() {
         return get_tree(path).find('> .node');
     }
 
+    function get_tree_empty_node(path) {
+        return get_tree(path).find('> .empty');
+    }
+
     function get_tree_val(path) {
         return get_tree(path).find('> .node > text').text();
-    };
+    }
 
-    function check_undo_disabled(disabled) {
-        expect($('#tree_editor .undo').is(':disabled')).toEqual(disabled);
+    function get_tree_edge(path) {
+        return get_tree(path).find('> .edge');
+    }
+
+    var INPUT_SELECTOR = '#tree_editor .edit input';
+    var BUTTON_OK_SELECTOR = '#tree_editor .ok';
+    var BUTTON_CANCEL_SELECTOR = '#tree_editor .cancel';
+    var BUTTON_UNDO_SELECTOR = '#tree_editor .undo';
+
+    function check_node_count(count) {
+        expect($('#tree_editor text').length).toEqual(count);
+        expect($('#tree_editor .empty').length).toEqual(count + 1);
+    }
+
+    function check_undo_enabled(is_enabled) {
+        expectEnabled(BUTTON_UNDO_SELECTOR, is_enabled);
+    }
+
+    function perform_undo() {
+        expectEnabled(BUTTON_UNDO_SELECTOR, true);
+        $(BUTTON_UNDO_SELECTOR).click();
     }
 
     it("should render tree", function() {
         $('#add_test_case').click()
-        expect($('#tree_editor text').length).toEqual(9);
-        expect($('#tree_editor .empty').length).toEqual(10);
         expect(get_tree_val('')).toEqual('25');
         expect(get_tree_val('rlr')).toEqual('30');
-        check_undo_disabled(true);
-        expectVisible('#tree_editor .edit input', false);
+        check_node_count(9);
+        check_undo_enabled(false);
+        expectVisible(INPUT_SELECTOR, false);
     });
 
     it("should edit node value", function() {
         $('#add_test_case').click();
         get_tree_node('rlr').click();
-        expectVisible('#tree_editor .edit input', true);
-        $('#tree_editor .edit input').val('45').change().blur();
-        expectVisible('#tree_editor .edit input', false);
+        expectVisible(INPUT_SELECTOR, true);
+        $(INPUT_SELECTOR).val('45').change().blur();
+        expectVisible(INPUT_SELECTOR, false);
         expect(get_tree_val('rlr')).toEqual('45');
 
-        check_undo_disabled(false);
-        $('#tree_editor .undo').click();
+        perform_undo();
         expect(get_tree_val('rlr')).toEqual('30');
-        check_undo_disabled(true);
+        check_undo_enabled(false);
+    });
+
+    it("should add node", function() {
+        $('#add_test_case').click();
+        get_tree_empty_node('rlrl').click();
+        expect(get_tree_val('rlrl')).toEqual('0');
+        check_node_count(10);
+        expectVisible(INPUT_SELECTOR, true);
+        $(INPUT_SELECTOR).val('45').change().blur();
+        expectVisible(INPUT_SELECTOR, false);
+        expect(get_tree_val('rlrl')).toEqual('45');
+
+        perform_undo();
+        expect(get_tree_val('rlrl')).toEqual('0');
+        perform_undo();
+        check_node_count(9);
+        check_undo_enabled(false);
+    });
+
+    it("should remove nodes", function() {
+        $('#add_test_case').click();
+        get_tree_edge('rlr').click();
+        check_node_count(8);
+        get_tree_edge('l').click();
+        check_node_count(3);
+
+        perform_undo();
+        check_node_count(8);
+        perform_undo();
+        check_node_count(9);
+        check_undo_enabled(false);
+    });
+
+    function modify_tree() {
+        get_tree_empty_node('rlrl').click();
+        $(INPUT_SELECTOR).blur();
+        get_tree_edge('l').click();
+        check_node_count(5);
+        return '(25, None, (37, (29, None, (30, (0, None, None), None)), None))';
+    }
+
+    function modify_tree_again() {
+        get_tree_edge('rlr').click();
+        check_node_count(3);
+        return '(25, None, (37, (29, None, None), None))';
+    }
+
+    it("should save modified tree when pressed ok", function() {
+        $('#add_test_case').click();
+        var tree_string = modify_tree();
+        $(BUTTON_OK_SELECTOR).click();
+        expectVisible('#tree_editor', false);
+        expect($('#test_cases input').val()).toEqual(tree_string);
+
+        $('#test_cases .edit').click();
+        var tree_string_again = modify_tree_again();
+        $(BUTTON_OK_SELECTOR).click();
+        expect($('#test_cases input').val()).toEqual(tree_string_again);
+    });
+
+    it("should discard modified tree when pressed cancel", function() {
+        $('#add_test_case').click();
+        modify_tree();
+        $(BUTTON_CANCEL_SELECTOR).click();
+        expectVisible('#tree_editor', false);
+        expect($('#test_cases input').length).toEqual(0);
+
+        $('#add_test_case').click();
+        $(BUTTON_OK_SELECTOR).click();
+        var old_tree_string = $('#test_cases input').val();
+        $('#test_cases .edit').click();
+        modify_tree();
+        $(BUTTON_CANCEL_SELECTOR).click();
+        expect($('#test_cases input').val()).toEqual(old_tree_string);
+    });
+
+    it("should work after manually editing tree string", function() {
+        $('#add_test_case').click();
+        $(BUTTON_OK_SELECTOR).click();
+        $('#test_cases input').val('(5, None, (4, None, None))');
+        $('#test_cases .edit').click();
+        check_node_count(2);
+        $(BUTTON_CANCEL_SELECTOR).click();
+
+        $('#test_cases input').val('Invalid');
+        $('#test_cases .edit').click();
+        expectVisible('#tree_editor', false);
+        expect($('#console').text()).toEqual("Could not parse the test case: unexpected input near 'Invalid'");
     });
 });
 
