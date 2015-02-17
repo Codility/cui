@@ -211,7 +211,7 @@ var TreeEditor = function($elt, $undo_button) {
         self.$elt.css({width: width+'px', height: height+'px'});
 
         self.calc_positions(self.tree, start_x, start_y);
-        self.draw_tree(self.main, self.tree);
+        self.draw_tree(self.main, self.tree, null, 'root');
     };
 
     self.calc_dimensions = function(tree) {
@@ -246,10 +246,10 @@ var TreeEditor = function($elt, $undo_button) {
         return Math.max(TreeDimensions.NODE_WIDTH, self.get_text_width(value) + 10);
     };
 
-    self.draw_tree = function(container, tree, parent) {
+    self.draw_tree = function(container, tree, parent, node_type) {
         if (tree.empty) {
             if (!tree.part) {
-                tree.part = EmptyTreePart(container, tree, parent);
+                tree.part = EmptyTreePart(container, tree, parent, node_type);
                 tree.part.node_elt.onclick = function() {
                     self.add_node(tree);
                 };
@@ -258,7 +258,7 @@ var TreeEditor = function($elt, $undo_button) {
             tree.part.update();
         } else {
             if (!tree.part) {
-                tree.part = NonEmptyTreePart(container, tree, parent);
+                tree.part = NonEmptyTreePart(container, tree, parent, node_type);
                 if (parent) {
                     tree.part.edge_elt.onclick = function() {
                         self.remove_node(tree);
@@ -271,8 +271,8 @@ var TreeEditor = function($elt, $undo_button) {
 
             tree.part.update();
 
-            self.draw_tree(tree.part.children_elt, tree.l, tree);
-            self.draw_tree(tree.part.children_elt, tree.r, tree);
+            self.draw_tree(tree.part.children_elt, tree.l, tree, 'left');
+            self.draw_tree(tree.part.children_elt, tree.r, tree, 'right');
         }
     };
 
@@ -411,8 +411,8 @@ var Part = function(container, class_name) {
     return self;
 };
 
-var EmptyTreePart = function(container, tree, parent) {
-    var self = Part(container, 'empty-tree');
+var EmptyTreePart = function(container, tree, parent, node_type) {
+    var self = Part(container, 'empty-tree ' + node_type);
 
     if (parent)
         self.edge_elt = SVG.add(self.group_elt, 'line', { 'class': 'empty-edge'});
@@ -431,8 +431,8 @@ var EmptyTreePart = function(container, tree, parent) {
     return self;
 };
 
-var NonEmptyTreePart = function(container, tree, parent) {
-    var self = Part(container, 'tree');
+var NonEmptyTreePart = function(container, tree, parent, node_type) {
+    var self = Part(container, 'tree ' + node_type);
 
     if (parent) {
         self.edge_elt = SVG.add(self.group_elt, 'g', { 'class': 'edge' });
