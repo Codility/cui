@@ -187,14 +187,20 @@ var TreeEditor = function($elt) {
     // TODO calc the dimensions properly instead of hard-coding
     self.redraw_tree = function() {
         self.calc_dimensions(self.tree);
-        self.calc_positions(self.tree, 25, -TreeDimensions.NODE_HEIGHT + 30);
 
-        var width = self.tree.width + 50;
+        // We want the root to be drawn in the center of the picture.
+        var left_margin = 25 + Math.max(0, self.tree.r.width - self.tree.l.width);
+        var right_margin = 25 + Math.max(0, self.tree.l.width - self.tree.r.width);
+
+        var width = self.tree.width + left_margin + right_margin;
         var height = self.tree.height;
+        var start_x = left_margin;
+        var start_y = -TreeDimensions.NODE_HEIGHT + 30;
 
         SVG.update(self.svg, {width: width, height: height});
         self.$elt.css({width: width+'px', height: height+'px'});
 
+        self.calc_positions(self.tree, start_x, start_y);
         self.draw_tree(self.main, self.tree);
     };
 
