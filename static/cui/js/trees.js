@@ -201,11 +201,10 @@ var TreeEditor = function($elt, $undo_button) {
             right_margin = 25 + Math.max(0, self.tree.l.width - self.tree.r.width);
         }
 
-
         var width = self.tree.width + left_margin + right_margin;
         var height = self.tree.height;
         var start_x = left_margin;
-        var start_y = -TreeDimensions.NODE_HEIGHT + 30;
+        var start_y = -TreeDimensions.NODE_HEIGHT + 40;
 
         SVG.update(self.svg, {width: width, height: height});
         self.$elt.css({width: width+'px', height: height+'px'});
@@ -259,11 +258,9 @@ var TreeEditor = function($elt, $undo_button) {
         } else {
             if (!tree.part) {
                 tree.part = NonEmptyTreePart(container, tree, parent, node_type);
-                if (parent) {
-                    tree.part.edge_elt.onclick = function() {
-                        self.remove_node(tree);
-                    };
-                }
+                tree.part.edge_elt.onclick = function() {
+                    self.remove_node(tree);
+                };
                 tree.part.node_elt.onclick = function() {
                         self.make_editable(tree);
                 };
@@ -434,11 +431,10 @@ var EmptyTreePart = function(container, tree, parent, node_type) {
 var NonEmptyTreePart = function(container, tree, parent, node_type) {
     var self = Part(container, 'tree ' + node_type);
 
-    if (parent) {
-        self.edge_elt = SVG.add(self.group_elt, 'g', { 'class': 'edge' });
-        self.thick_elt = SVG.add(self.edge_elt, 'line', { 'class': 'thick' });
-        self.thin_elt = SVG.add(self.edge_elt, 'line', { 'class': 'thin' });
-    }
+
+    self.edge_elt = SVG.add(self.group_elt, 'g', { 'class': 'edge' });
+    self.thick_elt = SVG.add(self.edge_elt, 'line', { 'class': 'thick' });
+    self.thin_elt = SVG.add(self.edge_elt, 'line', { 'class': 'thin' });
 
     self.children_elt = SVG.add(self.group_elt, 'g', { 'class': 'children' });
 
@@ -449,10 +445,17 @@ var NonEmptyTreePart = function(container, tree, parent, node_type) {
     self.text_elt = SVG.add(self.node_elt, 'text', {});
 
     self.update = function () {
+        var edge_start_x, edge_start_y;
         if (parent) {
-            SVG.update(self.thick_elt, { x1: parent.x, y1: parent.y, x2: tree.x, y2: tree.y });
-            SVG.update(self.thin_elt, { x1: parent.x, y1: parent.y, x2: tree.x, y2: tree.y });
+            edge_start_x = parent.x;
+            edge_start_y = parent.y;
+        } else {
+            edge_start_x = tree.x;
+            edge_start_y = tree.y - TreeDimensions.NODE_HEIGHT;
         }
+
+        SVG.update(self.thick_elt, { x1: edge_start_x, y1: edge_start_y, x2: tree.x, y2: tree.y });
+        SVG.update(self.thin_elt, { x1: edge_start_x, y1: edge_start_y, x2: tree.x, y2: tree.y });
 
         SVG.update(self.rect_elt,
                    {x: tree.x-tree.node_width/2, y: tree.y-TreeDimensions.NODE_WIDTH/2,

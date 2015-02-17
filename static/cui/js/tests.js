@@ -169,7 +169,7 @@ describe_ui('', {}, function() {
 
             // Test that selects are populated correctly
             expectVisible('.task-list', true);
-            expect($('.task-list .task').length).toBe(3);
+            expect($('.task-list .task').length).toBe(4);
             expect($('#current_prg_lang option').length).toBe(2);
             expect($('#current_human_lang option').length).toBe(2);
         });
