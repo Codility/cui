@@ -35,6 +35,9 @@
 /* global Trees */
 
 
+// is true if we're running a test
+var TESTING;
+
 // Don't complain under IE and such
 if (!window.console) {
     window.console = {
@@ -113,6 +116,8 @@ function describe_ui(suffix, extra_options, f) {
 
 
         beforeEach(function() {
+            TESTING = true;
+
             // Recover initial HTML. Done before, not after the test,
             // to observer effect of failures.
             if (PAGE_HTML === undefined)
@@ -143,6 +148,8 @@ function describe_ui(suffix, extra_options, f) {
 
             // remove the modal overlay for convenience
             $('.jqmOverlay').hide();
+
+            TESTING = false;
         });
 
         f.apply(this);
@@ -1485,7 +1492,7 @@ describe_ui(' tree editor', {}, function() {
                 tree = tree.find('> .children > .right');
         }
         return tree;
-    };
+    }
 
     function get_tree_node(path) {
         return get_tree(path).find('> .node');
@@ -1522,8 +1529,12 @@ describe_ui(' tree editor', {}, function() {
         $(BUTTON_UNDO_SELECTOR).click();
     }
 
+    function set_value(value) {
+        $(INPUT_SELECTOR).val(value).trigger('blur-test');
+    }
+
     it("should render tree", function() {
-        $('#add_test_case').click()
+        $('#add_test_case').click();
         expect(get_tree_val('')).toEqual('25');
         expect(get_tree_val('rlr')).toEqual('30');
         check_node_count(9);
@@ -1535,7 +1546,7 @@ describe_ui(' tree editor', {}, function() {
         $('#add_test_case').click();
         get_tree_node('rlr').click();
         expectVisible(INPUT_SELECTOR, true);
-        $(INPUT_SELECTOR).val('45').change().blur();
+        set_value('45');
         expectVisible(INPUT_SELECTOR, false);
         expect(get_tree_val('rlr')).toEqual('45');
 
@@ -1550,7 +1561,7 @@ describe_ui(' tree editor', {}, function() {
         expect(get_tree_val('rlrl')).toEqual('0');
         check_node_count(10);
         expectVisible(INPUT_SELECTOR, true);
-        $(INPUT_SELECTOR).val('45').change().blur();
+        set_value('45');
         expectVisible(INPUT_SELECTOR, false);
         expect(get_tree_val('rlrl')).toEqual('45');
 
@@ -1577,7 +1588,7 @@ describe_ui(' tree editor', {}, function() {
 
     function modify_tree() {
         get_tree_empty_node('rlrl').click();
-        $(INPUT_SELECTOR).blur();
+        $(INPUT_SELECTOR).trigger('blur-test');
         get_tree_edge('l').click();
         check_node_count(5);
         return '(25, None, (37, (29, None, (30, (0, None, None), None)), None))';
