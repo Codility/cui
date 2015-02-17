@@ -1454,14 +1454,17 @@ describe('trees module', function() {
 });
 
 describe_ui(' tree editor', {}, function() {
-
     var server;
 
     beforeEach(function() {
         server = this.server;
+        server.respond();
+        clickTaskTab('task4');
+        server.respond();
     });
 
     it("should open when tree editor allowed", function() {
+        clickTaskTab('task1');
         server.respond();
         $('#add_test_case').click();
         expectVisible('#tree_editor', false);
@@ -1473,6 +1476,52 @@ describe_ui(' tree editor', {}, function() {
         expectVisible('#test_cases .test-case .edit', true);
     });
 
+    function get_tree(path) {
+        var tree = $('#tree_editor .root');
+        for (var i = 0; i < path.length; ++i) {
+            if (path[i] == 'l')
+                tree = tree.find('> .children > .left');
+            else
+                tree = tree.find('> .children > .right');
+        }
+        return tree;
+    };
+
+    function get_tree_node(path) {
+        return get_tree(path).find('> .node');
+    }
+
+    function get_tree_val(path) {
+        return get_tree(path).find('> .node > text').text();
+    };
+
+    function check_undo_disabled(disabled) {
+        expect($('#tree_editor .undo').is(':disabled')).toEqual(disabled);
+    }
+
+    it("should render tree", function() {
+        $('#add_test_case').click()
+        expect($('#tree_editor text').length).toEqual(9);
+        expect($('#tree_editor .empty').length).toEqual(10);
+        expect(get_tree_val('')).toEqual('25');
+        expect(get_tree_val('rlr')).toEqual('30');
+        check_undo_disabled(true);
+        expectVisible('#tree_editor .edit input', false);
+    });
+
+    it("should edit node value", function() {
+        $('#add_test_case').click();
+        get_tree_node('rlr').click();
+        expectVisible('#tree_editor .edit input', true);
+        $('#tree_editor .edit input').val('45').change().blur();
+        expectVisible('#tree_editor .edit input', false);
+        expect(get_tree_val('rlr')).toEqual('45');
+
+        check_undo_disabled(false);
+        $('#tree_editor .undo').click();
+        expect(get_tree_val('rlr')).toEqual('30');
+        check_undo_disabled(true);
+    });
 });
 
 $.migrateMute = true;

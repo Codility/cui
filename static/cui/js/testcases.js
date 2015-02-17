@@ -47,11 +47,11 @@ var TestCases = {
     limit : 5,
     focus : false,
     storage: window.sessionStorage,
-    allow_tree_editor: false,
-    tree_editor: null,
 
     init : function() {
         this.count = 0;
+        this.allow_tree_editor = false;
+        this.tree_editor = null;
 
         $('#add_test_case').click(function(e) {
             e.preventDefault();
