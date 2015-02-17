@@ -79,7 +79,7 @@ var TestCases = {
 
         $('#tree_editor').jqm({ modal: true });
 
-        this.tree_editor = TreeEditor($('#tree_editor .tree-editor'));
+        this.tree_editor = TreeEditor($('#tree_editor .tree-editor'), $('#tree_editor .undo'));
         $('#tree_editor .ok').click(function(e) {
             e.preventDefault();
 
