@@ -262,7 +262,7 @@ var TreeEditor = function($elt, $undo_button) {
                     self.remove_node(tree);
                 };
                 tree.part.node_elt.onclick = function() {
-                        self.make_editable(tree);
+                    self.make_editable(tree);
                 };
             }
 
@@ -283,6 +283,7 @@ var TreeEditor = function($elt, $undo_button) {
         tree.r = { empty: true };
         self.redraw_tree();
         self.make_editable(tree);
+        self.scroll_into_view(tree);
     };
 
     self.remove_node = function(tree) {
@@ -396,6 +397,14 @@ var TreeEditor = function($elt, $undo_button) {
         var width = elt.getBoundingClientRect().width;
         self.main.removeChild(elt);
         return width;
+    };
+
+    self.scroll_into_view = function(tree) {
+        var y_bottom = tree.y + tree.height;
+        var $parent = self.$elt.parent();
+        var spill_over = y_bottom - $parent.height() - $parent.scrollTop();
+        if (spill_over > 0)
+            $parent.scrollTop($parent.scrollTop() + spill_over);
     };
 
     self.init();
