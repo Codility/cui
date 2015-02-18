@@ -59,7 +59,7 @@ var TestCases = {
                 $('.test-case input').last().focus();
 
                 if (TestCases.allow_tree_editor)
-                    TestCases.open_tree_editor($('.test-case input').last());
+                    TestCases.show_modal_for_input($('.test-case input').last());
             }
         });
 
@@ -79,29 +79,6 @@ var TestCases = {
     disable_tree_editor: function() {
         this.allow_tree_editor = false;
         $('#test_cases').addClass('hide-edit');
-    },
-
-    open_tree_editor: function($input) {
-        var tree_string = $input.val();
-        if (tree_string === '')
-            tree_string = $('input[name=test_case_example]').val();
-
-        var tree;
-        try {
-            tree = Trees.parse_tree(tree_string);
-        } catch (e) {
-            Console.msg_error('Could not parse the test case: ' + e.message);
-            return;
-        }
-        // clear any errors
-        Console.clear();
-        try {
-            this.$current_input = $input;
-            this.create_tree_editor(tree);
-        } catch (e) {
-            Console.msg_error('Error opening the tree editor. Please edit the test case manually, or open the page in another browser.');
-            Log.error('error opening tree editor', e);
-        }
     },
 
     create_tree_editor: function(tree) {
@@ -220,7 +197,7 @@ var TestCases = {
         $test_case.find('.edit').click(function(e) {
             e.preventDefault();
             if (TestCases.allow_tree_editor)
-                TestCases.open_tree_editor($input);
+                TestCases.show_modal_for_input($input);
         });
 
         $input.val(value);
@@ -327,4 +304,71 @@ var TestCases = {
         $("#test_cases_area").show();
         this.update();
     },
+
+    show_modal: function($elt, tree_string, on_ok, on_cancel) {
+        var tree;
+        try {
+            tree = Trees.parse_tree(tree_string);
+        } catch (e) {
+            Console.clear();
+            Console.msg_error('Could not parse the test case: ' + e.message);
+            return;
+        }
+
+        this.tree_editor = TreeEditor($elt.find('.tree-editor'),
+                                      $elt.find('.undo'));
+
+        function destroy_modal() {
+            $elt.jqmHide();
+            $elt.find('.ok').unbind('click');
+            $elt.find('.cancel').unbind('click');
+            TestCases.tree_editor.destroy();
+            TestCases.tree_editor = null;
+        }
+
+        $elt.find('.ok').click(function(e) {
+            e.preventDefault();
+            var tree = TestCases.tree_editor.tree;
+            destroy_modal();
+            var tree_string = Trees.serialize_tree(tree);
+            on_ok(tree_string);
+        });
+
+        $elt.find('.cancel').click(function(e) {
+            e.preventDefault();
+            destroy_modal();
+            on_cancel();
+        });
+
+        Console.clear(); // wipe any past parse errors
+        $elt.jqmShow();
+        this.tree_editor.set_tree(tree);
+    },
+
+    show_modal_for_input: function($input) {
+        var tree_string = $input.val();
+        if (tree_string === '')
+            tree_string = $('input[name=test_case_example]').val();
+
+        function on_ok(result_tree_string) {
+            $input.val(result_tree_string);
+            TestCases.save();
+        }
+
+        function on_cancel() {
+            if ($input.val() === '') {
+                TestCases.remove($input.closest('.test-case'));
+            }
+        }
+
+        try {
+            this.show_modal($('#tree_editor'), tree_string, on_ok, on_cancel);
+        } catch(e) {
+            $('#tree_editor').jqmHide();
+            this.disable_tree_editor();
+            Console.msg_error('Error opening the tree editor. Please edit the test case manually, or open the page in another browser.');
+            Log.error('error opening tree editor', e);
+        }
+
+    }
 };

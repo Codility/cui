@@ -178,6 +178,7 @@ var TreeEditor = function($elt, $undo_button) {
     };
 
     self.destroy = function() {
+        self.remove_from_svg(self.tree);
         self.$undo_button.unbind('click');
         self.$elt.empty();
     };
