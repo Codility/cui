@@ -101,7 +101,7 @@ var TestCases = {
             });
         } catch (e) {
             this.disable_tree_editor();
-            Console.msg_error('Cannot load tree editor. Write a testcase manually or refresh the page.');
+            Console.msg_error('Error loading the tree editor. Please edit the test case manually, or open the page in another browser.');
             Log.error('error loading tree editor', e);
         }
     },
@@ -130,7 +130,7 @@ var TestCases = {
             this.$current_input = $input;
             $('#tree_editor').jqmShow();
         } catch (e) {
-            Console.msg_error('Cannot open tree editor. Write a testcase manually or refresh the page.');
+            Console.msg_error('Error opening the tree editor. Please edit the test case manually, or open the page in another browser.');
             Log.error('error opening tree editor', e);
         }
     },
