@@ -71,33 +71,37 @@ var TestCases = {
     },
 
     enable_tree_editor: function() {
-        this.allow_tree_editor = true;
-        $('#test_cases').removeClass('hide-edit');
-
         if (this.tree_editor)
             return;
 
-        $('#tree_editor').jqm({ modal: true });
+        try {
+            $('#tree_editor').jqm({ modal: true });
 
-        this.tree_editor = TreeEditor($('#tree_editor .tree-editor'), $('#tree_editor .undo'));
-        $('#tree_editor .ok').click(function(e) {
-            e.preventDefault();
+            this.tree_editor = TreeEditor($('#tree_editor .tree-editor'), $('#tree_editor .undo'));
+            $('#tree_editor .ok').click(function(e) {
+                e.preventDefault();
 
-            $('#tree_editor').jqmHide();
-            var tree_string = Trees.serialize_tree(TestCases.tree_editor.tree);
-            TestCases.$current_input.val(tree_string);
-            TestCases.$current_input = null;
-            TestCases.save();
-        });
-        $('#tree_editor .cancel').click(function(e) {
-            e.preventDefault();
-
-            $('#tree_editor').jqmHide();
-            if (TestCases.$current_input.val() === '') {
-                TestCases.remove(TestCases.$current_input.closest('.test-case'));
+                $('#tree_editor').jqmHide();
+                var tree_string = Trees.serialize_tree(TestCases.tree_editor.tree);
+                TestCases.$current_input.val(tree_string);
                 TestCases.$current_input = null;
-            }
-        });
+                TestCases.save();
+            });
+            $('#tree_editor .cancel').click(function(e) {
+                e.preventDefault();
+
+                $('#tree_editor').jqmHide();
+                if (TestCases.$current_input.val() === '') {
+                    TestCases.remove(TestCases.$current_input.closest('.test-case'));
+                    TestCases.$current_input = null;
+                }
+            });
+            this.allow_tree_editor = true;
+            $('#test_cases').removeClass('hide-edit');
+        } catch (e) {
+            Console.msg_error('Cannot load tree editor. Write a testcase manually or refresh the page.');
+            Log.error('error loading tree editor', e);
+        }
     },
 
     disable_tree_editor: function() {
@@ -119,9 +123,14 @@ var TestCases = {
         }
         // clear any errors
         Console.clear();
-        this.tree_editor.set_tree(tree);
-        this.$current_input = $input;
-        $('#tree_editor').jqmShow();
+        try {
+            this.tree_editor.set_tree(tree);
+            this.$current_input = $input;
+            $('#tree_editor').jqmShow();
+        } catch (e) {
+            Console.msg_error('Cannot open tree editor. Write a testcase manually or refresh the page.');
+            Log.error('error opening tree editor', e);
+        }
     },
 
     // Update layout after changing the number of test cases.
