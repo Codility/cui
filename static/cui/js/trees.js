@@ -160,12 +160,13 @@ var TreeDimensions = {
     EMPTY_SIZE: 10
 };
 
-var TreeEditor = function($elt, $undo_button) {
+var TreeEditor = function($elt, $undo_button, $warning_area) {
     var self = {};
 
     self.init = function() {
         self.$elt = $elt;
         self.$undo_button = $undo_button;
+        self.$warning_area = $warning_area;
         self.$elt.addClass('tree-editor');
         self.tree = { empty: true };
 
@@ -175,6 +176,7 @@ var TreeEditor = function($elt, $undo_button) {
         self.main = SVG.add(self.svg, 'g', {'class': 'tree-editor-main'});
 
         self.$undo_button.click(self.undo);
+        self.bst_warning_enabled = false;
     };
 
     self.destroy = function() {
@@ -186,8 +188,12 @@ var TreeEditor = function($elt, $undo_button) {
     self.set_tree = function(tree) {
         self.tree = tree;
         self.clear();
-        self.redraw_tree();
+        self.update_tree();
         self.setup_undo();
+    };
+
+    self.enable_bst_warning = function() {
+        self.bst_warning_enabled = true;
     };
 
     self.clear = function() {
@@ -195,6 +201,11 @@ var TreeEditor = function($elt, $undo_button) {
     };
 
     // TODO calc the dimensions properly instead of hard-coding
+    self.update_tree = function() {
+        self.redraw_tree();
+        self.check_bst();
+    };
+
     self.redraw_tree = function() {
         self.calc_dimensions(self.tree);
 
@@ -287,7 +298,7 @@ var TreeEditor = function($elt, $undo_button) {
         tree.val = 0;
         tree.l = { empty: true };
         tree.r = { empty: true };
-        self.redraw_tree();
+        self.update_tree();
         self.make_editable(tree);
         self.scroll_into_view(tree);
     };
@@ -299,7 +310,7 @@ var TreeEditor = function($elt, $undo_button) {
         tree.empty = true;
         tree.l = null;
         tree.r = null;
-        self.redraw_tree();
+        self.update_tree();
     };
 
     // Remove all tree parts
@@ -312,6 +323,39 @@ var TreeEditor = function($elt, $undo_button) {
             tree.part.remove();
             tree.part = null;
         }
+    };
+
+    self.flatten = function(tree) {
+        if (tree.empty) {
+            return [];
+        } else {
+            var flat_left = self.flatten(tree.l);
+            var flat_right = self.flatten(tree.r);
+            return flat_left.concat([tree], flat_right);
+        }
+    };
+
+    self.check_bst = function() {
+        if (!self.bst_warning_enabled)
+            return;
+
+        var flat = self.flatten(self.tree);
+        var warning = '';
+        for (var i = 0; i < flat.length; ++i) {
+            flat[i].part.rect_elt.setAttributeNS(null, 'class', '');
+        }
+        for (var i = 1; i < flat.length; ++i) {
+            if (!(flat[i-1].val < flat[i].val)) {
+                warning = 'Warning: this is not a binary search tree ('
+                        + flat[i-1].val + ' is not less than ' + flat[i].val + ').';
+                // FIXME: Why addClass does not work here?
+                flat[i-1].part.rect_elt.setAttributeNS(null, 'class', 'bst-warning');
+                flat[i].part.rect_elt.setAttributeNS(null, 'class', 'bst-warning');
+                break;
+            }
+        }
+
+        self.$warning_area.text(warning);
     };
 
     self.make_editable = function(tree) {
@@ -343,7 +387,7 @@ var TreeEditor = function($elt, $undo_button) {
                 self.add_undo_action(tree);
 
                 tree.val = val;
-                self.redraw_tree();
+                self.update_tree();
             }
             $input.remove();
         }
@@ -392,7 +436,7 @@ var TreeEditor = function($elt, $undo_button) {
         action.tree.r = action.r;
         action.tree.val = action.val;
 
-        self.redraw_tree();
+        self.update_tree();
 
         self.$undo_button.prop('disabled', self.undo_actions.length === 0);
     };
