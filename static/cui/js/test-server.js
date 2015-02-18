@@ -37,7 +37,7 @@ function TestServer() {
                 'saved': null,
                 'n_saves': 0,
                 'allow_tree_editor': false,
-                'example_input': 'Example input: 1'
+                'example_input': '1'
             },
             'task2': {
                 'status': 'open',
@@ -47,7 +47,7 @@ function TestServer() {
                 'saved': null,
                 'n_saves': 0,
                 'allow_tree_editor': false,
-                'example_input': 'Example input: 2'
+                'example_input': '2'
             },
             'task3': {
                 'status': 'open',
@@ -57,7 +57,7 @@ function TestServer() {
                 'saved': null,
                 'n_saves': 0,
                 'allow_tree_editor': false,
-                'example_input': 'Example input: 3'
+                'example_input': '3'
             },
             'task4': {
                 'status': 'open',
