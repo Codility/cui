@@ -66,6 +66,7 @@ var TestCases = {
         var that = this;
         $('#test_cases').on('change keyup paste', 'input', function() { that.save(); });
 
+        $('#tree_editor').jqm({ modal: true });
 
         this.update();
     },
@@ -73,37 +74,6 @@ var TestCases = {
     enable_tree_editor: function() {
         this.allow_tree_editor = true;
         $('#test_cases').removeClass('hide-edit');
-
-        if (this.tree_editor)
-            return;
-
-        try {
-            $('#tree_editor').jqm({ modal: true });
-
-            this.tree_editor = TreeEditor($('#tree_editor .tree-editor'), $('#tree_editor .undo'));
-            $('#tree_editor .ok').click(function(e) {
-                e.preventDefault();
-
-                $('#tree_editor').jqmHide();
-                var tree_string = Trees.serialize_tree(TestCases.tree_editor.tree);
-                TestCases.$current_input.val(tree_string);
-                TestCases.$current_input = null;
-                TestCases.save();
-            });
-            $('#tree_editor .cancel').click(function(e) {
-                e.preventDefault();
-
-                $('#tree_editor').jqmHide();
-                if (TestCases.$current_input.val() === '') {
-                    TestCases.remove(TestCases.$current_input.closest('.test-case'));
-                    TestCases.$current_input = null;
-                }
-            });
-        } catch (e) {
-            this.disable_tree_editor();
-            Console.msg_error('Error loading the tree editor. Please edit the test case manually, or open the page in another browser.');
-            Log.error('error loading tree editor', e);
-        }
     },
 
     disable_tree_editor: function() {
@@ -126,13 +96,54 @@ var TestCases = {
         // clear any errors
         Console.clear();
         try {
-            this.tree_editor.set_tree(tree);
             this.$current_input = $input;
-            $('#tree_editor').jqmShow();
+            this.create_tree_editor(tree);
         } catch (e) {
             Console.msg_error('Error opening the tree editor. Please edit the test case manually, or open the page in another browser.');
             Log.error('error opening tree editor', e);
         }
+    },
+
+    create_tree_editor: function(tree) {
+        try {
+            this.tree_editor = TreeEditor($('#tree_editor .tree-editor'), $('#tree_editor .undo'));
+            this.tree_editor.set_tree(tree);
+
+            $('#tree_editor .ok').click(function(e) {
+                e.preventDefault();
+
+                var tree = TestCases.destroy_tree_editor();
+                var tree_string = Trees.serialize_tree(tree);
+                TestCases.$current_input.val(tree_string);
+                TestCases.$current_input = null;
+                TestCases.save();
+            });
+            $('#tree_editor .cancel').click(function(e) {
+                e.preventDefault();
+
+                TestCases.destroy_tree_editor();
+                if (TestCases.$current_input.val() === '') {
+                    TestCases.remove(TestCases.$current_input.closest('.test-case'));
+                    TestCases.$current_input = null;
+                }
+            });
+
+            $('#tree_editor').jqmShow();
+        } catch (e) {
+            this.disable_tree_editor();
+            Console.msg_error('Error loading the tree editor. Please edit the test case manually, or open the page in another browser.');
+            Log.error('error loading tree editor', e);
+        }
+    },
+
+    destroy_tree_editor: function() {
+        $('#tree_editor').jqmHide();
+        $('#tree_editor .ok').unbind('click');
+        $('#tree_editor .cancel').unbind('click');
+        var tree = this.tree_editor.tree;
+        this.tree_editor.destroy();
+        this.tree_editor = null;
+        return tree;
     },
 
     // Update layout after changing the number of test cases.

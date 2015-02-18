@@ -177,6 +177,11 @@ var TreeEditor = function($elt, $undo_button) {
         self.$undo_button.click(self.undo);
     };
 
+    self.destroy = function() {
+        self.$undo_button.unbind('click');
+        self.$elt.empty();
+    };
+
     self.set_tree = function(tree) {
         self.tree = tree;
         self.clear();
