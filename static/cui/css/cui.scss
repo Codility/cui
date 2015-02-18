@@ -883,7 +883,10 @@ g.tree-editor-main {
       stroke-width: 8px;
     }
 
-    & + .children, & + .children + .node {
+    // '+' doesn't work here, see:
+    // http://stackoverflow.com/questions/8320530/webkit-bug-with-hover-and-multiple-adjacent-sibling-selectors
+    & ~ .children, & ~ .node
+    {
       line, rect { stroke: #ccc; }
       text { fill: #ccc; }
       .edge .thick { stroke: $tree-background; }
