@@ -1,6 +1,4 @@
 
-/* global TESTING */
-
 var Trees = (function() {
     var self = {};
 
@@ -357,7 +355,7 @@ var TreeEditor = function($elt, $undo_button) {
 
         // We don't want to use normal 'blur' in tests,
         // because it can be triggered by user during the test run.
-        if (TESTING) {
+        if (window.TESTING) {
             $input.on('blur-test', exit);
         } else {
             $input.on('blur', exit);
