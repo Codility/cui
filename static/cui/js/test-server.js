@@ -36,7 +36,8 @@ function TestServer() {
                 'type': 'algo',
                 'saved': null,
                 'n_saves': 0,
-                'allow_tree_editor': false,
+                'allow_modal_editor': false,
+                'modal_editor_options': null,
                 'example_input': '1'
             },
             'task2': {
@@ -46,7 +47,8 @@ function TestServer() {
                 'type': 'bugfixing',
                 'saved': null,
                 'n_saves': 0,
-                'allow_tree_editor': false,
+                'allow_modal_editor': false,
+                'modal_editor_options': null,
                 'example_input': '2'
             },
             'task3': {
@@ -56,7 +58,8 @@ function TestServer() {
                 'type': 'sql',
                 'saved': null,
                 'n_saves': 0,
-                'allow_tree_editor': false,
+                'allow_modal_editor': false,
+                'modal_editor_options': null,
                 'example_input': '3'
             },
             'task4': {
@@ -66,11 +69,23 @@ function TestServer() {
                 'type': 'algo',
                 'saved': null,
                 'n_saves': 0,
-                'allow_tree_editor': true,
+                'allow_modal_editor': true,
+                'modal_editor_options': '{}',
+                'example_input': '(25, (19, (12, (4, None, None), None), (22, None, (23, None, None))), (37, (29, None, (30, None, None)), None))'
+            },
+            'task5': {
+                'status': 'open',
+                'human_lang_list': ['en'],
+                'prg_lang_list': ['c'],
+                'type': 'algo',
+                'saved': null,
+                'n_saves': 0,
+                'allow_modal_editor': true,
+                'modal_editor_options': '{"bst": true}',
                 'example_input': '(25, (19, (12, (4, None, None), None), (22, None, (23, None, None))), (37, (29, None, (30, None, None)), None))'
             },
         },
-        'task_names': ['task1', 'task2', 'task3', 'task4'],
+        'task_names': ['task1', 'task2', 'task3', 'task4', 'task5'],
         'current_task': 'task1',
         'next_task': '',
         'submits': [],
@@ -92,7 +107,7 @@ function TestServer() {
         current_prg_lang: "c",
         current_task_name: "task1",
 
-        task_names: ["task1", "task2", "task3", "task4"],
+        task_names: self.task_names,
 
         human_langs: {
             "en": {"name_in_itself": "English"},
@@ -157,7 +172,8 @@ function TestServer() {
             'prg_lang': prg_lang,
             'human_lang': human_lang,
             'allow_user_test_cases': t.type != 'sql',
-            'allow_tree_editor': t.allow_tree_editor
+            'allow_modal_editor': t.allow_modal_editor,
+            'modal_editor_options': t.modal_editor_options
         };
     };
 
@@ -400,6 +416,8 @@ function TestServer() {
     };
 
     function jsonToXml(data) {
+        if (data === null)
+            return 'null';
         if (typeof data == 'string')
             // HACK: Simple escaping for HTML strings. Don't copy this :)
             return data.replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;');

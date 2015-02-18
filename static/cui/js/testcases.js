@@ -58,7 +58,7 @@ var TestCases = {
             if (TestCases.add()) {
                 $('.test-case input').last().focus();
 
-                if (TestCases.allow_tree_editor)
+                if (TestCases.allow_modal_editor)
                     TestCases.show_modal_for_input($('.test-case input').last());
             }
         });
@@ -71,56 +71,16 @@ var TestCases = {
         this.update();
     },
 
-    enable_tree_editor: function() {
-        this.allow_tree_editor = true;
+    enable_modal_editor: function(modal_editor_options) {
+        this.allow_modal_editor = true;
+        this.modal_editor_options = modal_editor_options;
         $('#test_cases').removeClass('hide-edit');
     },
 
-    disable_tree_editor: function() {
-        this.allow_tree_editor = false;
+    disable_modal_editor: function() {
+        this.allow_modal_editor = false;
+        this.modal_editor_options = null;
         $('#test_cases').addClass('hide-edit');
-    },
-
-    create_tree_editor: function(tree) {
-        try {
-            this.tree_editor = TreeEditor($('#tree_editor .tree-editor'), $('#tree_editor .undo'));
-            this.tree_editor.set_tree(tree);
-
-            $('#tree_editor .ok').click(function(e) {
-                e.preventDefault();
-
-                var tree = TestCases.destroy_tree_editor();
-                var tree_string = Trees.serialize_tree(tree);
-                TestCases.$current_input.val(tree_string);
-                TestCases.$current_input = null;
-                TestCases.save();
-            });
-            $('#tree_editor .cancel').click(function(e) {
-                e.preventDefault();
-
-                TestCases.destroy_tree_editor();
-                if (TestCases.$current_input.val() === '') {
-                    TestCases.remove(TestCases.$current_input.closest('.test-case'));
-                    TestCases.$current_input = null;
-                }
-            });
-
-            $('#tree_editor').jqmShow();
-        } catch (e) {
-            this.disable_tree_editor();
-            Console.msg_error('Error loading the tree editor. Please edit the test case manually, or open the page in another browser.');
-            Log.error('error loading tree editor', e);
-        }
-    },
-
-    destroy_tree_editor: function() {
-        $('#tree_editor').jqmHide();
-        $('#tree_editor .ok').unbind('click');
-        $('#tree_editor .cancel').unbind('click');
-        var tree = this.tree_editor.tree;
-        this.tree_editor.destroy();
-        this.tree_editor = null;
-        return tree;
     },
 
     // Update layout after changing the number of test cases.
@@ -196,7 +156,7 @@ var TestCases = {
 
         $test_case.find('.edit').click(function(e) {
             e.preventDefault();
-            if (TestCases.allow_tree_editor)
+            if (TestCases.allow_modal_editor)
                 TestCases.show_modal_for_input($input);
         });
 
@@ -316,7 +276,11 @@ var TestCases = {
         }
 
         this.tree_editor = TreeEditor($elt.find('.tree-editor'),
-                                      $elt.find('.undo'));
+                                      $elt.find('.undo'),
+                                      $elt.find('.warnings'));
+
+        if (this.modal_editor_options.bst)
+            this.tree_editor.enable_bst_warning();
 
         function destroy_modal() {
             $elt.jqmHide();
@@ -365,7 +329,7 @@ var TestCases = {
             this.show_modal($('#tree_editor'), tree_string, on_ok, on_cancel);
         } catch(e) {
             $('#tree_editor').jqmHide();
-            this.disable_tree_editor();
+            this.disable_modal_editor();
             Console.msg_error('Error opening the tree editor. Please edit the test case manually, or open the page in another browser.');
             Log.error('error opening tree editor', e);
         }

@@ -815,12 +815,16 @@ $tree-background: #eee;
     background: $tree-background;
     width: 100%;
     height: 400px;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     border: 1px dashed #ccc;
     overflow: auto;
     .tree-editor {
       margin: 0 auto;
     }
+  }
+
+  .warnings {
+    margin-bottom: 10px;
   }
 }
 
