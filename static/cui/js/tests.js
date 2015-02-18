@@ -438,7 +438,7 @@ describe_ui('', {}, function() {
 
             // 'are you sure?'
             expectVisible('#final_prompt', true);
-            $('#final_prompt [value=yes]').click();
+            $('#final_prompt .yes').click();
             expectVisible('#final_prompt', false);
 
             // 'Codility is verifying your solution'
@@ -466,7 +466,7 @@ describe_ui('', {}, function() {
             clock.tick(500);
             expectVisible('#final_verification', false);
             expectVisible('#msg_task_completed', true);
-            $('#msg_task_completed [value="next task"]').click();
+            $('#msg_task_completed [value="Next task"]').click();
             expectVisible('#msg_task_completed', false);
 
             expectAllSwitches(false);
@@ -509,7 +509,7 @@ describe_ui('', {}, function() {
             // your solution is not correct, do you still want to submit?
             expectVisible('#final_verification', true);
             expect($('#final_verification').text()).toMatch('Your solution is not correct');
-            $('#final_verification [value=yes]').click();
+            $('#final_verification .yes').click();
 
             endFinal();
         });
@@ -526,7 +526,7 @@ describe_ui('', {}, function() {
             ui.saveActionAsync();
 
             // and we initiate verification
-            $('#final_prompt [value=yes]').click();
+            $('#final_prompt .yes').click();
             expectVisible('#final_prompt', false);
             server.respond();
             expect(server.submits.length).toBe(1);
