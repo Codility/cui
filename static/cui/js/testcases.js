@@ -71,6 +71,9 @@ var TestCases = {
     },
 
     enable_tree_editor: function() {
+        this.allow_tree_editor = true;
+        $('#test_cases').removeClass('hide-edit');
+
         if (this.tree_editor)
             return;
 
@@ -96,9 +99,8 @@ var TestCases = {
                     TestCases.$current_input = null;
                 }
             });
-            this.allow_tree_editor = true;
-            $('#test_cases').removeClass('hide-edit');
         } catch (e) {
+            this.disable_tree_editor();
             Console.msg_error('Cannot load tree editor. Write a testcase manually or refresh the page.');
             Log.error('error loading tree editor', e);
         }
