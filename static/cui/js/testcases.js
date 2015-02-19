@@ -265,19 +265,33 @@ var TestCases = {
         this.update();
     },
 
-    show_modal: function($elt, tree_string, on_ok, on_cancel) {
-        var tree;
+    show_modal: function($elt, input_string, on_ok, on_cancel) {
+        var tuple;
+        var format = this.modal_editor_options.format;
         try {
-            tree = Trees.parse_tree(tree_string);
+            tuple = Trees.parse_tuple(input_string, format);
         } catch (e) {
             Console.clear();
             Console.msg_error('Could not parse the test case: ' + e.message);
             return;
         }
 
+        var tree_name = null;
+        for (var i = 0; i < format.length; i++) {
+            if (format[i].type == "tree") {
+                tree_name = format[i].name;
+                break;
+            }
+        }
+        if (tree_name === null) {
+            throw new Error("Format does not contain a tree");
+        }
+        var tree = tuple[tree_name];
+
         this.tree_editor = TreeEditor($elt.find('.tree-editor'),
                                       $elt.find('.undo'),
                                       $elt.find('.warnings'));
+        this.tree_editor.set_tree(tree);
 
         if (this.modal_editor_options.bst)
             this.tree_editor.enable_bst_warning();
@@ -293,9 +307,11 @@ var TestCases = {
         $elt.find('.ok').click(function(e) {
             e.preventDefault();
             var tree = TestCases.tree_editor.tree;
+            var tuple = {};
+            tuple[tree_name] = tree;
             destroy_modal();
-            var tree_string = Trees.serialize_tree(tree);
-            on_ok(tree_string);
+            var tuple_string = Trees.serialize_tuple(tuple, format);
+            on_ok(tuple_string);
         });
 
         $elt.find('.cancel').click(function(e) {
@@ -306,7 +322,10 @@ var TestCases = {
 
         Console.clear(); // wipe any past parse errors
         $elt.jqmShow();
-        this.tree_editor.set_tree(tree);
+
+        // text width is not computed correctly before the modal
+        // is shown
+        this.tree_editor.update_tree();
     },
 
     show_modal_for_input: function($input) {

@@ -70,7 +70,7 @@ function TestServer() {
                 'saved': null,
                 'n_saves': 0,
                 'allow_modal_editor': true,
-                'modal_editor_options': '{}',
+                'modal_editor_options': JSON.stringify({format: [{name: 'T', type: 'tree'}]}),
                 'example_input': '(25, (19, (12, (4, None, None), None), (22, None, (23, None, None))), (37, (29, None, (30, None, None)), None))'
             },
             'task5': {
@@ -81,11 +81,22 @@ function TestServer() {
                 'saved': null,
                 'n_saves': 0,
                 'allow_modal_editor': true,
-                'modal_editor_options': '{"bst": true}',
+                'modal_editor_options': JSON.stringify({bst: true, format: [{name: 'T', type: 'tree'}]}),
                 'example_input': '(25, (19, (12, (4, None, None), None), (22, None, (23, None, None))), (37, (29, None, (30, None, None)), None))'
             },
+            'task6': {
+                'status': 'open',
+                'human_lang_list': ['en'],
+                'prg_lang_list': ['c'],
+                'type': 'algo',
+                'saved': null,
+                'n_saves': 0,
+                'allow_modal_editor': true,
+                'modal_editor_options': JSON.stringify({format: [{name: 'A', type: 'int'}, {name: 'B', type: 'int'}, {name: 'T', type: 'tree'}]}),
+                'example_input': '(10, 20, (15, (12, None, None), None))'
+            },
         },
-        'task_names': ['task1', 'task2', 'task3', 'task4', 'task5'],
+        'task_names': ['task1', 'task2', 'task3', 'task4', 'task5', 'task6'],
         'current_task': 'task1',
         'next_task': '',
         'submits': [],
