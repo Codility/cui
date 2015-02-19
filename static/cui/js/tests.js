@@ -1028,8 +1028,13 @@ describe_ui('', {}, function() {
     /*
       This test is intended to guard us against changes in Ace
       breaking copy-paste detection and possibly even copy-pasting.
+
+      The test is disabled in browsers other than Firefox, because
+      we are not able to construct an appropriate CustomEvent in make_event.
     */
-    describe('copy-paste detection', function() {
+    var firefox_describe =  $.browser.mozilla ? describe : xdescribe;
+
+    firefox_describe('copy-paste detection', function() {
         function make_event(type, text) {
             var e = new CustomEvent(type);
             e.clipboardData = { getData: function() { return text; }, setData: function() {} };
