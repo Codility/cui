@@ -104,7 +104,7 @@ function testHelp(clock) {
 
 // Scaffolding for candidate UI
 function describe_ui(suffix, extra_options, f) {
-    describe('Candidate UI' + suffix, function() {
+    describe('Candidate UI' + (suffix === "" ? "" : " " + suffix), function() {
         function FakeStorage () {
             var store = {};
             return {
@@ -1103,7 +1103,7 @@ describe_ui('', {}, function() {
 });
 
 
-describe_ui(" start ticket", {}, function(){
+describe_ui("start ticket", {}, function(){
     var ui;
     var server, clock;
 
@@ -1139,7 +1139,7 @@ describe_ui(" start ticket", {}, function(){
     });
 });
 
-describe_ui(' (with show_help enabled)', { 'show_help': true }, function(){
+describe_ui('(with show_help enabled)', { 'show_help': true }, function(){
     var ui;
     var server, clock;
 
@@ -1204,7 +1204,7 @@ describe_ui(' (with show_help enabled)', { 'show_help': true }, function(){
     });
 });
 
-describe_ui(' (with save_often enabled)', { 'save_often': true }, function() {
+describe_ui('(with save_often enabled)', { 'save_often': true }, function() {
     var ui;
     var server, clock;
 
@@ -1332,7 +1332,7 @@ describe('plugins', function () {
     }
 
 
-    describe_ui(' plugins loading and unloading', {}, function() {
+    describe_ui('plugins loading and unloading', {}, function() {
         it('should load and unload plugin', function () {
             // setup spys
             var plugin = Plugin();
@@ -1487,7 +1487,7 @@ describe('trees module', function() {
     });
 });
 
-describe_ui(' tree editor', {}, function() {
+describe_ui('tree editor', {}, function() {
     var server;
 
     beforeEach(function() {
@@ -1671,7 +1671,7 @@ describe_ui(' tree editor', {}, function() {
     });
 });
 
-describe_ui(' tree editor with parameters', {}, function() {
+describe_ui('tree editor with parameters', {}, function() {
     var server;
 
     beforeEach(function() {
