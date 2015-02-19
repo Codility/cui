@@ -114,7 +114,9 @@ var Trees = (function() {
         var parser = Trees.Parser(input);
         var result = {};
 
-        parser.read('(');
+        var use_parens = format.length != 1;
+        if (use_parens)
+            parser.read('(');
         for (var i = 0; i < format.length; i++) {
             if (i > 0)
                 parser.read(',');
@@ -129,7 +131,8 @@ var Trees = (function() {
 
             result[format[i].name] = val;
         }
-        parser.read(')');
+        if (use_parens)
+            parser.read(')');
         parser.end();
         return result;
     };
@@ -159,6 +162,8 @@ var Trees = (function() {
 
             result.push(str);
         }
+        if (format.length == 1)
+            return result[0];
         return '(' + result.join(", ") + ')';
     };
 
