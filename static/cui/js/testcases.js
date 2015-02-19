@@ -356,6 +356,7 @@ var TestCases = {
             $param.find('.name').text(param.name);
             // note we use ints only, so no need to deserialize
             $param.find('input').val(tuple[param.name]);
+            $param.attr('data-name', param.name);
             self.int_editors[param.name] = IntEditor($param.find('input'));
             return $param;
         };

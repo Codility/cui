@@ -1671,4 +1671,39 @@ describe_ui(' tree editor', {}, function() {
     });
 });
 
+describe_ui(' tree editor with parameters', {}, function() {
+    var server;
+
+    beforeEach(function() {
+        server = this.server;
+        server.respond();
+        clickTaskTab('task6');
+        server.respond();
+    });
+
+    function get_input(name) {
+        return $('#tree_editor .param[data-name=' + name +'] input');
+    }
+
+    it("should allow to edit parameters", function() {
+        $('#add_test_case').click();
+        expect(get_input('A').val()).toEqual('10');
+        expect(get_input('B').val()).toEqual('20');
+        get_input('A').val('15').change();
+        $('#tree_editor .ok').click();
+
+        expect($('#test_cases input').val()).toMatch(/^\(15, 20, /);
+    });
+
+    it("should validate parameters", function() {
+        $('#add_test_case').click();
+        get_input('A').val('1000000000000000').change();
+        expect(get_input('A').hasClass('error')).toEqual(true);
+        $('#tree_editor .ok').click();
+
+        expect($('#test_cases input').val()).toMatch(/^\(0, 20, /);
+        expect($('#console').text()).toMatch(/^Invalid value for parameter A/);
+    });
+});
+
 $.migrateMute = true;
