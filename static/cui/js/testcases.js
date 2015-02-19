@@ -266,88 +266,105 @@ var TestCases = {
     },
 
     show_modal: function($elt, input_string, on_ok, on_cancel) {
-        var tuple;
-        var format = this.modal_editor_options.format;
-        try {
-            tuple = Trees.parse_tuple(input_string, format);
-        } catch (e) {
-            Console.clear();
-            Console.msg_error('Could not parse the test case: ' + e.message);
-            return;
-        }
+        var self = {};
 
-        var tree_name = null;
-        for (var i = 0; i < format.length; i++) {
-            if (format[i].type == "tree") {
-                tree_name = format[i].name;
-                break;
+        self.options = this.modal_editor_options;
+        self.format = self.options.format;
+
+        self.read_tuple = function() {
+            try {
+                return Trees.parse_tuple(input_string, self.format);
+            } catch (e) {
+                Console.clear();
+                Console.msg_error('Could not parse the test case: ' + e.message);
+                return null;
             }
-        }
-        if (tree_name === null) {
-            throw new Error("Format does not contain a tree");
-        }
-        var tree = tuple[tree_name];
+        };
 
-        this.tree_editor = TreeEditor($elt.find('.tree-editor'),
-                                      $elt.find('.undo'),
-                                      $elt.find('.warnings'));
-        this.tree_editor.set_tree(tree);
+        self.init = function() {
+            var tuple = self.read_tuple();
+            if (tuple === null)
+                return;
 
-        if (this.modal_editor_options.bst)
-            this.tree_editor.enable_bst_warning();
+            var tree_name = null;
+            for (var i = 0; i < self.format.length; i++) {
+                if (self.format[i].type == "tree") {
+                    tree_name = self.format[i].name;
+                    break;
+                }
+            }
+            if (tree_name === null) {
+                throw new Error("Format does not contain a tree");
+            }
+            var tree = tuple[tree_name];
 
-        function destroy_modal() {
+            self.tree_editor = TreeEditor($elt.find('.tree-editor'),
+                                          $elt.find('.undo'),
+                                          $elt.find('.warnings'));
+
+            self.tree_editor.set_tree(tree);
+            if (self.options.bst)
+                self.tree_editor.enable_bst_warning();
+            for (i = 0; i < self.format.length; i++) {
+                if (self.format[i].type == 'tree')
+                    continue;
+                var $param = $('<div class="param"><span class="name"></span> = <input type="text"></input></div>');
+                var param_name = self.format[i].name;
+                $param.find('.name').text(param_name);
+                // note we use ints only, so no need to deserialize
+                $param.find('input').val(tuple[param_name]);
+                $param.attr('data-name', param_name);
+                $elt.find('.params').append($param);
+            }
+
+            $elt.find('.ok').click(self.handle_ok);
+            $elt.find('.cancel').click(self.handle_cancel);
+
+            Console.clear(); // wipe any past parse errors
+            $elt.jqmShow();
+
+            // text width is not computed correctly before the modal
+            // is shown
+            self.tree_editor.update_tree();
+        };
+
+        self.destroy_modal = function() {
             $elt.jqmHide();
             $elt.find('.ok').unbind('click');
             $elt.find('.cancel').unbind('click');
             $elt.find('.params').empty();
-            TestCases.tree_editor.destroy();
-            TestCases.tree_editor = null;
-        }
+            self.tree_editor.destroy();
+        };
 
-        $elt.find('.ok').click(function(e) {
-            e.preventDefault();
-            var tree = TestCases.tree_editor.tree;
+        self.get_tuple_string = function() {
+            var tree = self.tree_editor.tree;
             var tuple = {};
-            tuple[tree_name] = tree;
-            for (i = 0; i < format.length; i++) {
-                if (format[i].type == 'tree')
-                    continue;
-                var $input = $elt.find('.params .param[data-name=' + format[i].name + '] input');
-                // note we use ints only (also below), so no need to serialize
-                tuple[format[i].name] = $input.val();
+            for (var i = 0; i < self.format.length; i++) {
+                if (self.format[i].type == 'tree')
+                    tuple[self.format[i].name] = tree;
+                else {
+                    var $input = $elt.find('.params .param[data-name=' + self.format[i].name + '] input');
+                    // note we use ints only (also below), so no need to serialize
+                    tuple[self.format[i].name] = $input.val();
+                }
             }
+            return Trees.serialize_tuple(tuple, self.format);
+        };
 
-
-            destroy_modal();
-            var tuple_string = Trees.serialize_tuple(tuple, format);
-            on_ok(tuple_string);
-        });
-
-        $elt.find('.cancel').click(function(e) {
+        self.handle_ok = function(e) {
             e.preventDefault();
-            destroy_modal();
+            var tuple_string = self.get_tuple_string();
+            self.destroy_modal();
+            on_ok(tuple_string);
+        };
+
+        self.handle_cancel = function(e) {
+            e.preventDefault();
+            self.destroy_modal();
             on_cancel();
-        });
+        };
 
-        for (i = 0; i < format.length; i++) {
-            if (format[i].type == 'tree')
-                continue;
-            var $param = $('<div class="param"><span class="name"></span> = <input type="text"></input></div>');
-            var param_name = format[i].name;
-            $param.find('.name').text(param_name);
-            // note we use ints only, so no need to deserialize
-            $param.find('input').val(tuple[param_name]);
-            $param.attr('data-name', param_name);
-            $elt.find('.params').append($param);
-        }
-
-        Console.clear(); // wipe any past parse errors
-        $elt.jqmShow();
-
-        // text width is not computed correctly before the modal
-        // is shown
-        this.tree_editor.update_tree();
+        self.init();
     },
 
     show_modal_for_input: function($input) {
