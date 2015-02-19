@@ -155,6 +155,25 @@ var SVG = (function() {
         }
     };
 
+    self.has_class = function(elt, class_name) {
+        var class_attr = elt.getAttributeNS(null, 'class');
+        return new RegExp('(\\s|^)' + class_name + '(\\s|$)').test(class_attr);
+    };
+
+    self.add_class = function(elt, class_name) {
+        if (!self.has_class(elt, class_name)) {
+            elt.setAttributeNS(null, 'class', elt.getAttributeNS(null, 'class') + ' ' + class_name);
+        }
+    };
+
+    self.remove_class = function(elt, class_name) {
+        if (self.has_class(elt, class_name)) {
+            var class_attr = elt.getAttributeNS(null, 'class');
+            var new_class_attr = class_attr.replace(new RegExp('(\\s|^)' + class_name + '(\\s|$)', 'g'), '$2');
+            elt.setAttributeNS(null, 'class', new_class_attr);
+        }
+    };
+
     self.update_selector = function(container, selector, attributes, content) {
         var elt = container.querySelector(selector);
         self.update(elt, attributes, content);
@@ -353,16 +372,17 @@ var TreeEditor = function($elt, $undo_button, $warning_area) {
 
         var flat = self.flatten(self.tree);
         var warning = '';
-        for (var i = 0; i < flat.length; ++i) {
-            flat[i].part.rect_elt.setAttributeNS(null, 'class', '');
+        var i;
+        for (i = 0; i < flat.length; ++i) {
+            SVG.remove_class(flat[i].part.node_elt, 'bst-warning');
         }
-        for (var i = 1; i < flat.length; ++i) {
-            if (!(flat[i-1].val < flat[i].val)) {
-                warning = 'Warning: this is not a binary search tree ('
-                        + flat[i-1].val + ' is not less than ' + flat[i].val + ').';
+        for (i = 1; i < flat.length; ++i) {
+            if (flat[i-1].val >= flat[i].val) {
+                warning = 'Warning: this is not a binary search tree (' +
+                    flat[i-1].val + ' is not less than ' + flat[i].val + ').';
                 // FIXME: Why addClass does not work here?
-                flat[i-1].part.rect_elt.setAttributeNS(null, 'class', 'bst-warning');
-                flat[i].part.rect_elt.setAttributeNS(null, 'class', 'bst-warning');
+                SVG.add_class(flat[i-1].part.node_elt, 'bst-warning');
+                SVG.add_class(flat[i].part.node_elt, 'bst-warning');
                 break;
             }
         }

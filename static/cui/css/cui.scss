@@ -880,8 +880,6 @@ g.tree-editor-main {
     opacity: 0.01;
   }
 
-  .bst-warning rect { fill: red; }
-
   .edge:hover {
     cursor: pointer;
     .thin {
@@ -907,10 +905,16 @@ g.tree-editor-main {
       stroke: black;
       fill: white;
     }
-    .bst-warning { fill: #f66; }
+
     text {
       text-anchor: middle;
     }
+
+    &.bst-warning rect {
+      stroke: #a00;
+      stroke-width: 2px;
+    }
+
   }
 
   .node:hover {
