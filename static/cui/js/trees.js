@@ -1,6 +1,6 @@
 
 var Trees = (function() {
-    var self = {};
+    var Trees = {};
 
     var TOKEN_TYPES = [
         { regex: /^\(/ },
@@ -10,7 +10,7 @@ var Trees = (function() {
         { regex: /^[+-]?(0|[1-9]\d{0,9})/, convert: function(s) { return parseInt(s, 10); } }
     ];
 
-    self.tokenize = function(input) {
+    Trees.tokenize = function(input) {
         var tokens = [];
 
         while (input !== '') {
@@ -45,70 +45,82 @@ var Trees = (function() {
         return tokens;
     };
 
-    self.parse_tree = function(input) {
-        var tokens = self.tokenize(input);
+    Trees.Parser = function(input) {
+        var self = {};
+        self.tokens = Trees.tokenize(input);
 
-        if (tokens.length === 0)
-            return { empty: true };
+        self.is_empty = function() {
+            return self.tokens.length === 0;
+        };
 
-        var t = read_tree();
-        end();
-        return t;
+        self.read_tree = function() {
+            if (self.tokens.length === 0)
+                self.error_parsing('tree');
 
-        function read_tree() {
-            if (tokens.length === 0)
-                error_parsing('tree');
-
-            if (tokens[0] === 'None') {
-                read('None');
+            if (self.tokens[0] === 'None') {
+                self.read('None');
                 return { empty: true };
-            } else if (tokens[0] === '(') {
-                read('(');
-                var val = read_int();
-                read(',');
-                var l = read_tree();
-                read(',');
-                var r = read_tree();
-                read(')');
+            } else if (self.tokens[0] === '(') {
+                self.read('(');
+                var val = self.read_int();
+                self.read(',');
+                var l = self.read_tree();
+                self.read(',');
+                var r = self.read_tree();
+                self.read(')');
                 return { val: val, l: l, r: r };
             } else {
-                error_parsing('tree');
+                self.error_parsing('tree');
             }
-        }
+        };
 
-        function read_int() {
-            if (tokens.length === 0 || typeof tokens[0] !== 'number')
-                error_parsing('integer');
-            return tokens.shift();
-        }
+        self.read_int = function() {
+            if (self.tokens.length === 0 || typeof self.tokens[0] !== 'number')
+                self.error_parsing('integer');
+            return self.tokens.shift();
+        };
 
-        function read(expected_token) {
-            if (tokens.length === 0 || tokens[0] !== expected_token)
-                error_parsing("'" + expected_token + "'");
-            return tokens.shift();
-        }
+        self.read = function(expected_token) {
+            if (self.tokens.length === 0 || self.tokens[0] !== expected_token)
+                self.error_parsing("'" + expected_token + "'");
+            return self.tokens.shift();
+        };
 
-        function end() {
-            if (tokens.length > 0)
-                error_parsing('end of input');
-        }
+        self.end = function() {
+            if (self.tokens.length > 0)
+                self.error_parsing('end of input');
+        };
 
-        function error_parsing(what) {
-            throw new Error('unexpected ' + (tokens.length > 0 ? "'"+tokens[0]+"'" : 'end of input') +
+        self.error_parsing = function(what) {
+            throw new Error('unexpected ' + (self.tokens.length > 0 ? "'"+self.tokens[0]+"'" : 'end of input') +
                             ', required ' + what);
-        }
+        };
+
+        return self;
     };
 
-    self.serialize_tree = function(tree) {
+
+    Trees.parse_tree = function(input) {
+        var parser = Trees.Parser(input);
+
+        if (parser.is_empty())
+            return { empty: true };
+
+        var t = parser.read_tree();
+        parser.end();
+        return t;
+    };
+
+    Trees.serialize_tree = function(tree) {
         if (tree.empty)
             return 'None';
         else
             return ('(' + tree.val + ', ' +
-                    self.serialize_tree(tree.l) + ', ' +
-                    self.serialize_tree(tree.r) + ')');
+                    Trees.serialize_tree(tree.l) + ', ' +
+                    Trees.serialize_tree(tree.r) + ')');
     };
 
-    return self;
+    return Trees;
 })();
 
 var SVG = (function() {
