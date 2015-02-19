@@ -1468,6 +1468,13 @@ describe('trees module', function() {
         expect(Trees.serialize_tree({ val: -1, l: { empty: true }, r: { empty: true } })).toEqual('(-1, None, None)');
         expect(Trees.serialize_tree(example_tree)).toEqual(example_tree_string);
     });
+
+    it('should serialize tuples', function() {
+        var format = [{name: 'A', type: 'int'}, {name: 'B', type: 'int'}, {name: 'T', type: 'tree'}];
+        expect(Trees.serialize_tuple({ A: 4, B: 10, T: example_tree}, format)).toEqual('(4, 10, ' + example_tree_string + ')');
+        var format2 = [{name: 'X', type: 'int'}, {name: 'T', type: 'tree'}];
+        expect(Trees.serialize_tuple({ X: 4, T: { empty: true }}, format2)).toEqual('(4, None)');
+    });
 });
 
 describe_ui(' tree editor', {}, function() {

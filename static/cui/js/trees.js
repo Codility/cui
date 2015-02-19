@@ -143,6 +143,25 @@ var Trees = (function() {
                     Trees.serialize_tree(tree.r) + ')');
     };
 
+    Trees.serialize_tuple = function(tuple, format) {
+        var result = [];
+
+        for (var i = 0; i < format.length; i++) {
+            var data = tuple[format[i].name];
+
+            var str;
+            if (format[i].type == 'tree')
+                str = Trees.serialize_tree(data);
+            else if (format[i].type == 'int')
+                str = data.toString();
+            else
+                throw new Error('unrecognized type: ' + format[i].type);
+
+            result.push(str);
+        }
+        return '(' + result.join(", ") + ')';
+    };
+
     return Trees;
 })();
 
