@@ -1453,6 +1453,16 @@ describe('trees module', function() {
         // TODO check for error messages
     });
 
+    it('should parse tuples', function() {
+        var format = [{name: 'A', type: 'int'}, {name: 'B', type: 'int'}, {name: 'T', type: 'tree'}];
+        expect(Trees.parse_tuple('(1, 2, (3, None, None))', format)).toEqual(
+            {A: 1, B: 2, T: { l: { empty: true }, val: 3, r: { empty: true }}}
+        );
+        expect(Trees.parse_tuple('(42, 44, ' + example_tree_string + ')', format)).toEqual(
+            {A: 42, B: 44, T: example_tree});
+        expect(function() { Trees.parse_tuple('(3, None, None)', format); }).toThrowError();
+    });
+
     it('should serialize trees', function() {
         expect(Trees.serialize_tree({ empty: true })).toEqual('None');
         expect(Trees.serialize_tree({ val: -1, l: { empty: true }, r: { empty: true } })).toEqual('(-1, None, None)');

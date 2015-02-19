@@ -99,7 +99,6 @@ var Trees = (function() {
         return self;
     };
 
-
     Trees.parse_tree = function(input) {
         var parser = Trees.Parser(input);
 
@@ -109,6 +108,30 @@ var Trees = (function() {
         var t = parser.read_tree();
         parser.end();
         return t;
+    };
+
+    Trees.parse_tuple = function(input, format) {
+        var parser = Trees.Parser(input);
+        var result = {};
+
+        parser.read('(');
+        for (var i = 0; i < format.length; i++) {
+            if (i > 0)
+                parser.read(',');
+
+            var val;
+            if (format[i].type == 'tree')
+                val = parser.read_tree();
+            else if (format[i].type == 'int')
+                val = parser.read_int();
+            else
+                throw new Error('unrecognized type: ' + format[i].type);
+
+            result[format[i].name] = val;
+        }
+        parser.read(')');
+        parser.end();
+        return result;
     };
 
     Trees.serialize_tree = function(tree) {
