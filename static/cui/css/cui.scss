@@ -826,6 +826,23 @@ $tree-background: #eee;
   .warnings {
     margin-bottom: 10px;
   }
+
+  .params {
+    .param {
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+    input {
+      width: 70px;
+
+      border: 2px solid #999;
+
+      &.error { border-color: red; }
+
+      // override Chrome default
+      &:focus { outline: none; }
+    }
+  }
 }
 
 .tree-editor {

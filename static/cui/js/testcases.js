@@ -22,7 +22,7 @@
 
 /* global Log, Console */
 /* global ui */
-/* global Trees, TreeEditor */
+/* global Trees, TreeEditor, IntEditor */
 
 // http://www.quirksmode.org/js/cookies.html
 // use cookies as fallback for sessionStorage in Safari private mode.
@@ -305,15 +305,12 @@ var TestCases = {
             self.tree_editor.set_tree(tree);
             if (self.options.bst)
                 self.tree_editor.enable_bst_warning();
+
+            self.int_editors = {};
             for (i = 0; i < self.format.length; i++) {
                 if (self.format[i].type == 'tree')
                     continue;
-                var $param = $('<div class="param"><span class="name"></span> = <input type="text"></input></div>');
-                var param_name = self.format[i].name;
-                $param.find('.name').text(param_name);
-                // note we use ints only, so no need to deserialize
-                $param.find('input').val(tuple[param_name]);
-                $param.attr('data-name', param_name);
+                var $param = self.create_input_for_param(self.format[i], tuple);
                 $elt.find('.params').append($param);
             }
 
@@ -343,12 +340,24 @@ var TestCases = {
                 if (self.format[i].type == 'tree')
                     tuple[self.format[i].name] = tree;
                 else {
-                    var $input = $elt.find('.params .param[data-name=' + self.format[i].name + '] input');
-                    // note we use ints only (also below), so no need to serialize
-                    tuple[self.format[i].name] = $input.val();
+                    var value = self.int_editors[self.format[i].name].get_value();
+                    if (value === null) {
+                        Console.msg_error('Invalid value for parameter ' + self.format[i].name + ', using 0.');
+                        value = 0;
+                    }
+                    tuple[self.format[i].name] = value;
                 }
             }
             return Trees.serialize_tuple(tuple, self.format);
+        };
+
+        self.create_input_for_param = function(param, tuple) {
+            var $param = $('<div class="param"><span class="name"></span> = <input type="text"></input></div>');
+            $param.find('.name').text(param.name);
+            // note we use ints only, so no need to deserialize
+            $param.find('input').val(tuple[param.name]);
+            self.int_editors[param.name] = IntEditor($param.find('input'));
+            return $param;
         };
 
         self.handle_ok = function(e) {

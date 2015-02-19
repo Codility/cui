@@ -438,7 +438,7 @@ var TreeEditor = function($elt, $undo_button, $warning_area) {
     };
 
     self.make_editable = function(tree) {
-        var $input = $('<input>').attr('maxlength', 11).val(tree.val);
+        var $input = $('<input>').val(tree.val);
         var width = Math.max(self.get_node_width(tree.val), 76);
         $input.css({
             position: 'absolute',
@@ -451,17 +451,10 @@ var TreeEditor = function($elt, $undo_button, $warning_area) {
         $input.focus();
         $input.select();
 
-        function get_value(s) {
-            if (!/^[+-]?(0|[1-9]\d{0,9})$/.test(s))
-                return null;
-            var n = parseInt(s, 10);
-            if (!(-2147483648 <= n && n <= 2147483647))
-                return null;
-            return n;
-        }
+        var editor = IntEditor($input);
 
         function exit() {
-            var val = get_value($input.val());
+            var val = editor.get_value();
             if (val !== null && val !== tree.val) {
                 self.add_undo_action(tree);
 
@@ -470,13 +463,6 @@ var TreeEditor = function($elt, $undo_button, $warning_area) {
             }
             $input.remove();
         }
-
-        $input.on('change keyup paste', function() {
-            if (get_value($input.val()) === null)
-                $input.addClass('error');
-            else
-                $input.removeClass('error');
-        });
 
         $input.on('keypress', function(e) {
             if (e.which == 13) // enter
@@ -611,5 +597,29 @@ var NonEmptyTreePart = function(container, tree, parent, node_type) {
         }, tree.val);
     };
 
+    return self;
+};
+
+var IntEditor = function($input) {
+    var self = {};
+
+    self.validate = function() {
+        if (self.get_value() === null)
+            $input.addClass('error');
+        else
+            $input.removeClass('error');
+    };
+
+    self.get_value = function() {
+        var s = $input.val();
+        if (!/^[+-]?(0|[1-9]\d{0,9})$/.test(s))
+            return null;
+        var n = parseInt(s, 10);
+        if (!(-2147483648 <= n && n <= 2147483647))
+            return null;
+        return n;
+    };
+
+    $input.attr('maxlength', 11).on('change keyup paste', self.validate);
     return self;
 };
