@@ -26,7 +26,7 @@
 // http://jasmine.github.io/2.0/ajax.html
 
 // TODO consider customizing Jasmine's boot.js to our ends.
-/* global describe,expect,jasmine,it,afterEach,beforeEach*/
+/* global describe,xdescribe,expect,jasmine,it,afterEach,beforeEach*/
 /* global sinon*/
 /* global console*/
 /* global CandidateUi, Console, Clock, TestCases, Diff */
@@ -1495,26 +1495,6 @@ describe('trees module', function() {
 describe_ui('tree editor', {}, function() {
     var server;
 
-    beforeEach(function() {
-        server = this.server;
-        server.respond();
-        clickTaskTab('task4');
-        server.respond();
-    });
-
-    it("should open tree editor when allowed", function() {
-        clickTaskTab('task1');
-        server.respond();
-        $('#add_test_case').click();
-        expectVisible('#tree_editor', false);
-        expectVisible('#test_cases .test-case .edit', false);
-        clickTaskTab('task4');
-        server.respond();
-        $('#add_test_case').click();
-        expectVisible('#tree_editor', true);
-        expectVisible('#test_cases .test-case .edit', true);
-    });
-
     function get_tree(path) {
         var tree = $('#tree_editor .root');
         for (var i = 0; i < path.length; ++i) {
@@ -1565,149 +1545,202 @@ describe_ui('tree editor', {}, function() {
         $(INPUT_SELECTOR).val(value).trigger('blur-test');
     }
 
-    it("should render tree", function() {
-        $('#add_test_case').click();
-        expect(get_tree_val('')).toEqual('25');
-        expect(get_tree_val('rlr')).toEqual('30');
-        check_node_count(9);
-        check_undo_enabled(false);
-        expectVisible(INPUT_SELECTOR, false);
-    });
-
-    it("should edit node value", function() {
-        $('#add_test_case').click();
-        get_tree_node('rlr').click();
-        expectVisible(INPUT_SELECTOR, true);
-        set_value('45');
-        expectVisible(INPUT_SELECTOR, false);
-        expect(get_tree_val('rlr')).toEqual('45');
-
-        perform_undo();
-        expect(get_tree_val('rlr')).toEqual('30');
-        check_undo_enabled(false);
-    });
-
-    it("should add node", function() {
-        $('#add_test_case').click();
-        get_tree_empty_node('rlrl').click();
-        expect(get_tree_val('rlrl')).toEqual('0');
-        check_node_count(10);
-        expectVisible(INPUT_SELECTOR, true);
-        set_value('45');
-        expectVisible(INPUT_SELECTOR, false);
-        expect(get_tree_val('rlrl')).toEqual('45');
-
-        perform_undo();
-        expect(get_tree_val('rlrl')).toEqual('0');
-        perform_undo();
-        check_node_count(9);
-        check_undo_enabled(false);
-    });
-
-    it("should remove nodes", function() {
-        $('#add_test_case').click();
-        get_tree_edge('rlr').click();
-        check_node_count(8);
-        get_tree_edge('l').click();
-        check_node_count(3);
-
-        perform_undo();
-        check_node_count(8);
-        perform_undo();
-        check_node_count(9);
-        check_undo_enabled(false);
-    });
-
-    function modify_tree() {
-        get_tree_empty_node('rlrl').click();
-        $(INPUT_SELECTOR).trigger('blur-test');
-        get_tree_edge('l').click();
-        check_node_count(5);
-        return '(25, None, (37, (29, None, (30, (0, None, None), None)), None))';
+    function select_task(task_name) {
+        clickTaskTab(task_name);
+        server.respond();
     }
-
-    function modify_tree_again() {
-        get_tree_edge('rlr').click();
-        check_node_count(3);
-        return '(25, None, (37, (29, None, None), None))';
-    }
-
-    it("should save modified tree when pressed ok", function() {
-        $('#add_test_case').click();
-        var tree_string = modify_tree();
-        $(BUTTON_OK_SELECTOR).click();
-        expectVisible('#tree_editor', false);
-        expect($('#test_cases input').val()).toEqual(tree_string);
-
-        $('#test_cases .edit').click();
-        var tree_string_again = modify_tree_again();
-        $(BUTTON_OK_SELECTOR).click();
-        expect($('#test_cases input').val()).toEqual(tree_string_again);
-    });
-
-    it("should discard modified tree when pressed cancel", function() {
-        $('#add_test_case').click();
-        modify_tree();
-        $(BUTTON_CANCEL_SELECTOR).click();
-        expectVisible('#tree_editor', false);
-        expect($('#test_cases input').length).toEqual(0);
-
-        $('#add_test_case').click();
-        $(BUTTON_OK_SELECTOR).click();
-        var old_tree_string = $('#test_cases input').val();
-        $('#test_cases .edit').click();
-        modify_tree();
-        $(BUTTON_CANCEL_SELECTOR).click();
-        expect($('#test_cases input').val()).toEqual(old_tree_string);
-    });
-
-    it("should work after manually editing tree string", function() {
-        $('#add_test_case').click();
-        $(BUTTON_OK_SELECTOR).click();
-        $('#test_cases input').val('(5, None, (4, None, None))');
-        $('#test_cases .edit').click();
-        check_node_count(2);
-        $(BUTTON_CANCEL_SELECTOR).click();
-
-        $('#test_cases input').val('Invalid');
-        $('#test_cases .edit').click();
-        expectVisible('#tree_editor', false);
-        expect($('#console').text()).toEqual("Could not parse the test case: unexpected input near 'Invalid'");
-    });
-});
-
-describe_ui('tree editor with parameters', {}, function() {
-    var server;
 
     beforeEach(function() {
         server = this.server;
         server.respond();
-        clickTaskTab('task6');
-        server.respond();
     });
 
-    function get_input(name) {
-        return $('#tree_editor .param[data-name=' + name +'] input');
-    }
 
-    it("should allow to edit parameters", function() {
-        $('#add_test_case').click();
-        expect(get_input('A').val()).toEqual('10');
-        expect(get_input('B').val()).toEqual('20');
-        get_input('A').val('15').change();
-        $('#tree_editor .ok').click();
+    describe('(normal)', function() {
+        beforeEach(function() {
+            select_task('task4');
+        });
 
-        expect($('#test_cases input').val()).toMatch(/^\(15, 20, /);
+        it("should open tree editor when allowed", function() {
+            clickTaskTab('task1');
+            server.respond();
+            $('#add_test_case').click();
+            expectVisible('#tree_editor', false);
+            expectVisible('#test_cases .test-case .edit', false);
+            clickTaskTab('task4');
+            server.respond();
+            $('#add_test_case').click();
+            expectVisible('#tree_editor', true);
+            expectVisible('#test_cases .test-case .edit', true);
+        });
+
+        it("should render tree", function() {
+            $('#add_test_case').click();
+            expect(get_tree_val('')).toEqual('25');
+            expect(get_tree_val('rlr')).toEqual('30');
+            check_node_count(9);
+            check_undo_enabled(false);
+            expectVisible(INPUT_SELECTOR, false);
+        });
+
+        it("should edit node value", function() {
+            $('#add_test_case').click();
+            get_tree_node('rlr').click();
+            expectVisible(INPUT_SELECTOR, true);
+            set_value('45');
+            expectVisible(INPUT_SELECTOR, false);
+            expect(get_tree_val('rlr')).toEqual('45');
+
+            perform_undo();
+            expect(get_tree_val('rlr')).toEqual('30');
+            check_undo_enabled(false);
+        });
+
+        it("should add node", function() {
+            $('#add_test_case').click();
+            get_tree_empty_node('rlrl').click();
+            expect(get_tree_val('rlrl')).toEqual('0');
+            check_node_count(10);
+            expectVisible(INPUT_SELECTOR, true);
+            set_value('45');
+            expectVisible(INPUT_SELECTOR, false);
+            expect(get_tree_val('rlrl')).toEqual('45');
+
+            perform_undo();
+            expect(get_tree_val('rlrl')).toEqual('0');
+            perform_undo();
+            check_node_count(9);
+            check_undo_enabled(false);
+        });
+
+        it("should remove nodes", function() {
+            $('#add_test_case').click();
+            get_tree_edge('rlr').click();
+            check_node_count(8);
+            get_tree_edge('l').click();
+            check_node_count(3);
+
+            perform_undo();
+            check_node_count(8);
+            perform_undo();
+            check_node_count(9);
+            check_undo_enabled(false);
+        });
+
+        function modify_tree() {
+            get_tree_empty_node('rlrl').click();
+            $(INPUT_SELECTOR).trigger('blur-test');
+            get_tree_edge('l').click();
+            check_node_count(5);
+            return '(25, None, (37, (29, None, (30, (0, None, None), None)), None))';
+        }
+
+        function modify_tree_again() {
+            get_tree_edge('rlr').click();
+            check_node_count(3);
+            return '(25, None, (37, (29, None, None), None))';
+        }
+
+        it("should save modified tree when pressed ok", function() {
+            $('#add_test_case').click();
+            var tree_string = modify_tree();
+            $(BUTTON_OK_SELECTOR).click();
+            expectVisible('#tree_editor', false);
+            expect($('#test_cases input').val()).toEqual(tree_string);
+
+            $('#test_cases .edit').click();
+            var tree_string_again = modify_tree_again();
+            $(BUTTON_OK_SELECTOR).click();
+            expect($('#test_cases input').val()).toEqual(tree_string_again);
+        });
+
+        it("should discard modified tree when pressed cancel", function() {
+            $('#add_test_case').click();
+            modify_tree();
+            $(BUTTON_CANCEL_SELECTOR).click();
+            expectVisible('#tree_editor', false);
+            expect($('#test_cases input').length).toEqual(0);
+
+            $('#add_test_case').click();
+            $(BUTTON_OK_SELECTOR).click();
+            var old_tree_string = $('#test_cases input').val();
+            $('#test_cases .edit').click();
+            modify_tree();
+            $(BUTTON_CANCEL_SELECTOR).click();
+            expect($('#test_cases input').val()).toEqual(old_tree_string);
+        });
+
+        it("should work after manually editing tree string", function() {
+            $('#add_test_case').click();
+            $(BUTTON_OK_SELECTOR).click();
+            $('#test_cases input').val('(5, None, (4, None, None))');
+            $('#test_cases .edit').click();
+            check_node_count(2);
+            $(BUTTON_CANCEL_SELECTOR).click();
+
+            $('#test_cases input').val('Invalid');
+            $('#test_cases .edit').click();
+            expectVisible('#tree_editor', false);
+            expect($('#console').text()).toEqual("Could not parse the test case: unexpected input near 'Invalid'");
+        });
     });
 
-    it("should validate parameters", function() {
-        $('#add_test_case').click();
-        get_input('A').val('1000000000000000').change();
-        expect(get_input('A').hasClass('error')).toEqual(true);
-        $('#tree_editor .ok').click();
+    describe('(BST)', function() {
+        beforeEach(function() {
+            select_task('task5');
+        });
 
-        expect($('#test_cases input').val()).toMatch(/^\(0, 20, /);
-        expect($('#console').text()).toMatch(/^Invalid value for parameter A/);
+        it('should validate BST', function() {
+            $('#add_test_case').click();
+            expect($('.node.bst-warning').length).toBe(0);
+
+            get_tree_node('lrr').click();
+            set_value('28');
+            expect($('.node.bst-warning').length).toBe(2);
+            expect($('#tree_editor .warnings').text()).toMatch(/not a binary search tree/);
+
+            get_tree_node('lrr').click();
+            set_value('23');
+            expect($('.node.bst-warning').length).toBe(0);
+            expect($('#tree_editor .warnings').text()).toEqual('');
+
+            get_tree_node('lrr').click();
+            set_value('28');
+            expect($('.node.bst-warning').length).toBe(2);
+
+            get_tree_edge('lrr').click();
+            expect($('.node.bst-warning').length).toBe(0);
+        });
+    });
+
+    describe('(with parameters)', function() {
+        beforeEach(function() {
+            select_task('task6');
+        });
+
+        function get_input(name) {
+            return $('#tree_editor .param[data-name=' + name +'] input');
+        }
+
+        it("should allow to edit parameters", function() {
+            $('#add_test_case').click();
+            expect(get_input('A').val()).toEqual('10');
+            expect(get_input('B').val()).toEqual('20');
+            get_input('A').val('15').change();
+            $('#tree_editor .ok').click();
+
+            expect($('#test_cases input').val()).toMatch(/^\(15, 20, /);
+        });
+
+        it("should validate parameters", function() {
+            $('#add_test_case').click();
+            get_input('A').val('1000000000000000').change();
+            expect(get_input('A').hasClass('error')).toEqual(true);
+            $('#tree_editor .ok').click();
+
+            expect($('#test_cases input').val()).toMatch(/^\(0, 20, /);
+            expect($('#console').text()).toMatch(/^Invalid value for parameter A/);
+        });
     });
 });
 
