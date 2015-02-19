@@ -300,6 +300,7 @@ var TestCases = {
             $elt.jqmHide();
             $elt.find('.ok').unbind('click');
             $elt.find('.cancel').unbind('click');
+            $elt.find('.params').empty();
             TestCases.tree_editor.destroy();
             TestCases.tree_editor = null;
         }
@@ -309,6 +310,15 @@ var TestCases = {
             var tree = TestCases.tree_editor.tree;
             var tuple = {};
             tuple[tree_name] = tree;
+            for (i = 0; i < format.length; i++) {
+                if (format[i].type == 'tree')
+                    continue;
+                var $input = $elt.find('.params .param[data-name=' + format[i].name + '] input');
+                // note we use ints only (also below), so no need to serialize
+                tuple[format[i].name] = $input.val();
+            }
+
+
             destroy_modal();
             var tuple_string = Trees.serialize_tuple(tuple, format);
             on_ok(tuple_string);
@@ -319,6 +329,18 @@ var TestCases = {
             destroy_modal();
             on_cancel();
         });
+
+        for (i = 0; i < format.length; i++) {
+            if (format[i].type == 'tree')
+                continue;
+            var $param = $('<div class="param"><span class="name"></span> = <input type="text"></input></div>');
+            var param_name = format[i].name;
+            $param.find('.name').text(param_name);
+            // note we use ints only, so no need to deserialize
+            $param.find('input').val(tuple[param_name]);
+            $param.attr('data-name', param_name);
+            $elt.find('.params').append($param);
+        }
 
         Console.clear(); // wipe any past parse errors
         $elt.jqmShow();
