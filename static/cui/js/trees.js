@@ -261,6 +261,7 @@ var TreeEditor = function($elt, $undo_button, $warning_area) {
         self.remove_from_svg(self.tree);
         self.$undo_button.unbind('click');
         self.$elt.empty();
+        self.$warning_area.empty();
     };
 
     self.set_tree = function(tree) {
