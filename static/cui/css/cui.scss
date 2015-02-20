@@ -825,7 +825,6 @@ $tree-background: #eee;
     background: $tree-background;
     width: 100%;
     height: 400px;
-    margin-bottom: 5px;
     border: 1px dashed #ccc;
     overflow: auto;
     .tree-editor {
@@ -839,9 +838,10 @@ $tree-background: #eee;
 
   .params {
     margin: 0 auto;
+    margin-top: 10px;
     .param {
       display: inline-block;
-      margin: 15px;
+      margin: 0px 15px;
     }
     input {
       @include tree-editor-input;
@@ -851,6 +851,10 @@ $tree-background: #eee;
 
       border-radius: 2px;
     }
+  }
+
+  .dialog_buttons {
+    margin-top: 20px;
   }
 }
 
