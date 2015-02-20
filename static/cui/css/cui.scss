@@ -806,6 +806,16 @@ $tc-padding: 16px;
 
 $tree-background: #eee;
 
+@mixin tree-editor-input {
+  border: 2px solid #999;
+  &.error { border-color: red; }
+
+  @include box-shadow(inset 1px 1px 3px rgba(0, 0, 0, 0.2));
+
+  // override Chrome default
+  &:focus { outline: none; }
+}
+
 // the modal
 #tree_editor {
   width: 800px;
@@ -824,23 +834,22 @@ $tree-background: #eee;
   }
 
   .warnings {
-    margin-bottom: 10px;
+    margin-top: 5px;
   }
 
   .params {
+    margin: 0 auto;
     .param {
-      margin-top: 5px;
-      margin-bottom: 5px;
+      display: inline-block;
+      margin: 15px;
     }
     input {
+      @include tree-editor-input;
+
       width: 70px;
+      padding: 3px;
 
-      border: 2px solid #999;
-
-      &.error { border-color: red; }
-
-      // override Chrome default
-      &:focus { outline: none; }
+      border-radius: 2px;
     }
   }
 }
@@ -848,19 +857,14 @@ $tree-background: #eee;
 .tree-editor {
   position: relative;
   input {
+    @include tree-editor-input;
+
     // width, margin-left are determined on creation
     height: 32px;
     margin-top: -16px;
     text-align: center;
 
-    border: 2px solid #999;
-    &.error { border-color: red; }
     border-radius: 15px;
-
-    @include box-shadow(inset 1px 1px 3px rgba(0, 0, 0, 0.2));
-
-    // override Chrome default
-    &:focus { outline: none; }
   }
 }
 
