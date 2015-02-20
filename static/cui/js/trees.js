@@ -428,7 +428,6 @@ var TreeEditor = function($elt, $undo_button, $warning_area) {
             if (flat[i-1].val >= flat[i].val) {
                 warning = 'Warning: this is not a binary search tree (' +
                     flat[i-1].val + ' is not less than ' + flat[i].val + ').';
-                // FIXME: Why addClass does not work here?
                 SVG.add_class(flat[i-1].part.node_elt, 'bst-warning');
                 SVG.add_class(flat[i].part.node_elt, 'bst-warning');
                 break;
