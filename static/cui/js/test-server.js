@@ -134,7 +134,6 @@ function TestServer() {
         show_help: false,
         show_welcome: true,
         sequential: false,
-        save_often: true,
 
         urls: {
             "status": "/chk/status/",

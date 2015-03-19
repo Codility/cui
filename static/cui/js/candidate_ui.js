@@ -42,12 +42,8 @@
 
 var MAX_SUBMIT_SOLUTION_RETRY_COUNT=15;
 
-// Old autosave (ui.options.save_often == false)
-// Save every 2 minutes
-var OLD_AUTOSAVE_PERIOD=2*60*1000; // 2 minutes
 
-// New autosave (ui.options.save_often == true)
-// We will save:
+// Autosave parameters. We will save:
 // - preferably, each time the candidate stops editing...
 // - but between MIN_PERIOD and MAX_PERIOD
 
@@ -159,13 +155,11 @@ function CandidateUi(options)
         if (self.task.open && self.editor.getValue() != self.task.saved_solution) {
             self.task.last_modify_time = new Date().getTime();
             self.task.modified = true;
-            if (self.options.save_often)
-                self.updateSaveStatus('');
+            self.updateSaveStatus('');
         } else {
             self.task.modified = false;
             self.task.last_modify_time = null;
-            if (self.options.save_often)
-                self.updateSaveStatus('All changes saved.');
+            self.updateSaveStatus('All changes saved.');
         }
     };
 
@@ -677,15 +671,6 @@ function CandidateUi(options)
         self.finalSubmitActionSave(0);
     };
 
-    // Periodic auto-save (!save_often)
-    self.oldAutoSave = function() {
-        setTimeout(self.oldAutoSave, OLD_AUTOSAVE_PERIOD);
-
-        if (!self.isCalling())
-            self.saveActionAsync();
-    };
-
-    // Auto-save after candidate stops typing (save_often)
     self.checkAutoSave = function() {
         setTimeout(self.checkAutoSave, CHECK_AUTOSAVE_PERIOD);
 
@@ -1309,10 +1294,7 @@ function CandidateUi(options)
         Clock.init(self.options.ticket_id, self.options.urls['clock'], self.options.time_remaining_sec, self.options.time_elapsed_sec);
 
         self.reloadTask();
-        if (self.options.save_often)
-            setTimeout(self.checkAutoSave, CHECK_AUTOSAVE_PERIOD);
-        else
-            setTimeout(self.oldAutoSave, OLD_AUTOSAVE_PERIOD);
+        setTimeout(self.checkAutoSave, CHECK_AUTOSAVE_PERIOD);
         self.updateControls();
 
         if (self.options.show_welcome) {

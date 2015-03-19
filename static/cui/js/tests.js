@@ -340,59 +340,98 @@ describe_ui('', {}, function() {
         expect(ui.task.modified).toBe(false);
     });
 
-    it('should save solutions', function() {
-        server.respond();
-        ui.editor.setValue('my solution');
-        ui.saveAction();
-        expectAllSwitches(false);
+    describe('save feature', function() {
+        it('should save solutions', function() {
+            server.respond();
+            ui.editor.setValue('my solution');
+            ui.saveAction();
+            expectAllSwitches(false);
 
-        server.respond();
-        expectAllSwitches(true);
-        expect(server.tasks.task1.saved).toEqual({
-            'prg_lang': 'c',
-            'solution': 'my solution'
+            server.respond();
+            expectAllSwitches(true);
+            expect(server.tasks.task1.saved).toEqual({
+                'prg_lang': 'c',
+                'solution': 'my solution'
+            });
         });
-    });
 
-    it('should auto-save periodically', function() {
-        server.respond();
-        ui.editor.setValue('my solution 1');
-        // wait 2 minutes
-        clock.tick(minutes(2, 1));
-        server.respond();
-        expect(server.tasks.task1.saved.solution).toEqual('my solution 1');
+        it('should not let auto-save overwrite data while switching tasks', function() {
+            server.respond();
+            ui.editor.setValue('my C solution');
 
-        // check if we auto-save again
-        ui.editor.setValue('my solution 2');
-        clock.tick(minutes(2, 1));
-        server.respond();
-        expect(server.tasks.task1.saved.solution).toEqual('my solution 2');
-    });
+            // The auto-save is handled with a delay...
+            ui.saveActionAsync();
+            server.respond(seconds(1));
+            expect(server.tasks.task1.saved).toBe(null);
 
-    it('should not let auto-save overwrite data while switching tasks', function() {
-        server.respond();
-        ui.editor.setValue('my C solution');
+            // ...but before the server returns, we switch to other language
+            $('#current_prg_lang').val('cpp').change();
+            server.respond();
+            expect(ui.editor.getValue()).toBe('Start: task1,en,cpp');
 
-        // The auto-save is handled with a delay...
-        ui.saveActionAsync();
-        server.respond(seconds(1));
-        expect(server.tasks.task1.saved).toBe(null);
-
-        // ...but before the server returns, we switch to other language
-        $('#current_prg_lang').val('cpp').change();
-        server.respond();
-        expect(ui.editor.getValue()).toBe('Start: task1,en,cpp');
-
-        // The solution is saved, but the UI shouldn't overwrite any data
-        // about a task.
-        clock.tick(seconds(1));
-        expect(server.tasks.task1.saved).toEqual({
-            'prg_lang': 'c',
-            'solution': 'my C solution'
+            // The solution is saved, but the UI shouldn't overwrite any data
+            // about a task.
+            clock.tick(seconds(1));
+            expect(server.tasks.task1.saved).toEqual({
+                'prg_lang': 'c',
+                'solution': 'my C solution'
+            });
+            expect(ui.editor.getValue()).toBe('Start: task1,en,cpp');
+            expect(ui.task.saved_solution).toBe('Start: task1,en,cpp');
+            expect(ui.task.prg_lang).toEqual('cpp');
         });
-        expect(ui.editor.getValue()).toBe('Start: task1,en,cpp');
-        expect(ui.task.saved_solution).toBe('Start: task1,en,cpp');
-        expect(ui.task.prg_lang).toEqual('cpp');
+
+
+        it('should save after each new modification', function() {
+            server.respond();
+            ui.editor.setValue('my solution 1');
+            clock.tick(seconds(10));
+            server.respond();
+            expect(server.tasks.task1.saved.solution).toEqual('my solution 1');
+
+            ui.editor.setValue('my solution 2');
+            clock.tick(seconds(10));
+            server.respond();
+            expect(server.tasks.task1.saved.solution).toEqual('my solution 2');
+        });
+
+        it('shouldn\'t save too often', function() {
+            server.respond();
+
+            // Save only when we finished typing
+            ui.editor.setValue('my solution 0');
+            clock.tick(seconds(1));
+            ui.editor.setValue('my solution 1');
+            clock.tick(seconds(3));
+            server.respond();
+            expect(server.tasks.task1.n_saves).toEqual(1);
+            expect(server.tasks.task1.saved.solution).toEqual('my solution 1');
+
+            // Don't save twice in a short period of time
+            ui.editor.setValue('my solution 2');
+            clock.tick(seconds(3));
+            server.respond();
+            expect(server.tasks.task1.n_saves).toEqual(1);
+            expect(server.tasks.task1.saved.solution).toEqual('my solution 1');
+        });
+
+        it('shouldn\'t save too rarely while candidate is editing', function() {
+            server.respond();
+            ui.editor.setValue('my solution');
+            clock.tick(seconds(3));
+            server.respond();
+            expect(server.tasks.task1.saved.solution).toEqual('my solution');
+
+            // Edit too frequently for 'save after typing' to kick in
+            var n_edits = AUTOSAVE_MAX_PERIOD/1000;
+            for (var i = 0; i < n_edits; i++) {
+                ui.editor.setValue('my solution ' + i);
+                clock.tick(seconds(1));
+                server.respond();
+            }
+            expect(server.tasks.task1.n_saves).toEqual(2);
+            expect(server.tasks.task1.saved.solution).toEqual('my solution ' + (n_edits-1));
+        });
     });
 
     it('should verify solutions', function() {
@@ -1208,69 +1247,6 @@ describe_ui('(with show_help enabled)', { 'show_help': true }, function(){
         expect(server.startCalled()).toBe(true);
     });
 });
-
-describe_ui('(with save_often enabled)', { 'save_often': true }, function() {
-    var ui;
-    var server, clock;
-
-    beforeEach(function() {
-        ui = this.ui;
-        server = this.server;
-        clock = this.clock;
-    });
-
-    it('should save after each new modification', function() {
-        server.respond();
-        ui.editor.setValue('my solution 1');
-        clock.tick(seconds(10));
-        server.respond();
-        expect(server.tasks.task1.saved.solution).toEqual('my solution 1');
-
-        ui.editor.setValue('my solution 2');
-        clock.tick(seconds(10));
-        server.respond();
-        expect(server.tasks.task1.saved.solution).toEqual('my solution 2');
-    });
-
-    it('shouldn\'t save too often', function() {
-        server.respond();
-
-        // Save only when we finished typing
-        ui.editor.setValue('my solution 0');
-        clock.tick(seconds(1));
-        ui.editor.setValue('my solution 1');
-        clock.tick(seconds(3));
-        server.respond();
-        expect(server.tasks.task1.n_saves).toEqual(1);
-        expect(server.tasks.task1.saved.solution).toEqual('my solution 1');
-
-        // Don't save twice in a short period of time
-        ui.editor.setValue('my solution 2');
-        clock.tick(seconds(3));
-        server.respond();
-        expect(server.tasks.task1.n_saves).toEqual(1);
-        expect(server.tasks.task1.saved.solution).toEqual('my solution 1');
-    });
-
-    it('shouldn\'t save too rarely while candidate is editing', function() {
-        server.respond();
-        ui.editor.setValue('my solution');
-        clock.tick(seconds(3));
-        server.respond();
-        expect(server.tasks.task1.saved.solution).toEqual('my solution');
-
-        // Edit too frequently for 'save after typing' to kick in
-        var n_edits = AUTOSAVE_MAX_PERIOD/1000;
-        for (var i = 0; i < n_edits; i++) {
-            ui.editor.setValue('my solution ' + i);
-            clock.tick(seconds(1));
-            server.respond();
-        }
-        expect(server.tasks.task1.n_saves).toEqual(2);
-        expect(server.tasks.task1.saved.solution).toEqual('my solution ' + (n_edits-1));
-    });
-});
-
 
 describe('diff engine', function() {
     it('should split string into lines, disregarding some whitespace runs', function() {
