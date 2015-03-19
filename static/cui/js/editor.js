@@ -80,6 +80,10 @@ function Editor() {
     self.setReadOnlyRegions = function() {};
     self.enforceReadOnlyRegions = function() {};
 
+    self.focus = function() {
+        $('#solution').focus();
+    };
+
     return self;
 }
 
