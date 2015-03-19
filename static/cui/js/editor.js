@@ -80,6 +80,10 @@ function Editor() {
     self.setReadOnlyRegions = function() {};
     self.enforceReadOnlyRegions = function() {};
 
+    self.focus = function() {
+        $('#solution').focus();
+    };
+
     return self;
 }
 
@@ -309,6 +313,9 @@ function AceEditor() {
                                 "movelinesup": true,
                                 "movelinesdown" : true,
                                 "splitline" : true};
+    };
+    self.focus = function() {
+        self.ace.focus();
     };
 
     self.ace.commands.on("exec", self.enforceReadOnlyRegions);

@@ -428,6 +428,7 @@ function CandidateUi(options)
                 self.verifyActionSuccess,
                 self.verifyActionError
         );
+        self.editor.focus();
     };
 
     self.verifyActionSuccess = function(xml) {
