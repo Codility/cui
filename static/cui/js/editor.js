@@ -310,6 +310,9 @@ function AceEditor() {
                                 "movelinesdown" : true,
                                 "splitline" : true};
     };
+    self.focus = function() {
+        self.ace.focus();
+    };
 
     self.ace.commands.on("exec", self.enforceReadOnlyRegions);
     return self;
