@@ -25,10 +25,11 @@ import os
 import sys
 import json
 
-from django.test.testcases import LiveServerTestCase, TestCase
+from django.test.testcases import TestCase
 from django.test.client import Client
 from django.core.urlresolvers import reverse
 from django.utils.http import urlquote
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -192,7 +193,7 @@ class SeleniumRunner(object):
         return passed_tests
 
 
-class CuiJsTestCase(LiveServerTestCase):
+class CuiJsTestCase(StaticLiveServerTestCase):
     def setUp(self):
         # See https://code.djangoproject.com/ticket/10827
         from django.contrib.contenttypes.models import ContentType
