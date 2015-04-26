@@ -84,7 +84,6 @@ By phone:
 By postal mail:
 
     Codility Polska
-    Długa 44/50
-    Poddasze A
-    00-241 Warszawa
+    Dobra 56/66
+    00-312 Warszawa
     Poland
