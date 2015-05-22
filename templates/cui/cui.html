@@ -34,14 +34,14 @@
     <input type="hidden" name="ticket" value="{{ticket.id}}" />
 
     <div id="header">
-      <div class="top-bar three-columns">
+      {% block logos %}
+        <div class="logos">
+          <a class="test-logo" target="_blank" href="https://github.com/codility/cui"
+             >C<span>U</span>I</a>
+        </div>
+      {% endblock %}
+      <div class="top-bar two-columns">
         <div class="passcode">{{ ticket.id }}</div>
-        {% block logos %}
-          <div class="logos">
-            <a class="test-logo" target="_blank" href="https://github.com/codility/cui"
-               >C<span>U</span>I</a>
-          </div>
-        {% endblock %}
         <div>
           <span id="clock">0:00:00</span>
         </div>
