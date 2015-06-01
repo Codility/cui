@@ -441,13 +441,6 @@ function CandidateUi(options)
             Console.msg(_message);
         } else if (_html) {
             Console.addHtml(_html);
-            // Hack, this probably belongs on the server.
-            if (self.bugfixingNothingChanged()) {
-                var warning = ("You haven't changed anything in the initial solution. " +
-                               "It contains a bug, and we ask you to fix it.");
-                $('#console .summary').replaceWith(
-                    $('<div class="title summary error">').text(warning));
-            }
         }
         var quote = xmlNodeValue(xml,'quote');
         Console.msg_quote(quote);
@@ -519,26 +512,8 @@ function CandidateUi(options)
     };
 
     //////////////////FINAL SUBMIT ACTION ////////////////////////////////
-    self.bugfixingNothingChanged = function() {
-        if ((self.task.type !== 'bugfixing') || (self.editor.template === null))
-            return false;
-
-        var diff = null;
-        try {
-            diff = Diff.analyze(self.editor.template, self.editor.getValue());
-        } catch (err) {
-            Log.error('Error computing diff', err);
-        }
-
-        return diff && diff.nChanged === 0;
-    };
-
     self.finalSubmitButtonAction = function() {
-        if (self.bugfixingNothingChanged()) {
-            $('#bugfix_no_changes').jqmShow();
-        } else {
-            $('#final_prompt').jqmShow();
-        }
+        $('#final_prompt').jqmShow();
     };
 
     self.finalSubmitAction = function() {
@@ -584,10 +559,9 @@ function CandidateUi(options)
         $('#fv_loader').css({display:'none'});
         var _message = xmlNodeValue(xml, 'response > message');
         var _html = xmlNodeValue(xml, 'response > html');
-        var _compile_ok = xmlNodeValue(xml,'response > compile_ok');
-        var _tests_ok = xmlNodeValue(xml,'response > tests_ok');
+        var _all_ok = xmlNodeValue(xml,'response > all_ok');
 
-        if (_compile_ok == "1" && _tests_ok == "1") {
+        if (_all_ok == "1") {
             Log.info("candidate final submit verify", 'solution passed example tests');
             self.finalSubmitActionSave(1);
         } else {
@@ -1014,7 +988,6 @@ function CandidateUi(options)
         $("#final_verification").jqm({modal: true});
         $("#msg_task_completed").jqm({modal: true});
         $('#msg_task_closed').jqm({modal: true});
-        $("#bugfix_no_changes").jqm({modal: true});
         $("#exit_initial_help").jqm({modal: true});
         // Note that there is no 'close' button on this one,
         // only 'click outside to close'.

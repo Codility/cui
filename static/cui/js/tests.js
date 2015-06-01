@@ -904,41 +904,6 @@ describe_ui('', {}, function() {
         });
     });
 
-    describe('prompt for bugfixing tasks', function() {
-        it('should be displayed when you made no changes', function() {
-            server.respond();
-            clickTaskTab('task2');
-            server.respond();
-            $('#final_button').click();
-            expectVisible('#bugfix_no_changes', true);
-            $('#bugfix_no_changes [value="I understand"]').click();
-            expectVisible('#bugfix_no_changes', false);
-
-            // 'Codility is verifying your solution'
-            expectVisible('#final_verification', false);
-        });
-        it('shouldn\'t be displayed if you made changes', function() {
-            server.respond();
-            clickTaskTab('task2');
-            server.respond();
-            ui.editor.setValue('modified code');
-            $('#final_button').click();
-            expectVisible('#bugfix_no_changes', false);
-            expectVisible('#final_prompt', true);
-        });
-        it('should show a warning when verifying', function() {
-           server.respond();
-           clickTaskTab('task2');
-           server.respond();
-           $('#verify_button').click();
-           server.respond();
-           clock.tick(seconds(1));
-           server.submits[0].result = server.verifyOkResponse();
-           server.respond();
-           expect($('#console').text()).toMatch('haven\'t changed anything');
-        });
-    });
-
     describe('clock widget', function() {
         it('should count down', function() {
             server.respond();
