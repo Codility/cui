@@ -512,20 +512,6 @@ function CandidateUi(options)
     };
 
     //////////////////FINAL SUBMIT ACTION ////////////////////////////////
-    self.bugfixingNothingChanged = function() {
-        if ((self.task.type !== 'bugfixing') || (self.editor.template === null))
-            return false;
-
-        var diff = null;
-        try {
-            diff = Diff.analyze(self.editor.template, self.editor.getValue());
-        } catch (err) {
-            Log.error('Error computing diff', err);
-        }
-
-        return diff && diff.nChanged === 0;
-    };
-
     self.finalSubmitButtonAction = function() {
         $('#final_prompt').jqmShow();
     };
