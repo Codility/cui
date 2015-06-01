@@ -411,6 +411,7 @@ function TestServer() {
 
     self.verifyOkResponse = function() {
         return {
+            'all_ok': '1',
             'compile_ok': '1',
             'tests_ok': '1',
             'html': '<div class="title summary success">Verification succeeded</div>',
@@ -419,6 +420,7 @@ function TestServer() {
 
     self.verifyFailedResponse = function() {
         return {
+            'all_ok': '0',
             'compile_ok': '1',
             'tests_ok': '0',
             'html': 'Verification failed',
