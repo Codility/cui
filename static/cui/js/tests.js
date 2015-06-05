@@ -32,7 +32,7 @@
 /* global CandidateUi, Console, Clock, TestCases, Diff */
 /* global AUTOSAVE_MAX_PERIOD */
 /* global TestServer */
-/* global Trees */
+/* global InputData */
 
 
 // is true if we're running a test
@@ -1369,10 +1369,10 @@ describe('plugins', function () {
 
 describe('trees module', function() {
     it('should tokenize strings', function() {
-        expect(Trees.tokenize('')).toEqual([]);
-        expect(Trees.tokenize('  ')).toEqual([]);
-        expect(Trees.tokenize(' (1, None, -2, 3) ')).toEqual(['(', 1, ',', 'None', ',', -2, ',', 3, ')']);
-        expect(function() { Trees.tokenize(' 1.5 '); }).toThrowError();
+        expect(InputData.tokenize('')).toEqual([]);
+        expect(InputData.tokenize('  ')).toEqual([]);
+        expect(InputData.tokenize(' (1, None, -2, 3) ')).toEqual(['(', 1, ',', 'None', ',', -2, ',', 3, ')']);
+        expect(function() { InputData.tokenize(' 1.5 '); }).toThrowError();
     });
 
     var example_tree_string = '(25, (19, (12, (4, None, None), None), (22, None, (23, None, None))), (37, (29, None, (30, None, None)), None))';
@@ -1392,42 +1392,42 @@ describe('trees module', function() {
              r: { empty: true } } };
 
     it('should parse trees', function() {
-        expect(Trees.parse_tree('')).toEqual({ empty: true });
-        expect(Trees.parse_tree('None')).toEqual({ empty: true });
-        expect(Trees.parse_tree('(-1, None, None)')).toEqual({val: -1, l: { empty: true }, r: { empty: true }});
-        expect(Trees.parse_tree(example_tree_string)).toEqual(example_tree);
+        expect(InputData.parse_tree('')).toEqual({ empty: true });
+        expect(InputData.parse_tree('None')).toEqual({ empty: true });
+        expect(InputData.parse_tree('(-1, None, None)')).toEqual({val: -1, l: { empty: true }, r: { empty: true }});
+        expect(InputData.parse_tree(example_tree_string)).toEqual(example_tree);
         // TODO check for error messages
     });
 
     it('should parse tuples', function() {
         var format = [{name: 'A', type: 'int'}, {name: 'B', type: 'int'}, {name: 'T', type: 'tree'}];
-        expect(Trees.parse_tuple('(1, 2, (3, None, None))', format)).toEqual(
+        expect(InputData.parse_tuple('(1, 2, (3, None, None))', format)).toEqual(
             {A: 1, B: 2, T: { l: { empty: true }, val: 3, r: { empty: true }}}
         );
-        expect(Trees.parse_tuple('(42, 44, ' + example_tree_string + ')', format)).toEqual(
+        expect(InputData.parse_tuple('(42, 44, ' + example_tree_string + ')', format)).toEqual(
             {A: 42, B: 44, T: example_tree});
-        expect(function() { Trees.parse_tuple('(3, None, None)', format); }).toThrowError();
+        expect(function() { InputData.parse_tuple('(3, None, None)', format); }).toThrowError();
 
-        expect(Trees.parse_tuple('3', [{name: 'A', type: 'int'}])).toEqual({A: 3});
-        expect(Trees.parse_tuple('(1, None, None)', [{name: 'A', type: 'tree'}])).toEqual(
+        expect(InputData.parse_tuple('3', [{name: 'A', type: 'int'}])).toEqual({A: 3});
+        expect(InputData.parse_tuple('(1, None, None)', [{name: 'A', type: 'tree'}])).toEqual(
             {A: {val: 1, l: { empty: true}, r: { empty: true }}});
     });
 
     it('should serialize trees', function() {
-        expect(Trees.serialize_tree({ empty: true })).toEqual('None');
-        expect(Trees.serialize_tree({ val: -1, l: { empty: true }, r: { empty: true } })).toEqual('(-1, None, None)');
-        expect(Trees.serialize_tree(example_tree)).toEqual(example_tree_string);
+        expect(InputData.serialize_tree({ empty: true })).toEqual('None');
+        expect(InputData.serialize_tree({ val: -1, l: { empty: true }, r: { empty: true } })).toEqual('(-1, None, None)');
+        expect(InputData.serialize_tree(example_tree)).toEqual(example_tree_string);
     });
 
     it('should serialize tuples', function() {
         var format = [{name: 'A', type: 'int'}, {name: 'B', type: 'int'}, {name: 'T', type: 'tree'}];
-        expect(Trees.serialize_tuple({ A: 4, B: 10, T: example_tree}, format)).toEqual('(4, 10, ' + example_tree_string + ')');
+        expect(InputData.serialize_tuple({ A: 4, B: 10, T: example_tree}, format)).toEqual('(4, 10, ' + example_tree_string + ')');
         var format2 = [{name: 'X', type: 'int'}, {name: 'T', type: 'tree'}];
-        expect(Trees.serialize_tuple({ X: 4, T: { empty: true }}, format2)).toEqual('(4, None)');
+        expect(InputData.serialize_tuple({ X: 4, T: { empty: true }}, format2)).toEqual('(4, None)');
 
-        expect(Trees.serialize_tuple({A: 3}, [{name: 'A', type: 'int'}])).toEqual('3');
+        expect(InputData.serialize_tuple({A: 3}, [{name: 'A', type: 'int'}])).toEqual('3');
 
-        expect(Trees.serialize_tuple({A: {val: 1, l: { empty: true}, r: { empty: true }}},
+        expect(InputData.serialize_tuple({A: {val: 1, l: { empty: true}, r: { empty: true }}},
             [{name: 'A', type: 'tree'}])).toEqual(
             '(1, None, None)');
     });

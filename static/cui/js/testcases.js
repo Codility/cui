@@ -22,7 +22,7 @@
 
 /* global Log, Console */
 /* global ui */
-/* global Trees, TreeEditor, IntEditor */
+/* global InputData, TreeEditor, IntEditor */
 
 // http://www.quirksmode.org/js/cookies.html
 // use cookies as fallback for sessionStorage in Safari private mode.
@@ -273,7 +273,7 @@ var TestCases = {
 
         self.read_tuple = function() {
             try {
-                return Trees.parse_tuple(input_string, self.format);
+                return InputData.parse_tuple(input_string, self.format);
             } catch (e) {
                 Console.clear();
                 Console.msg_error('Could not parse the test case: ' + e.message);
@@ -348,7 +348,7 @@ var TestCases = {
                     tuple[self.format[i].name] = value;
                 }
             }
-            return Trees.serialize_tuple(tuple, self.format);
+            return InputData.serialize_tuple(tuple, self.format);
         };
 
         self.create_input_for_param = function(param, tuple) {
