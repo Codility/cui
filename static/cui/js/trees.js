@@ -100,6 +100,10 @@ var TreeEditor = function($elt, $undo_button, $warning_area) {
         self.setup_undo();
     };
 
+    self.get_value = function() {
+        return self.tree;
+    };
+
     self.enable_bst_warning = function() {
         self.bst_warning_enabled = true;
     };
