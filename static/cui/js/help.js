@@ -61,14 +61,14 @@ var Help = function(isInitial, taskCount, prgLangName, prgLangCount, support_ema
                     ' Running your solution will help you to avoid simple'+
                     ' mistakes. You can verify your solution multiple times.'+
                     ' The number of "run" requests will not influence '+
-                    'your score. The output window can be increased.',
+                    'your score. The height of the output window can be increased.',
         testData : 'You can run your solution on your test data to see '+
                    'what results it computes, you will not be informed '+
                    'about the correctness of this result. '+
                    'You can add a maximum of 5 test cases at once.',
 
         outputWindow : 'Compilation and verification output is visible here.',
-        outputWindowResize : 'The output window can be increased.',
+        outputWindowResize : 'The height of the output window can be increased.',
         submitButton :  taskCount > 1?
         /*For tests with more than one tasks*/
         "Submit your solution for final evaluation. "+
