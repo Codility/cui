@@ -2,6 +2,14 @@
 var InputData = (function() {
     var InputData = {};
 
+    InputData.escape_string = function(string) {
+        return '"' + string.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/"/g, '\\"') + '"';
+    };
+
+    InputData.unescape_string = function(literal) {
+        return literal.slice(1, -1).replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+    };
+
     var TOKEN_TYPES = [
         { regex: /^\(/, type: 'symbol' },
         { regex: /^\)/, type: 'symbol' },
@@ -15,7 +23,7 @@ var InputData = (function() {
         {
             regex: /^"(\\"|[^"])*"/,
             type: 'string',
-            convert: function(s) { return s.slice(1, -1).replace(/\\n/g, '\n').replace(/\\"/g, '"'); }
+            convert: InputData.unescape_string
         }
     ];
 
@@ -165,10 +173,6 @@ var InputData = (function() {
                     InputData.serialize_tree(tree.r) + ')');
     };
 
-    InputData.serialize_string = function(string) {
-        return '"' + string.replace(/\n/g, '\\n').replace(/"/g, '\\"') + '"';
-    };
-
     InputData.serialize_tuple = function(tuple, format) {
         var result = [];
 
@@ -179,7 +183,7 @@ var InputData = (function() {
             if (format[i].type == 'tree')
                 str = InputData.serialize_tree(data);
             else if (format[i].type == 'string')
-                str = InputData.serialize_string(data);
+                str = InputData.escape_string(data);
             else if (format[i].type == 'int')
                 str = data.toString();
             else
