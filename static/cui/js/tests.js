@@ -1375,7 +1375,10 @@ describe('input data module', function() {
 
         expect(token_values(InputData.tokenize(''))).toEqual([]);
         expect(token_values(InputData.tokenize('  '))).toEqual([]);
-        expect(token_values(InputData.tokenize(' (1, None, -2, 3) '))).toEqual(['(', 1, ',', 'None', ',', -2, ',', 3, ')']);
+        expect(token_values(InputData.tokenize(' (1, None, -2, 3) '))).toEqual(
+            ['(', 1, ',', 'None', ',', -2, ',', 3, ')']);
+        expect(token_values(InputData.tokenize('("a\\n\\nb", "c\\"d"'))).toEqual(
+            ['(', "a\n\nb", ",", "c\"d"]);
         expect(function() { InputData.tokenize(' 1.5 '); }).toThrowError();
     });
 
@@ -1434,6 +1437,9 @@ describe('input data module', function() {
         expect(InputData.serialize_tuple({A: {val: 1, l: { empty: true}, r: { empty: true }}},
             [{name: 'A', type: 'tree'}])).toEqual(
             '(1, None, None)');
+
+        expect(InputData.serialize_tuple({A: 'a"b\n\nc'},
+            [{name: 'A', type: 'string'}])).toEqual('"a\\"b\\n\\nc"');
     });
 });
 
