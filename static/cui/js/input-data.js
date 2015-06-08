@@ -69,7 +69,7 @@ var InputData = (function() {
             if (self.tokens[0].type === 'symbol' && self.tokens[0].value === 'None') {
                 self.read('symbol', 'None');
                 return { empty: true };
-            } else if (self.tokens[0] === '(') {
+            } else if (self.tokens[0].type === 'symbol' && self.tokens[0].value === '(') {
                 self.read('symbol', '(');
                 var val = self.read_int();
                 self.read('symbol', ',');
@@ -95,11 +95,11 @@ var InputData = (function() {
             return self.tokens.shift().value;
         };
 
-        self.read = function(expected_type, expected_token) {
+        self.read = function(expected_type, expected_value) {
             if (self.tokens.length === 0 ||
-                self.tokens[0].type != expected_type ||
-                self.tokens[0] !== expected_token)
-                self.error_parsing("'" + expected_token + "'");
+                self.tokens[0].type !== expected_type ||
+                self.tokens[0].value !== expected_value)
+                self.error_parsing("'" + expected_value + "'");
             return self.tokens.shift().value;
         };
 
@@ -178,7 +178,7 @@ var InputData = (function() {
             var str;
             if (format[i].type == 'tree')
                 str = InputData.serialize_tree(data);
-            if (format[i].type == 'string')
+            else if (format[i].type == 'string')
                 str = InputData.serialize_string(data);
             else if (format[i].type == 'int')
                 str = data.toString();

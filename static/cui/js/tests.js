@@ -1367,11 +1367,15 @@ describe('plugins', function () {
     });
 });
 
-describe('trees module', function() {
+describe('input data module', function() {
     it('should tokenize strings', function() {
-        expect(InputData.tokenize('')).toEqual([]);
-        expect(InputData.tokenize('  ')).toEqual([]);
-        expect(InputData.tokenize(' (1, None, -2, 3) ')).toEqual(['(', 1, ',', 'None', ',', -2, ',', 3, ')']);
+        function token_values(tokens) {
+            return $.map(tokens, function(token) { return token.value; });
+        }
+
+        expect(token_values(InputData.tokenize(''))).toEqual([]);
+        expect(token_values(InputData.tokenize('  '))).toEqual([]);
+        expect(token_values(InputData.tokenize(' (1, None, -2, 3) '))).toEqual(['(', 1, ',', 'None', ',', -2, ',', 3, ')']);
         expect(function() { InputData.tokenize(' 1.5 '); }).toThrowError();
     });
 
