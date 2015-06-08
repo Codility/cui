@@ -1447,7 +1447,7 @@ describe_ui('tree editor', {}, function() {
     var server;
 
     function get_tree(path) {
-        var tree = $('#tree_editor .root');
+        var tree = $('#modal_editor .root');
         for (var i = 0; i < path.length; ++i) {
             if (path[i] == 'l')
                 tree = tree.find('> .children > .left');
@@ -1473,14 +1473,14 @@ describe_ui('tree editor', {}, function() {
         return get_tree(path).find('> .edge');
     }
 
-    var INPUT_SELECTOR = '#tree_editor .edit input';
-    var BUTTON_OK_SELECTOR = '#tree_editor .ok';
-    var BUTTON_CANCEL_SELECTOR = '#tree_editor .cancel';
-    var BUTTON_UNDO_SELECTOR = '#tree_editor .undo';
+    var INPUT_SELECTOR = '#modal_editor .tree-area input';
+    var BUTTON_OK_SELECTOR = '#modal_editor .ok';
+    var BUTTON_CANCEL_SELECTOR = '#modal_editor .cancel';
+    var BUTTON_UNDO_SELECTOR = '#modal_editor .undo';
 
     function check_node_count(count) {
-        expect($('#tree_editor text').length).toEqual(count);
-        expect($('#tree_editor .empty').length).toEqual(count + 1);
+        expect($('#modal_editor text').length).toEqual(count);
+        expect($('#modal_editor .empty').length).toEqual(count + 1);
     }
 
     function check_undo_enabled(is_enabled) {
@@ -1516,12 +1516,12 @@ describe_ui('tree editor', {}, function() {
             clickTaskTab('task1');
             server.respond();
             $('#add_test_case').click();
-            expectVisible('#tree_editor', false);
+            expectVisible('#modal_editor', false);
             expectVisible('#test_cases .test-case .edit', false);
             clickTaskTab('task4');
             server.respond();
             $('#add_test_case').click();
-            expectVisible('#tree_editor', true);
+            expectVisible('#modal_editor', true);
             expectVisible('#test_cases .test-case .edit', true);
         });
 
@@ -1596,7 +1596,7 @@ describe_ui('tree editor', {}, function() {
             $('#add_test_case').click();
             var tree_string = modify_tree();
             $(BUTTON_OK_SELECTOR).click();
-            expectVisible('#tree_editor', false);
+            expectVisible('#modal_editor', false);
             expect($('#test_cases input').val()).toEqual(tree_string);
 
             $('#test_cases .edit').click();
@@ -1609,7 +1609,7 @@ describe_ui('tree editor', {}, function() {
             $('#add_test_case').click();
             modify_tree();
             $(BUTTON_CANCEL_SELECTOR).click();
-            expectVisible('#tree_editor', false);
+            expectVisible('#modal_editor', false);
             expect($('#test_cases input').length).toEqual(0);
 
             $('#add_test_case').click();
@@ -1631,7 +1631,7 @@ describe_ui('tree editor', {}, function() {
 
             $('#test_cases input').val('Invalid');
             $('#test_cases .edit').click();
-            expectVisible('#tree_editor', false);
+            expectVisible('#modal_editor', false);
             expect($('#console').text()).toEqual("Could not parse the test case: unexpected input near 'Invalid'");
         });
     });
@@ -1648,12 +1648,12 @@ describe_ui('tree editor', {}, function() {
             get_tree_node('lrr').click();
             set_value('28');
             expect($('.node.bst-warning').length).toBe(2);
-            expect($('#tree_editor .warnings').text()).toMatch(/not a binary search tree/);
+            expect($('#modal_editor .warnings').text()).toMatch(/not a binary search tree/);
 
             get_tree_node('lrr').click();
             set_value('23');
             expect($('.node.bst-warning').length).toBe(0);
-            expect($('#tree_editor .warnings').text()).toEqual('');
+            expect($('#modal_editor .warnings').text()).toEqual('');
 
             get_tree_node('lrr').click();
             set_value('28');
@@ -1670,7 +1670,7 @@ describe_ui('tree editor', {}, function() {
         });
 
         function get_input(name) {
-            return $('#tree_editor .param[data-name=' + name +'] input');
+            return $('#modal_editor .param[data-name=' + name +'] input');
         }
 
         it("should allow to edit parameters", function() {
@@ -1678,7 +1678,7 @@ describe_ui('tree editor', {}, function() {
             expect(get_input('A').val()).toEqual('10');
             expect(get_input('B').val()).toEqual('20');
             get_input('A').val('15').change();
-            $('#tree_editor .ok').click();
+            $('#modal_editor .ok').click();
 
             expect($('#test_cases input').val()).toMatch(/^\(15, 20, /);
         });
@@ -1687,7 +1687,7 @@ describe_ui('tree editor', {}, function() {
             $('#add_test_case').click();
             get_input('A').val('1000000000000000').change();
             expect(get_input('A').hasClass('error')).toEqual(true);
-            $('#tree_editor .ok').click();
+            $('#modal_editor .ok').click();
 
             expect($('#test_cases input').val()).toMatch(/^\(0, 20, /);
             expect($('#console').text()).toMatch(/^Invalid value for parameter A/);
