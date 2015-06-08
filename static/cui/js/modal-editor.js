@@ -44,10 +44,13 @@ function ModalEditor($elt, input_string, on_ok, on_cancel, options) {
         $elt.jqmHide();
         $elt.find('.ok').unbind('click');
         $elt.find('.cancel').unbind('click');
-        $elt.find('.params').empty();
 
-        if (self.tree_editor)
+        if (self.tree_editor) {
             self.tree_editor.destroy();
+            $elt.find('.tree-area').detach();
+        }
+
+        $elt.find('.params').empty();
     };
 
     self.get_tuple_string = function() {
@@ -64,10 +67,14 @@ function ModalEditor($elt, input_string, on_ok, on_cancel, options) {
     };
 
     self.create_editor_for_param = function(param, tuple) {
+        var $param;
         var editor;
         if (param.type == 'tree') {
             if (self.tree_editor)
                 throw new Error('Only one tree is currently supported');
+
+            $param = $('<div class="tree-area"><div class="tree-editor"></div></div>');
+            $elt.find('h2').after($param);
 
             editor = TreeEditor($elt.find('.tree-editor'),
                                 $elt.find('.undo'),
@@ -78,7 +85,7 @@ function ModalEditor($elt, input_string, on_ok, on_cancel, options) {
 
             self.tree_editor = editor;
         } else if (param.type == 'int') {
-            var $param = $('<div class="param"><span class="name"></span> = <input type="text"></input></div>');
+            $param = $('<div class="param"><span class="name"></span> = <input type="text"></input></div>');
             $param.find('.name').text(param.name);
             // note we use ints only, so no need to deserialize
             $param.find('input').val(tuple[param.name]);

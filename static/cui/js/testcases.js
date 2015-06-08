@@ -51,7 +51,6 @@ var TestCases = {
     init : function() {
         this.count = 0;
         this.allow_tree_editor = false;
-        this.tree_editor = null;
 
         $('#add_test_case').click(function(e) {
             e.preventDefault();
@@ -66,7 +65,7 @@ var TestCases = {
         var that = this;
         $('#test_cases').on('change keyup paste', 'input', function() { that.save(); });
 
-        $('#tree_editor').jqm({ modal: true });
+        $('#modal_editor').jqm({ modal: true });
 
         this.update();
     },
@@ -282,9 +281,9 @@ var TestCases = {
         }
 
         try {
-            ModalEditor($('#tree_editor'), tree_string, on_ok, on_cancel, this.modal_editor_options);
+            ModalEditor($('#modal_editor'), tree_string, on_ok, on_cancel, this.modal_editor_options);
         } catch(e) {
-            $('#tree_editor').jqmHide();
+            $('#modal_editor').jqmHide();
             this.disable_modal_editor();
             Console.msg_error('Error opening the tree editor. Please edit the test case manually, or open the page in another browser.');
             Log.error('error opening tree editor', e);
