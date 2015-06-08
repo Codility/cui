@@ -3,11 +3,20 @@ var InputData = (function() {
     var InputData = {};
 
     var TOKEN_TYPES = [
-        { regex: /^\(/ },
-        { regex: /^\)/ },
-        { regex: /^,/ },
-        { regex: /^None/ },
-        { regex: /^[+-]?(0|[1-9]\d{0,9})/, convert: function(s) { return parseInt(s, 10); } }
+        { regex: /^\(/, type: 'symbol' },
+        { regex: /^\)/, type: 'symbol' },
+        { regex: /^,/, type: 'symbol' },
+        { regex: /^None/, type: 'symbol' },
+        {
+            regex: /^[+-]?(0|[1-9]\d{0,9})/,
+            type: 'int',
+            convert: function(s) { return parseInt(s, 10); }
+        },
+        {
+            regex: /^"(\\"|[^"])*"/,
+            type: 'string',
+            convert: function(s) { return s.slice(1, -1).replace(/\\n/g, '\n').replace(/\\"/g, '"'); }
+        }
     ];
 
     InputData.tokenize = function(input) {
@@ -24,9 +33,9 @@ var InputData = (function() {
                 var m = TOKEN_TYPES[i].regex.exec(input);
                 if (m) {
                     input = input.substr(m[0].length);
-                    token = m[0];
+                    token = { type: TOKEN_TYPES[i].type, value: m[0] };
                     if (TOKEN_TYPES[i].convert) {
-                        token = TOKEN_TYPES[i].convert(token);
+                        token.value = TOKEN_TYPES[i].convert(token.value);
                     }
                     break;
                 }
@@ -57,17 +66,17 @@ var InputData = (function() {
             if (self.tokens.length === 0)
                 self.error_parsing('tree');
 
-            if (self.tokens[0] === 'None') {
-                self.read('None');
+            if (self.tokens[0].type === 'symbol' && self.tokens[0].value === 'None') {
+                self.read('symbol', 'None');
                 return { empty: true };
             } else if (self.tokens[0] === '(') {
-                self.read('(');
+                self.read('symbol', '(');
                 var val = self.read_int();
-                self.read(',');
+                self.read('symbol', ',');
                 var l = self.read_tree();
-                self.read(',');
+                self.read('symbol', ',');
                 var r = self.read_tree();
-                self.read(')');
+                self.read('symbol', ')');
                 return { val: val, l: l, r: r };
             } else {
                 self.error_parsing('tree');
@@ -75,15 +84,23 @@ var InputData = (function() {
         };
 
         self.read_int = function() {
-            if (self.tokens.length === 0 || typeof self.tokens[0] !== 'number')
+            if (self.tokens.length === 0 || self.tokens[0].type !== 'int')
                 self.error_parsing('integer');
-            return self.tokens.shift();
+            return self.tokens.shift().value;
         };
 
-        self.read = function(expected_token) {
-            if (self.tokens.length === 0 || self.tokens[0] !== expected_token)
+        self.read_string = function() {
+            if (self.tokens.length === 0 || self.tokens[0].type !== 'string')
+                self.error_parsing('string');
+            return self.tokens.shift().value;
+        };
+
+        self.read = function(expected_type, expected_token) {
+            if (self.tokens.length === 0 ||
+                self.tokens[0].type != expected_type ||
+                self.tokens[0] !== expected_token)
                 self.error_parsing("'" + expected_token + "'");
-            return self.tokens.shift();
+            return self.tokens.shift().value;
         };
 
         self.end = function() {
@@ -92,7 +109,7 @@ var InputData = (function() {
         };
 
         self.error_parsing = function(what) {
-            throw new Error('unexpected ' + (self.tokens.length > 0 ? "'"+self.tokens[0]+"'" : 'end of input') +
+            throw new Error('unexpected ' + (self.tokens.length > 0 ? "'"+self.tokens[0].value+"'" : 'end of input') +
                             ', required ' + what);
         };
 
@@ -116,14 +133,16 @@ var InputData = (function() {
 
         var use_parens = format.length != 1;
         if (use_parens)
-            parser.read('(');
+            parser.read('symbol', '(');
         for (var i = 0; i < format.length; i++) {
             if (i > 0)
-                parser.read(',');
+                parser.read('symbol', ',');
 
             var val;
             if (format[i].type == 'tree')
                 val = parser.read_tree();
+            else if (format[i].type == 'string')
+                val = parser.read_string();
             else if (format[i].type == 'int')
                 val = parser.read_int();
             else
@@ -132,7 +151,7 @@ var InputData = (function() {
             result[format[i].name] = val;
         }
         if (use_parens)
-            parser.read(')');
+            parser.read('symbol', ')');
         parser.end();
         return result;
     };
@@ -146,6 +165,10 @@ var InputData = (function() {
                     InputData.serialize_tree(tree.r) + ')');
     };
 
+    InputData.serialize_string = function(string) {
+        return '"' + string.replace(/\n/g, '\\n').replace(/"/g, '\\"') + '"';
+    };
+
     InputData.serialize_tuple = function(tuple, format) {
         var result = [];
 
@@ -155,6 +178,8 @@ var InputData = (function() {
             var str;
             if (format[i].type == 'tree')
                 str = InputData.serialize_tree(data);
+            if (format[i].type == 'string')
+                str = InputData.serialize_string(data);
             else if (format[i].type == 'int')
                 str = data.toString();
             else

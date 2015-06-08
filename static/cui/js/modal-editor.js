@@ -1,5 +1,5 @@
 
-/* global Console, InputData, TreeEditor, IntEditor */
+/* global Console, InputData, TreeEditor, IntEditor, TextEditor */
 
 function ModalEditor($elt, input_string, on_ok, on_cancel, options) {
     var self = {};
@@ -47,11 +47,12 @@ function ModalEditor($elt, input_string, on_ok, on_cancel, options) {
 
         if (self.tree_editor) {
             self.tree_editor.destroy();
-            $elt.find('.tree-area').detach();
         }
 
         $elt.find('.params').empty();
-    };
+        $elt.find('.tree-area').detach();
+        $elt.find('textarea').detach();
+   };
 
     self.get_tuple_string = function() {
         var tuple = {};
@@ -84,6 +85,11 @@ function ModalEditor($elt, input_string, on_ok, on_cancel, options) {
                 editor.enable_bst_warning();
 
             self.tree_editor = editor;
+        } else if (param.type == 'string') {
+            $param = $('<textarea></textarea>');
+            $param.val(tuple[param.name]);
+            $elt.find('h2').after($param);
+            editor = TextEditor($param);
         } else if (param.type == 'int') {
             $param = $('<div class="param"><span class="name"></span> = <input type="text"></input></div>');
             $param.find('.name').text(param.name);
@@ -93,6 +99,7 @@ function ModalEditor($elt, input_string, on_ok, on_cancel, options) {
             editor = IntEditor($param.find('input'));
             $elt.find('.params').append($param);
         }
+
         self.editors[param.name] = editor;
     };
 

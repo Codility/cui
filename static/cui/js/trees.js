@@ -456,3 +456,13 @@ var IntEditor = function($input) {
     $input.attr('maxlength', 11).on('change keyup paste', self.validate);
     return self;
 };
+
+var TextEditor = function($input) {
+    var self = {};
+
+    self.get_value = function() {
+        return $input.val();
+    };
+
+    return self;
+};
