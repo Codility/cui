@@ -22,8 +22,6 @@ function ModalEditor($elt, input_string, on_ok, on_cancel, options) {
         if (tuple === null)
             return;
 
-	$elt.find('.undo').hide();
-
         self.editors = {};
         for (var i = 0; i < self.format.length; i++) {
             self.create_editor_for_param(self.format[i], tuple);
@@ -31,6 +29,14 @@ function ModalEditor($elt, input_string, on_ok, on_cancel, options) {
 
         $elt.find('.ok').click(self.handle_ok);
         $elt.find('.cancel').click(self.handle_cancel);
+
+        if (self.tree_editor) {
+            $elt.find('.undo').show();
+            $elt.removeClass('narrow');
+        } else {
+            $elt.find('.undo').hide();
+            $elt.addClass('narrow');
+        }
 
         Console.clear(); // wipe any past parse errors
         $elt.jqmShow();
@@ -58,7 +64,7 @@ function ModalEditor($elt, input_string, on_ok, on_cancel, options) {
     self.get_tuple_string = function() {
         var tuple = {};
         for (var i = 0; i < self.format.length; i++) {
-            var param = self.format[i]
+            var param = self.format[i];
             var value = self.editors[param.name].get_value();
             if (value === null && param.type == 'int') {
                 Console.msg_error('Invalid value for parameter ' + param.name + ', using 0.');
