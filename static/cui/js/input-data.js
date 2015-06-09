@@ -7,7 +7,7 @@ var InputData = (function() {
     };
 
     InputData.unescape_string = function(literal) {
-        return literal.slice(1, -1).replace(/\\\\/g, '\\-').replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\-/g, '\\');
+        return literal.slice(1, -1).replace(/\\\\/g, '\\-').replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\'/g, "'").replace(/\\-/g, '\\');
     };
 
     var TOKEN_TYPES = [
@@ -21,7 +21,7 @@ var InputData = (function() {
             convert: function(s) { return parseInt(s, 10); }
         },
         {
-            regex: /^"(\\"|[^"])*"/,
+            regex: /^("(\\"|\\'|\\\\|\\n|[^"\\])*"|'(\\"|\\'|\\n|\\\\|[^'\\])*')/,
             type: 'string',
             convert: InputData.unescape_string
         }
