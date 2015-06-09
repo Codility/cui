@@ -7,7 +7,7 @@ var InputData = (function() {
     };
 
     InputData.unescape_string = function(literal) {
-        return literal.slice(1, -1).replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+        return literal.slice(1, -1).replace(/\\\\/g, '\\-').replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\-/g, '\\');
     };
 
     var TOKEN_TYPES = [
