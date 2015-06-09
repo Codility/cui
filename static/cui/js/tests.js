@@ -1379,6 +1379,8 @@ describe('input data module', function() {
             ['(', 1, ',', 'None', ',', -2, ',', 3, ')']);
         expect(token_values(InputData.tokenize('("a\\n\\nb", "c\\"d", "back\\\\slash"'))).toEqual(
             ['(', "a\n\nb", ",", "c\"d", ",", "back\\slash"]);
+        expect(token_values(InputData.tokenize('("\\"something\\" ,  " \'\\\'else\\\' , \')'))).toEqual(
+            ['(', '"something" ,  ', "'else' , ", ')']);
         expect(function() { InputData.tokenize(' 1.5 '); }).toThrowError();
     });
 
@@ -1407,12 +1409,12 @@ describe('input data module', function() {
     });
 
     it('should parse tuples', function() {
-        var format = [{name: 'A', type: 'int'}, {name: 'B', type: 'int'}, {name: 'T', type: 'tree'}];
-        expect(InputData.parse_tuple('(1, 2, (3, None, None))', format)).toEqual(
-            {A: 1, B: 2, T: { l: { empty: true }, val: 3, r: { empty: true }}}
+        var format = [{name: 'A', type: 'int'}, {name: 'B', type: 'int'}, {name: 'S', type: 'string'}, {name: 'T', type: 'tree'}];
+        expect(InputData.parse_tuple('(1, 2, "\\\'ala\\\'\\nma\\\\\\"kota\\"", (3, None, None))', format)).toEqual(
+            {A: 1, B: 2, S: '\'ala\'\nma\\"kota"', T: { l: { empty: true }, val: 3, r: { empty: true }}}
         );
-        expect(InputData.parse_tuple('(42, 44, ' + example_tree_string + ')', format)).toEqual(
-            {A: 42, B: 44, T: example_tree});
+        expect(InputData.parse_tuple("(42, 44, '', " + example_tree_string + ')', format)).toEqual(
+            {A: 42, B: 44, S: '', T: example_tree});
         expect(function() { InputData.parse_tuple('(3, None, None)', format); }).toThrowError();
 
         expect(InputData.parse_tuple('3', [{name: 'A', type: 'int'}])).toEqual({A: 3});
@@ -1434,12 +1436,14 @@ describe('input data module', function() {
 
         expect(InputData.serialize_tuple({A: 3}, [{name: 'A', type: 'int'}])).toEqual('3');
 
+        expect(InputData.serialize_tuple({S: '\'ala\'\nma\\"kota"'}, [{name: 'S', type: 'string'}])).toEqual('"\'ala\'\\nma\\\\\\"kota\\""');
+
         expect(InputData.serialize_tuple({A: {val: 1, l: { empty: true}, r: { empty: true }}},
             [{name: 'A', type: 'tree'}])).toEqual(
             '(1, None, None)');
 
-        expect(InputData.serialize_tuple({A: 'a"b\n\nc back\\slash'},
-            [{name: 'A', type: 'string'}])).toEqual('"a\\"b\\n\\nc back\\\\slash"');
+        expect(InputData.serialize_tuple({A: 'a"b\n\n\'c back\\slash'},
+            [{name: 'A', type: 'string'}])).toEqual('"a\\"b\\n\\n\'c back\\\\slash"');
     });
 });
 
