@@ -73,7 +73,6 @@ var TreeEditor = function($elt, $undo_button, $warning_area) {
     self.init = function() {
         self.$elt = $elt;
         self.$undo_button = $undo_button;
-	self.$undo_button.show();
         self.$warning_area = $warning_area;
         self.$elt.addClass('tree-editor');
         self.tree = { empty: true };
