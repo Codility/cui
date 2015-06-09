@@ -50,7 +50,7 @@ var TestCases = {
 
     init : function() {
         this.count = 0;
-        this.allow_tree_editor = false;
+        this.allow_modal_editor = false;
 
         $('#add_test_case').click(function(e) {
             e.preventDefault();
@@ -265,12 +265,12 @@ var TestCases = {
     },
 
     show_modal_for_input: function($input) {
-        var tree_string = $input.val();
-        if (tree_string === '')
-            tree_string = $('input[name=test_case_example]').val();
+        var input_string = $input.val();
+        if (input_string === '')
+            input_string = $('input[name=test_case_example]').val();
 
-        function on_ok(result_tree_string) {
-            $input.val(result_tree_string);
+        function on_ok(result_input_string) {
+            $input.val(result_input_string);
             TestCases.save();
         }
 
@@ -281,7 +281,7 @@ var TestCases = {
         }
 
         try {
-            ModalEditor($('#modal_editor'), tree_string, on_ok, on_cancel, this.modal_editor_options);
+            ModalEditor($('#modal_editor'), input_string, on_ok, on_cancel, this.modal_editor_options);
         } catch(e) {
             $('#modal_editor').jqmHide();
             this.disable_modal_editor();
