@@ -3,11 +3,22 @@ var InputData = (function() {
     var InputData = {};
 
     InputData.escape_string = function(string) {
-        return '"' + string.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/"/g, '\\"') + '"';
+        string = string.
+            replace(/\\/g, '\\\\').
+            replace(/\n/g, '\\n').
+            replace(/"/g, '\\"');
+        return '"' + string + '"';
     };
 
     InputData.unescape_string = function(literal) {
-        return literal.slice(1, -1).replace(/\\\\/g, '\\-').replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\'/g, "'").replace(/\\-/g, '\\');
+        literal = literal.slice(1, -1);
+        literal = literal.
+            replace(/\\\\/g, '\\-').
+            replace(/\\n/g, '\n').
+            replace(/\\"/g, '"').
+            replace(/\\'/g, "'").
+            replace(/\\-/g, '\\');
+        return literal;
     };
 
     var TOKEN_TYPES = [
@@ -21,6 +32,9 @@ var InputData = (function() {
             convert: function(s) { return parseInt(s, 10); }
         },
         {
+            // String literals:
+            // - we support both flavours: "", ''
+            // - we support the following escapes: \", \', \\, \n
             regex: /^("(\\"|\\'|\\\\|\\n|[^"\\])*"|'(\\"|\\'|\\n|\\\\|[^'\\])*')/,
             type: 'string',
             convert: InputData.unescape_string
