@@ -58,7 +58,7 @@ function ModalEditor($elt, input_string, on_ok, on_cancel, options) {
 
         $elt.find('.params').empty();
         $elt.find('.tree-area').detach();
-        $elt.find('textarea').detach();
+        $elt.find('.multiline').detach();
    };
 
     self.get_tuple_string = function() {
@@ -96,7 +96,7 @@ function ModalEditor($elt, input_string, on_ok, on_cancel, options) {
         } else if (param.type == 'string') {
             if (self.multiline_editor)
                 throw new Error('Only one multiline string is currently supported');
-            $param = $('<textarea></textarea>');
+            $param = $('<textarea class="multiline"></textarea>');
             $param.val(tuple[param.name]);
             $elt.find('.params').after($param);
             editor = TextEditor($param);
