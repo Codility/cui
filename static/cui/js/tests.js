@@ -1464,19 +1464,19 @@ describe_ui('multiline string editor', {}, function() {
             expectVisible('#modal_editor .multiline', true);
             expectVisible('#test_cases .test-case .edit', true);
             expectVisible('#modal_editor .undo', false);
-            example = InputData.unescape_string($('input[name=test_case_example]').val());
-            expect($('#modal_editor .multiline').val()).toEqual(example)
+            var example = InputData.unescape_string($('input[name=test_case_example]').val());
+            expect($('#modal_editor .multiline').val()).toEqual(example);
         });
 
         it("Idempotence of the mulitiline string editor", function() {
             clickTaskTab('task7');
             server.respond();
             $('#add_test_case').click();
-            values = ['"Quotes" from Mc\'Guiver:\n\\"Back\\slash is to slash somebody\'s back\\\'\\nIndentations\n\tare\n    protected',
-                      'bżdziągwo kiń że tę chmurność w głąb flaszy!', 
-                      describe_ui.toString()];
-            for (i = 0; i < values.length; i++){
-                value = values[i];
+            var values = ['"Quotes" from Mc\'Guiver:\n\\"Back\\slash is to slash somebody\'s back\\\'\\nIndentations\n\tare\n    protected',
+			  'bżdziągwo kiń że tę chmurność w głąb flaszy!', 
+			  describe_ui.toString()];
+            for (var i = 0; i < values.length; i++){
+                var value = values[i];
                 $('#modal_editor .multiline').val(value);
                 $('#modal_editor .ok').click();
                 $('#test_cases .test-case .edit').click();
