@@ -1455,38 +1455,36 @@ describe_ui('multiline string editor', {}, function() {
         server.respond();
     });
 
-    describe('(normal)', function() {
-        it("Initial state of the multiline string editor for a new test-case", function() {
-            clickTaskTab('task7');
-            server.respond();
-            $('#add_test_case').click();
-            expectVisible('#modal_editor', true);
-            expectVisible('#modal_editor .multiline', true);
-            expectVisible('#test_cases .test-case .edit', true);
-            expectVisible('#modal_editor .undo', false);
-            var example = InputData.unescape_string($('input[name=test_case_example]').val());
-            expect($('#modal_editor .multiline').val()).toEqual(example);
-        });
-
-        it("Idempotence of the mulitiline string editor", function() {
-            clickTaskTab('task7');
-            server.respond();
-            $('#add_test_case').click();
-            var values = ['"Quotes" from Mc\'Guiver:\n\\"Back\\slash is to slash somebody\'s back\\\'\\nIndentations\n\tare\n    protected',
-			  'bżdziągwo kiń że tę chmurność w głąb flaszy!', 
-			  describe_ui.toString()];
-            for (var i = 0; i < values.length; i++){
-                var value = values[i];
-                $('#modal_editor .multiline').val(value);
-                $('#modal_editor .ok').click();
-                $('#test_cases .test-case .edit').click();
-                expectVisible('#modal_editor .multiline', true);
-                expect($('#modal_editor .multiline').val()).toEqual(value);
-            }
-        });
+    it("should initialize properly", function() {
+        clickTaskTab('task7');
+        server.respond();
+        $('#add_test_case').click();
+        expectVisible('#modal_editor', true);
+        expectVisible('#modal_editor .multiline', true);
+        expectVisible('#test_cases .test-case .edit', true);
+        expectVisible('#modal_editor .undo', false);
+        var example = InputData.unescape_string($('input[name=test_case_example]').val());
+        expect($('#modal_editor .multiline').val()).toEqual(example);
     });
 
+    it("should be idempotent", function() {
+        clickTaskTab('task7');
+        server.respond();
+        $('#add_test_case').click();
+        var values = ['"Quotes" from Mc\'Guiver:\n\\"Back\\slash is to slash somebody\'s back\\\'\\nIndentations\n\tare\n    protected',
+		      'bżdziągwo kiń że tę chmurność w głąb flaszy!', 
+		      describe_ui.toString()];
+        for (var i = 0; i < values.length; i++){
+            var value = values[i];
+            $('#modal_editor .multiline').val(value);
+            $('#modal_editor .ok').click();
+            $('#test_cases .test-case .edit').click();
+            expectVisible('#modal_editor .multiline', true);
+            expect($('#modal_editor .multiline').val()).toEqual(value);
+        }
+    });
 });
+
 
 describe_ui('tree editor', {}, function() {
     var server;
