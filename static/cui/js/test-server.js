@@ -95,8 +95,19 @@ function TestServer() {
                 'modal_editor_options': JSON.stringify({format: [{name: 'A', type: 'int'}, {name: 'B', type: 'int'}, {name: 'T', type: 'tree'}]}),
                 'example_input': '(10, 20, (15, (12, None, None), None))'
             },
+            'task7': {
+                'status': 'open',
+                'human_lang_list': ['en'],
+                'prg_lang_list': ['c'],
+                'type': 'algo',
+                'saved': null,
+                'n_saves': 0,
+                'allow_modal_editor': true,
+                'modal_editor_options': JSON.stringify({format: [{name: 'A', type: 'string'}]}),
+                'example_input': '"foo\nbar"'
+            },
         },
-        'task_names': ['task1', 'task2', 'task3', 'task4', 'task5', 'task6'],
+        'task_names': ['task1', 'task2', 'task3', 'task4', 'task5', 'task6', 'task7'],
         'current_task': 'task1',
         'next_task': '',
         'submits': [],

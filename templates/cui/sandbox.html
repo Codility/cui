@@ -20,7 +20,7 @@
         tree_editor = TreeEditor($('.tree-editor'), $('.undo'), $('.warning-area'));
 
         var tree_string = '(25, (1999999, (1222222, (4, None, None), None), (2222222, None, (23, None, None))), (37, (29, None, (30, None, None)), None))';
-        var tree = Trees.parse_tree(tree_string);
+        var tree = InputData.parse_tree(tree_string);
         tree_editor.enable_bst_warning();
         tree_editor.set_tree(tree);
     });

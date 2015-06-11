@@ -32,7 +32,7 @@
 /* global CandidateUi, Console, Clock, TestCases, Diff */
 /* global AUTOSAVE_MAX_PERIOD */
 /* global TestServer */
-/* global Trees */
+/* global InputData */
 
 
 // is true if we're running a test
@@ -1367,12 +1367,21 @@ describe('plugins', function () {
     });
 });
 
-describe('trees module', function() {
+describe('input data module', function() {
     it('should tokenize strings', function() {
-        expect(Trees.tokenize('')).toEqual([]);
-        expect(Trees.tokenize('  ')).toEqual([]);
-        expect(Trees.tokenize(' (1, None, -2, 3) ')).toEqual(['(', 1, ',', 'None', ',', -2, ',', 3, ')']);
-        expect(function() { Trees.tokenize(' 1.5 '); }).toThrowError();
+        function token_values(tokens) {
+            return $.map(tokens, function(token) { return token.value; });
+        }
+
+        expect(token_values(InputData.tokenize(''))).toEqual([]);
+        expect(token_values(InputData.tokenize('  '))).toEqual([]);
+        expect(token_values(InputData.tokenize(' (1, None, -2, 3) '))).toEqual(
+            ['(', 1, ',', 'None', ',', -2, ',', 3, ')']);
+        expect(token_values(InputData.tokenize('("a\\n\\nb", "c\\"d", "back\\\\slash"'))).toEqual(
+            ['(', "a\n\nb", ",", "c\"d", ",", "back\\slash"]);
+        expect(token_values(InputData.tokenize('("\\"something\\" ,  " \'\\\'else\\\' , \')'))).toEqual(
+            ['(', '"something" ,  ', "'else' , ", ')']);
+        expect(function() { InputData.tokenize(' 1.5 '); }).toThrowError();
     });
 
     var example_tree_string = '(25, (19, (12, (4, None, None), None), (22, None, (23, None, None))), (37, (29, None, (30, None, None)), None))';
@@ -1392,52 +1401,96 @@ describe('trees module', function() {
              r: { empty: true } } };
 
     it('should parse trees', function() {
-        expect(Trees.parse_tree('')).toEqual({ empty: true });
-        expect(Trees.parse_tree('None')).toEqual({ empty: true });
-        expect(Trees.parse_tree('(-1, None, None)')).toEqual({val: -1, l: { empty: true }, r: { empty: true }});
-        expect(Trees.parse_tree(example_tree_string)).toEqual(example_tree);
+        expect(InputData.parse_tree('')).toEqual({ empty: true });
+        expect(InputData.parse_tree('None')).toEqual({ empty: true });
+        expect(InputData.parse_tree('(-1, None, None)')).toEqual({val: -1, l: { empty: true }, r: { empty: true }});
+        expect(InputData.parse_tree(example_tree_string)).toEqual(example_tree);
         // TODO check for error messages
     });
 
     it('should parse tuples', function() {
-        var format = [{name: 'A', type: 'int'}, {name: 'B', type: 'int'}, {name: 'T', type: 'tree'}];
-        expect(Trees.parse_tuple('(1, 2, (3, None, None))', format)).toEqual(
-            {A: 1, B: 2, T: { l: { empty: true }, val: 3, r: { empty: true }}}
+        var format = [{name: 'A', type: 'int'}, {name: 'B', type: 'int'}, {name: 'S', type: 'string'}, {name: 'T', type: 'tree'}];
+        expect(InputData.parse_tuple('(1, 2, "\\\'ala\\\'\\nma\\\\\\"kota\\"", (3, None, None))', format)).toEqual(
+            {A: 1, B: 2, S: '\'ala\'\nma\\"kota"', T: { l: { empty: true }, val: 3, r: { empty: true }}}
         );
-        expect(Trees.parse_tuple('(42, 44, ' + example_tree_string + ')', format)).toEqual(
-            {A: 42, B: 44, T: example_tree});
-        expect(function() { Trees.parse_tuple('(3, None, None)', format); }).toThrowError();
+        expect(InputData.parse_tuple("(42, 44, '', " + example_tree_string + ')', format)).toEqual(
+            {A: 42, B: 44, S: '', T: example_tree});
+        expect(function() { InputData.parse_tuple('(3, None, None)', format); }).toThrowError();
 
-        expect(Trees.parse_tuple('3', [{name: 'A', type: 'int'}])).toEqual({A: 3});
-        expect(Trees.parse_tuple('(1, None, None)', [{name: 'A', type: 'tree'}])).toEqual(
+        expect(InputData.parse_tuple('3', [{name: 'A', type: 'int'}])).toEqual({A: 3});
+        expect(InputData.parse_tuple('(1, None, None)', [{name: 'A', type: 'tree'}])).toEqual(
             {A: {val: 1, l: { empty: true}, r: { empty: true }}});
     });
 
     it('should serialize trees', function() {
-        expect(Trees.serialize_tree({ empty: true })).toEqual('None');
-        expect(Trees.serialize_tree({ val: -1, l: { empty: true }, r: { empty: true } })).toEqual('(-1, None, None)');
-        expect(Trees.serialize_tree(example_tree)).toEqual(example_tree_string);
+        expect(InputData.serialize_tree({ empty: true })).toEqual('None');
+        expect(InputData.serialize_tree({ val: -1, l: { empty: true }, r: { empty: true } })).toEqual('(-1, None, None)');
+        expect(InputData.serialize_tree(example_tree)).toEqual(example_tree_string);
     });
 
     it('should serialize tuples', function() {
         var format = [{name: 'A', type: 'int'}, {name: 'B', type: 'int'}, {name: 'T', type: 'tree'}];
-        expect(Trees.serialize_tuple({ A: 4, B: 10, T: example_tree}, format)).toEqual('(4, 10, ' + example_tree_string + ')');
+        expect(InputData.serialize_tuple({ A: 4, B: 10, T: example_tree}, format)).toEqual('(4, 10, ' + example_tree_string + ')');
         var format2 = [{name: 'X', type: 'int'}, {name: 'T', type: 'tree'}];
-        expect(Trees.serialize_tuple({ X: 4, T: { empty: true }}, format2)).toEqual('(4, None)');
+        expect(InputData.serialize_tuple({ X: 4, T: { empty: true }}, format2)).toEqual('(4, None)');
 
-        expect(Trees.serialize_tuple({A: 3}, [{name: 'A', type: 'int'}])).toEqual('3');
+        expect(InputData.serialize_tuple({A: 3}, [{name: 'A', type: 'int'}])).toEqual('3');
 
-        expect(Trees.serialize_tuple({A: {val: 1, l: { empty: true}, r: { empty: true }}},
+        expect(InputData.serialize_tuple({S: '\'ala\'\nma\\"kota"'}, [{name: 'S', type: 'string'}])).toEqual('"\'ala\'\\nma\\\\\\"kota\\""');
+
+        expect(InputData.serialize_tuple({A: {val: 1, l: { empty: true}, r: { empty: true }}},
             [{name: 'A', type: 'tree'}])).toEqual(
             '(1, None, None)');
+
+        expect(InputData.serialize_tuple({A: 'a"b\n\n\'c back\\slash'},
+            [{name: 'A', type: 'string'}])).toEqual('"a\\"b\\n\\n\'c back\\\\slash"');
     });
 });
+
+describe_ui('multiline string editor', {}, function() {
+    var server;
+
+    beforeEach(function() {
+        server = this.server;
+        server.respond();
+    });
+
+    it("should initialize properly", function() {
+        clickTaskTab('task7');
+        server.respond();
+        $('#add_test_case').click();
+        expectVisible('#modal_editor', true);
+        expectVisible('#modal_editor .multiline', true);
+        expectVisible('#test_cases .test-case .edit', true);
+        expectVisible('#modal_editor .undo', false);
+        var example = InputData.unescape_string($('input[name=test_case_example]').val());
+        expect($('#modal_editor .multiline').val()).toEqual(example);
+    });
+
+    it("should be idempotent", function() {
+        clickTaskTab('task7');
+        server.respond();
+        $('#add_test_case').click();
+        var values = ['"Quotes" from Mc\'Guiver:\n\\"Back\\slash is to slash somebody\'s back\\\'\\nIndentations\n\tare\n    protected',
+		      'bżdziągwo kiń że tę chmurność w głąb flaszy!', 
+		      describe_ui.toString()];
+        for (var i = 0; i < values.length; i++){
+            var value = values[i];
+            $('#modal_editor .multiline').val(value);
+            $('#modal_editor .ok').click();
+            $('#test_cases .test-case .edit').click();
+            expectVisible('#modal_editor .multiline', true);
+            expect($('#modal_editor .multiline').val()).toEqual(value);
+        }
+    });
+});
+
 
 describe_ui('tree editor', {}, function() {
     var server;
 
     function get_tree(path) {
-        var tree = $('#tree_editor .root');
+        var tree = $('#modal_editor .root');
         for (var i = 0; i < path.length; ++i) {
             if (path[i] == 'l')
                 tree = tree.find('> .children > .left');
@@ -1463,14 +1516,14 @@ describe_ui('tree editor', {}, function() {
         return get_tree(path).find('> .edge');
     }
 
-    var INPUT_SELECTOR = '#tree_editor .edit input';
-    var BUTTON_OK_SELECTOR = '#tree_editor .ok';
-    var BUTTON_CANCEL_SELECTOR = '#tree_editor .cancel';
-    var BUTTON_UNDO_SELECTOR = '#tree_editor .undo';
+    var INPUT_SELECTOR = '#modal_editor .tree-area input';
+    var BUTTON_OK_SELECTOR = '#modal_editor .ok';
+    var BUTTON_CANCEL_SELECTOR = '#modal_editor .cancel';
+    var BUTTON_UNDO_SELECTOR = '#modal_editor .undo';
 
     function check_node_count(count) {
-        expect($('#tree_editor text').length).toEqual(count);
-        expect($('#tree_editor .empty').length).toEqual(count + 1);
+        expect($('#modal_editor text').length).toEqual(count);
+        expect($('#modal_editor .empty').length).toEqual(count + 1);
     }
 
     function check_undo_enabled(is_enabled) {
@@ -1506,12 +1559,12 @@ describe_ui('tree editor', {}, function() {
             clickTaskTab('task1');
             server.respond();
             $('#add_test_case').click();
-            expectVisible('#tree_editor', false);
+            expectVisible('#modal_editor', false);
             expectVisible('#test_cases .test-case .edit', false);
             clickTaskTab('task4');
             server.respond();
             $('#add_test_case').click();
-            expectVisible('#tree_editor', true);
+            expectVisible('#modal_editor', true);
             expectVisible('#test_cases .test-case .edit', true);
         });
 
@@ -1586,7 +1639,7 @@ describe_ui('tree editor', {}, function() {
             $('#add_test_case').click();
             var tree_string = modify_tree();
             $(BUTTON_OK_SELECTOR).click();
-            expectVisible('#tree_editor', false);
+            expectVisible('#modal_editor', false);
             expect($('#test_cases input').val()).toEqual(tree_string);
 
             $('#test_cases .edit').click();
@@ -1599,7 +1652,7 @@ describe_ui('tree editor', {}, function() {
             $('#add_test_case').click();
             modify_tree();
             $(BUTTON_CANCEL_SELECTOR).click();
-            expectVisible('#tree_editor', false);
+            expectVisible('#modal_editor', false);
             expect($('#test_cases input').length).toEqual(0);
 
             $('#add_test_case').click();
@@ -1621,7 +1674,7 @@ describe_ui('tree editor', {}, function() {
 
             $('#test_cases input').val('Invalid');
             $('#test_cases .edit').click();
-            expectVisible('#tree_editor', false);
+            expectVisible('#modal_editor', false);
             expect($('#console').text()).toEqual("Could not parse the test case: unexpected input near 'Invalid'");
         });
     });
@@ -1638,12 +1691,12 @@ describe_ui('tree editor', {}, function() {
             get_tree_node('lrr').click();
             set_value('28');
             expect($('.node.bst-warning').length).toBe(2);
-            expect($('#tree_editor .warnings').text()).toMatch(/not a binary search tree/);
+            expect($('#modal_editor .warnings').text()).toMatch(/not a binary search tree/);
 
             get_tree_node('lrr').click();
             set_value('23');
             expect($('.node.bst-warning').length).toBe(0);
-            expect($('#tree_editor .warnings').text()).toEqual('');
+            expect($('#modal_editor .warnings').text()).toEqual('');
 
             get_tree_node('lrr').click();
             set_value('28');
@@ -1660,7 +1713,7 @@ describe_ui('tree editor', {}, function() {
         });
 
         function get_input(name) {
-            return $('#tree_editor .param[data-name=' + name +'] input');
+            return $('#modal_editor .param[data-name=' + name +'] input');
         }
 
         it("should allow to edit parameters", function() {
@@ -1668,7 +1721,7 @@ describe_ui('tree editor', {}, function() {
             expect(get_input('A').val()).toEqual('10');
             expect(get_input('B').val()).toEqual('20');
             get_input('A').val('15').change();
-            $('#tree_editor .ok').click();
+            $('#modal_editor .ok').click();
 
             expect($('#test_cases input').val()).toMatch(/^\(15, 20, /);
         });
@@ -1677,7 +1730,7 @@ describe_ui('tree editor', {}, function() {
             $('#add_test_case').click();
             get_input('A').val('1000000000000000').change();
             expect(get_input('A').hasClass('error')).toEqual(true);
-            $('#tree_editor .ok').click();
+            $('#modal_editor .ok').click();
 
             expect($('#test_cases input').val()).toMatch(/^\(0, 20, /);
             expect($('#console').text()).toMatch(/^Invalid value for parameter A/);

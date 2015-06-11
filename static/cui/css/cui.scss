@@ -841,11 +841,24 @@ $tree-background: #eee;
 }
 
 // the modal
-#tree_editor {
+#modal_editor {
   width: 800px;
   margin-left: -400px;
 
-  .edit {
+  &.narrow {
+    width: 500px;
+    margin-left: -250px;
+  }
+
+  .multiline {
+    width: 100%;
+    height: 200px;
+    font-family: Droid Sans Mono, Courier, monospace;
+    font-size: 12px;
+    resize: none;
+  }
+
+  .tree-area {
     background: $tree-background;
     width: 100%;
     height: 400px;
