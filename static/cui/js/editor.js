@@ -87,6 +87,39 @@ function Editor() {
     return self;
 }
 
+function AceEditorUtils() {
+    var self = {};
+    self._prgLangToEditorMode = function(prg_lang) {
+        var lang_dict = {
+            'c': 'c_cpp',
+            'cpp': 'c_cpp',
+            'cs': 'csharp',
+            'java': 'java',
+            'js': 'javascript',
+            'lua': 'lua',
+            'm': 'objectivec',
+            'py': 'python',
+            'pas': 'pascal',
+            'php': 'php',
+            'pl': 'perl',
+            'rb': 'ruby',
+            'scala': 'scala',
+            'sql': 'sql',
+            'vb': 'vbscript',
+            'go': 'golang'
+        };
+        return lang_dict[prg_lang] || 'plain_text';
+    };
+
+    self.setPrgLang = function(ace, prg_lang) {
+        var mode = 'ace/mode/'+self._prgLangToEditorMode(prg_lang);
+        if (prg_lang == 'php') // Highlight PHP without <?php tag
+            ace.getSession().setMode({path: mode, inline: true});
+        else
+            ace.getSession().setMode({path: mode});
+    };
+    return self;
+}
 
 function AceEditor() {
     var self = Editor();
@@ -146,34 +179,9 @@ function AceEditor() {
             self.handleChange();
     };
 
-    self._prgLangToEditorMode = function(prg_lang) {
-        var lang_dict = {
-            'c': 'c_cpp',
-            'cpp': 'c_cpp',
-            'cs': 'csharp',
-            'java': 'java',
-            'js': 'javascript',
-            'lua': 'lua',
-            'm': 'objectivec',
-            'py': 'python',
-            'pas': 'pascal',
-            'php': 'php',
-            'pl': 'perl',
-            'rb': 'ruby',
-            'scala': 'scala',
-            'sql': 'sql',
-            'vb': 'vbscript',
-            'go': 'golang'
-        };
-        return lang_dict[prg_lang] || 'plain_text';
-    };
-
     self.setPrgLang = function(prg_lang) {
-        var mode = 'ace/mode/'+self._prgLangToEditorMode(prg_lang);
-        if (prg_lang == 'php') // Highlight PHP without <?php tag
-            self.ace.getSession().setMode({path: mode, inline: true});
-        else
-            self.ace.getSession().setMode({path: mode});
+        var aceutils = AceEditorUtils();
+        aceutils.setPrgLang(self.ace, prg_lang);
     };
 
     self.setEditable = function(editable) {
