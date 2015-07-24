@@ -158,6 +158,9 @@ function TestServer() {
             "final": "/chk/final/",
             "start_ticket": "/c/_start/"
         },
+
+        max_test_case_length: 10*1024,
+        max_test_case_count: 7
     };
 
     self.respondGetTask = function(data) {

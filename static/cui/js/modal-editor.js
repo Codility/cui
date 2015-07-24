@@ -1,5 +1,6 @@
 
 /* global Console, InputData, TreeEditor, IntEditor, TextEditor */
+/* global ui */
 
 function ModalEditor($elt, input_string, on_ok, on_cancel, options) {
     var self = {};
@@ -97,6 +98,7 @@ function ModalEditor($elt, input_string, on_ok, on_cancel, options) {
             if (self.multiline_editor)
                 throw new Error('Only one multiline string is currently supported');
             $param = $('<textarea class="multiline"></textarea>');
+            $param.attr('maxlength', ui.options.max_test_case_length);
             $param.val(tuple[param.name]);
             $elt.find('.params').after($param);
             editor = TextEditor($param);

@@ -44,13 +44,15 @@ function readCookie(name) {
 }
 
 var TestCases = {
-    limit : 5,
     focus : false,
     storage: window.sessionStorage,
 
     init : function() {
         this.count = 0;
         this.allow_modal_editor = false;
+        this.limit = ui.options.max_test_case_count;
+
+        $('#example_test_case input').attr('maxlength', ui.options.max_test_case_length);
 
         $('#add_test_case').click(function(e) {
             e.preventDefault();
