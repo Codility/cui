@@ -256,10 +256,6 @@ $codility-light-blue: #2b9cd9;
           // stick to bottom
           @include position(absolute, 0 0px 0px 0px);
           padding-top: $padding;
-          #test_cases_area {
-            max-height: 200px;
-            overflow: auto;
-          }
         }
       }
     }
@@ -467,7 +463,7 @@ $tc-padding: 16px;
 }
 
 #test_cases .test-case:first-child {
-  border-top:2px solid #777777;
+  border-top:1px solid #777777;
   border-radius: 2px 2px 0 0;
 }
 
