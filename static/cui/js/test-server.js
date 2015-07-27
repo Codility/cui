@@ -228,7 +228,13 @@ function TestServer() {
             expect(t).toBeLessThan(60);
         self.timed_out = true;
 
-        return self.respondSave(data);
+        if (data.solution) {
+            return self.respondSave(data);
+        } else {
+            return {
+                'result': 'OK',
+            };
+        }
     };
 
     self.respondSubmit = function(data, mode) {

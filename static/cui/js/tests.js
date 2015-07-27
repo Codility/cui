@@ -313,6 +313,46 @@ describe_ui('', {}, function() {
             server.respond();
             expect(ui.editor.noNewLines).toBe(true);
         });
+
+        it('should not send a solution during timeout when task is not loaded', function() {
+            // Wait until last second.
+            clock.tick(seconds(1799));
+            server.respond();
+
+            ui.editor.setValue('my solution 1');
+            clickTaskTab('task2');
+            server.respond();
+
+            ui.editor.setValue('my solution 2');
+            clickTaskTab('task1');
+
+            // During the task switch we succeed with /save/, but we are still
+            // waiting on _get_task so the solution is not loaded.
+            var request = server.requests.pop();
+            expect(request.url).toBe('/chk/save/');
+            server.respondTo(request);
+
+            request = server.requests.pop();
+            expect(request.url).toBe('/c/_get_task/');
+
+            expect(ui.editor.getValue()).toBe('Loading solution...');
+
+            // The UI detects a timeout
+            ui.actionTimeout();
+            server.respondTo(request);
+            server.respond();
+
+            // We don't want to send "Loading solution" as the final solution.
+            expect(server.tasks.task1.saved).toEqual({
+                'prg_lang': 'c',
+                'solution': 'my solution 1'
+            });
+            expect(server.tasks.task2.saved).toEqual({
+                'prg_lang': 'c',
+                'solution': 'my solution 2'
+            });
+        });
+
     });
 
     it('should show help', function() {

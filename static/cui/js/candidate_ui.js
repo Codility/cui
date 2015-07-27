@@ -108,15 +108,21 @@ function CandidateUi(options)
         Log.debug("candidate action timeout", "task="+self.task.name+" prg_lang="+self.task.prg_lang);
         Log.flush();
 
-        $.ajax({
-            type: "POST",
-            url: self.options.urls['timeout_action'],
-            data: {
-                ticket: self.options.ticket_id,
+        var data;
+        if (self.task.loaded) {
+            data = {
                 task: self.task.name,
                 prg_lang: self.task.prg_lang,
                 solution: self.editor.getValue()
-            },
+            };
+        } else {
+            data = {};
+        }
+        data['ticket'] = self.options.ticket_id;
+        $.ajax({
+            type: "POST",
+            url: self.options.urls['timeout_action'],
+            data: data,
             dataType: "xml"
         });
     };
