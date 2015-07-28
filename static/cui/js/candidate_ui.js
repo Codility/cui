@@ -345,6 +345,12 @@ function CandidateUi(options)
 
         if (self.options.sequential)
             $('.task-list').addClass('disabled');
+
+        if (!self.task.allow_verify) {
+            $('#verify_button').hide();
+        } else {
+            $('#verify_button').show();
+        }
     };
 
     self.submitSolutionStatusReceived = function(data, successCallback, errorCallback) {
@@ -524,7 +530,13 @@ function CandidateUi(options)
 
     self.finalSubmitAction = function() {
         Console.clear();
-        self.finalSubmitActionVerify();
+        if (self.task.allow_verify) {
+            self.finalSubmitActionVerify();
+        } else {
+            $('#final_prompt').jqmHide();
+            $('#final_verification').jqmShow();
+            self.finalSubmitActionSave(1);
+        }
     };
 
     self.finalSubmitActionError = function(xml) {
@@ -814,6 +826,7 @@ function CandidateUi(options)
         var human_lang = xmlNodeValue(data, 'response human_lang');
         var human_lang_list = JSON.parse(xmlNodeValue(data, 'response human_lang_list'));
         var allow_user_test_cases = JSON.parse(xmlNodeValue(data, 'response allow_user_test_cases'));
+        var allow_verify = JSON.parse(xmlNodeValue(data, 'response allow_verify'));
         var allow_modal_editor = JSON.parse(xmlNodeValue(data, 'response allow_modal_editor') || 'false');
         var modal_editor_options = JSON.parse(xmlNodeValue(data, 'response modal_editor_options') || '{}');
 
@@ -825,6 +838,7 @@ function CandidateUi(options)
         self.task.human_lang = human_lang;
         self.task.saved_solution = current_solution;
         self.task.allow_user_test_cases = allow_user_test_cases;
+        self.task.allow_verify = allow_verify;
 
         $('#task_description').html(task_description);
         if (!self.options.demo && !self.options.cert) self.simpleCopyProtection();
