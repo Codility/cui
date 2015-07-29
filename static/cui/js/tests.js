@@ -238,7 +238,7 @@ describe_ui('', {}, function() {
             expect(get_visible_options('#current_prg_lang')).toEqual(['txt']);
         });
 
-        it('should correctly display verify button', function() {
+        it('should hide the verify button for text tasks', function() {
             server.respond();
             expectVisible('#verify_button', true);
 
@@ -1544,7 +1544,7 @@ describe_ui('multiline string editor', {}, function() {
         server.respond();
         $('#add_test_case').click();
         var values = ['"Quotes" from Mc\'Guiver:\n\\"Back\\slash is to slash somebody\'s back\\\'\\nIndentations\n\tare\n    protected',
-		      'bżdziągwo kiń że tę chmurność w głąb flaszy!', 
+		      'bżdziągwo kiń że tę chmurność w głąb flaszy!',
 		      describe_ui.toString()];
         for (var i = 0; i < values.length; i++){
             var value = values[i];
