@@ -195,7 +195,8 @@ function TestServer() {
             'human_lang_list': JSON.stringify(t.human_lang_list),
             'prg_lang': prg_lang,
             'human_lang': human_lang,
-            'allow_user_test_cases': t.type != 'sql',
+            'allow_user_test_cases': t.type != 'sql' && t.type != 'text',
+            'allow_verify': t.type != 'text',
             'allow_modal_editor': t.allow_modal_editor,
             'modal_editor_options': t.modal_editor_options
         };

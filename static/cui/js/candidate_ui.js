@@ -346,10 +346,10 @@ function CandidateUi(options)
         if (self.options.sequential)
             $('.task-list').addClass('disabled');
 
-        if (!self.task.allow_verify) {
-            $('#verify_button').hide();
-        } else {
+        if (self.task.allow_verify) {
             $('#verify_button').show();
+        } else {
+            $('#verify_button').hide();
         }
     };
 
@@ -535,7 +535,7 @@ function CandidateUi(options)
         } else {
             $('#final_prompt').jqmHide();
             $('#final_verification').jqmShow();
-            self.finalSubmitActionSave(1);
+            self.finalSubmitActionSave(true);
         }
     };
 
@@ -581,7 +581,7 @@ function CandidateUi(options)
 
         if (_all_ok == "1") {
             Log.info("candidate final submit verify", 'solution passed example tests');
-            self.finalSubmitActionSave(1);
+            self.finalSubmitActionSave(true);
         } else {
             Log.info("candidate final submit verify", "solution didn't pass example tests");
             if (_html)
@@ -661,7 +661,7 @@ function CandidateUi(options)
     };
 
     self.finalSubmitForceAction = function() {
-        self.finalSubmitActionSave(0);
+        self.finalSubmitActionSave(false);
     };
 
     self.checkAutoSave = function() {
