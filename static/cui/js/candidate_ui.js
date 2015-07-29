@@ -348,8 +348,10 @@ function CandidateUi(options)
 
         if (self.task.allow_verify) {
             $('#verify_button').show();
+            $('#help_btn').show();
         } else {
             $('#verify_button').hide();
+            $('#help_btn').hide();
         }
     };
 
