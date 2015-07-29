@@ -106,8 +106,19 @@ function TestServer() {
                 'modal_editor_options': JSON.stringify({format: [{name: 'A', type: 'string'}]}),
                 'example_input': '"foo\nbar"'
             },
+            'task8': {
+                'status': 'open',
+                'human_lang_list': ['en'],
+                'prg_lang_list': ['txt'],
+                'type': 'text',
+                'saved': null,
+                'n_saves': 0,
+                'allow_modal_editor': false,
+                'modal_editor_options': null,
+                'example_input': ''
+            },
         },
-        'task_names': ['task1', 'task2', 'task3', 'task4', 'task5', 'task6', 'task7'],
+        'task_names': ['task1', 'task2', 'task3', 'task4', 'task5', 'task6', 'task7', 'task8'],
         'current_task': 'task1',
         'next_task': '',
         'submits': [],
@@ -139,6 +150,7 @@ function TestServer() {
             "c": {"version": "C", "name": "C"},
             "sql": {"version": "SQL", "name": "SQL"},
             "cpp": {"version": "C++", "name": "C++"},
+            "txt": {"version": "Text", "name": "Text"},
         },
 
         show_survey: true,

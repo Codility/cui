@@ -231,6 +231,24 @@ describe_ui('', {}, function() {
             server.respond();
             expect(get_visible_options('#current_human_lang')).toEqual(['en']);
             expect(get_visible_options('#current_prg_lang')).toEqual(['sql']);
+
+            clickTaskTab('task8');
+            server.respond();
+            expect(get_visible_options('#current_human_lang')).toEqual(['en']);
+            expect(get_visible_options('#current_prg_lang')).toEqual(['txt']);
+        });
+
+        it('should correctly display verify button', function() {
+            server.respond();
+            expectVisible('#verify_button', true);
+
+            clickTaskTab('task8');
+            server.respond();
+            expectVisible('#verify_button', false);
+
+            clickTaskTab('task3');
+            server.respond();
+            expectVisible('#verify_button', true);
         });
 
         it('should switch to last programming language when switching tasks', function() {
@@ -262,6 +280,12 @@ describe_ui('', {}, function() {
             server.respond();
             expect($('#task_description').html()).toBe('Description: task3,en,sql');
             expect($('#current_prg_lang').val()).toBe('sql');
+            expect($('#current_human_lang').val()).toBe('en');
+
+            clickTaskTab('task8');
+            server.respond();
+            expect($('#task_description').html()).toBe('Description: task8,en,txt');
+            expect($('#current_prg_lang').val()).toBe('txt');
             expect($('#current_human_lang').val()).toBe('en');
         });
 
@@ -853,6 +877,14 @@ describe_ui('', {}, function() {
             server.respond();
             expectVisible('#test_cases_area', true);
             clickTaskTab('task3');
+            server.respond();
+            expectVisible('#test_cases_area', false);
+        });
+
+        it('should not be visible for text tasks', function() {
+            server.respond();
+            expectVisible('#test_cases_area', true);
+            clickTaskTab('task8');
             server.respond();
             expectVisible('#test_cases_area', false);
         });
