@@ -238,17 +238,20 @@ describe_ui('', {}, function() {
             expect(get_visible_options('#current_prg_lang')).toEqual(['txt']);
         });
 
-        it('should hide the verify button for text tasks', function() {
+        it('should hide the verify and help button for text tasks', function() {
             server.respond();
             expectVisible('#verify_button', true);
+            expectVisible('#help_btn', true);
 
             clickTaskTab('task8');
             server.respond();
             expectVisible('#verify_button', false);
+            expectVisible('#help_btn', false);
 
             clickTaskTab('task3');
             server.respond();
             expectVisible('#verify_button', true);
+            expectVisible('#help_btn', true);
         });
 
         it('should switch to last programming language when switching tasks', function() {
