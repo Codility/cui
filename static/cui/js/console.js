@@ -64,19 +64,19 @@ var Console = {
         if (log_level == "ERROR") {
             color = "red";
         }
-        $('#console').append('<div style="color:'+color+';">'+ msgtxt+'</div><br/>');
-        $("#console").scrollTop($("#console").prop("scrollHeight"));
+        $('#cui_console').append('<div style="color:'+color+';">'+ msgtxt+'</div><br/>');
+        $("#cui_console").scrollTop($("#cui_console").prop("scrollHeight"));
     },
 
     _msg : function(msg, color) {
         if (!color)
             color = "black";
-        $('#console').append('<div style="color:'+color+';">'+ msg+'</div><br/>');
-        $("#console").scrollTop($("#console").prop("scrollHeight"));
+        $('#cui_console').append('<div style="color:'+color+';">'+ msg+'</div><br/>');
+        $("#cui_console").scrollTop($("#cui_console").prop("scrollHeight"));
     },
 
     addHtml : function(html) {
-        $('#console').append(html);
+        $('#cui_console').append(html);
     },
 
     msg : function(msg) {
@@ -95,8 +95,8 @@ var Console = {
     },
     msg_quote : function(msg) {
         Log.info("candidate console message", msg);
-        $('#console').append('<div class="quote">'+msg+'</div>');
-        $("#console").scrollTop($("#console").prop("scrollHeight"));
+        $('#cui_console').append('<div class="quote">'+msg+'</div>');
+        $("#cui_console").scrollTop($("#cui_console").prop("scrollHeight"));
     },
 
     msg_syserr : function(msg) {
@@ -106,21 +106,21 @@ var Console = {
 
     clear : function() {
         Log.info("candidate console clear");
-        $('#console').html('');
+        $('#cui_console').html('');
     },
 
     add_loader : function(msg) {
         var $loader = $('.loader').clone();
         $loader.find('.message').text(msg);
-        $('#console').append($loader);
+        $('#cui_console').append($loader);
         $loader.show();
     },
 
     add_loader_comment : function(comment) {
-        $('#console .loader .comment').text(comment);
+        $('#cui_console .loader .comment').text(comment);
     },
 
     remove_loader : function() {
-        $('#console .loader').remove();
+        $('#cui_console .loader').remove();
     },
 };

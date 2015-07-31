@@ -759,7 +759,7 @@ function CandidateUi(options)
     };
     self.selectionRestrictedToConsole = function(){
         var commonAncestor = $(window.getSelection().getRangeAt(0).commonAncestorContainer);
-        if (commonAncestor.closest('#console').length){
+        if (commonAncestor.closest('#cui_console').length){
             return true;
         }
         return false;
@@ -980,8 +980,8 @@ function CandidateUi(options)
     };
 
     self.resizeConsoleAction = function() {
-        $('#console').toggleClass("maximized");
-        if ($('#console').hasClass("maximized")){
+        $('#cui_console').toggleClass("maximized");
+        if ($('#cui_console').hasClass("maximized")){
             $('#resize_console_button').val("↓");
         }
         else{

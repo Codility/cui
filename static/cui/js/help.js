@@ -131,7 +131,7 @@ var Help = function(isInitial, taskCount, prgLangName, prgLangCount, support_ema
               intro:self.stepsTexts.runButton,
               position: "top"
             },
-            { element: "#console",
+            { element: "#cui_console",
               intro:self.stepsTexts.outputWindow,
               position: "top"
             },
