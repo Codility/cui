@@ -1071,7 +1071,7 @@ describe_ui('', {}, function() {
             //alow copy of overlapping elements within console
             var sub_element2 = c_console.childNodes[6];
             buildSelection(sub_element, sub_element2);
-            expect(window.getSelection().getRangeAt(0).commonAncestorContainer.id).toBe('console');
+            expect(window.getSelection().getRangeAt(0).commonAncestorContainer.id).toBe('cui_console');
             expect(ui.selectionRestrictedToConsole()).toBe(true);
         });
         it('should not allow copying when overlapping with restricted portions',function(){
