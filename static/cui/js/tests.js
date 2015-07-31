@@ -483,7 +483,7 @@ describe_ui('', {}, function() {
         // server accepts the submit, but doesn't return result yet
         server.respond();
         expectAllSwitches(false);
-        expect($('#console').text()).toMatch('Running solution');
+        expect($('#cui_console').text()).toMatch('Running solution');
 
         // there's a submit
         expect(server.submits.length).toBe(1);
@@ -506,7 +506,7 @@ describe_ui('', {}, function() {
         clock.tick(seconds(N_ATTEMPTS + 1));
         server.respond();
         expectAllSwitches(true);
-        expect($('#console').text()).toMatch('Verification succeeded');
+        expect($('#cui_console').text()).toMatch('Verification succeeded');
     });
 
     describe('final task submission', function() {
@@ -1026,7 +1026,7 @@ describe_ui('', {}, function() {
             Console.msg_syserr("This is a system error");
             Console.msg_ok("This is not an error");
             //allow copy of the whole console range
-            var c_console = $('#console')[0];
+            var c_console = $('#cui_console')[0];
             buildSelection(c_console);
             expect(ui.selectionRestrictedToConsole()).toBe(true);
             //allow copy of a sub element in console
@@ -1042,7 +1042,7 @@ describe_ui('', {}, function() {
         it('should not allow copying when overlapping with restricted portions',function(){
             server.respond();
             //don't allow copy when console and another is highlighted
-            var c_console = $('#console')[0];
+            var c_console = $('#cui_console')[0];
             var editor_bar = $('#editor_bar')[0];
             var e = {'target': editor_bar}; //target is usually first node in the selection
             buildSelection(editor_bar, c_console);
@@ -1182,7 +1182,7 @@ describe_ui("start ticket", {}, function(){
         //simulate error condition
         server.triggerTicketNotFound();
         server.respond();
-        expect($('#console').text()).toMatch("Network error encountered while trying to start your test. "+
+        expect($('#cui_console').text()).toMatch("Network error encountered while trying to start your test. "+
             "Try reloading this page.");
 
     });
@@ -1715,7 +1715,7 @@ describe_ui('tree editor', {}, function() {
             $('#test_cases input').val('Invalid');
             $('#test_cases .edit').click();
             expectVisible('#modal_editor', false);
-            expect($('#console').text()).toEqual("Could not parse the test case: unexpected input near 'Invalid'");
+            expect($('#cui_console').text()).toEqual("Could not parse the test case: unexpected input near 'Invalid'");
         });
     });
 
@@ -1773,7 +1773,7 @@ describe_ui('tree editor', {}, function() {
             $('#modal_editor .ok').click();
 
             expect($('#test_cases input').val()).toMatch(/^\(0, 20, /);
-            expect($('#console').text()).toMatch(/^Invalid value for parameter A/);
+            expect($('#cui_console').text()).toMatch(/^Invalid value for parameter A/);
         });
     });
 });
