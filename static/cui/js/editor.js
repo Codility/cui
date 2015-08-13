@@ -83,6 +83,7 @@ function Editor() {
     self.focus = function() {
         $('#solution').focus();
     };
+    self.setCommandHandler = function(name, bindKey, handler) {};
 
     return self;
 }
