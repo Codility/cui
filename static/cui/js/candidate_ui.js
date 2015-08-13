@@ -309,10 +309,16 @@ function CandidateUi(options)
         self.updateControls();
     };
 
+    self.mayEdit = function() { return (self.task.loaded && self.task.open); };
+    self.maySubmitOrReload = function() { return (self.task.loaded && self.task.open && !self.isCalling()); };
+    self.maySwitch = function() { return (self.task.loaded && !self.isCalling()); };
+
+    self.mayVerify = function() { return self.maySubmitOrReload() && self.task.allow_verify; };
+
     self.updateControls = function() {
-        var may_edit = (self.task.loaded && self.task.open);
-        var may_submit_or_reload = (self.task.loaded && self.task.open && !self.isCalling());
-        var may_switch = (self.task.loaded && !self.isCalling());
+        var may_edit = self.mayEdit();
+        var may_submit_or_reload = self.maySubmitOrReload();
+        var may_switch = self.maySwitch();
         var submit_or_reload_controls = [
             '#verify_button',
             '#final_button',
@@ -996,14 +1002,19 @@ function CandidateUi(options)
         self.editor.setCommandHandler(
             "save",
             { win: 'Ctrl-S', mac: 'Command-S' },
-            function(editor) { self.saveAction(true); }
+            function(editor) {
+                if (self.mayEdit()) {
+                    self.saveActionAsync();
+                }
+            }
         );
         self.editor.setCommandHandler(
             "verify",
             { win: 'F9', mac: 'F9' },
             function(editor) {
-                if ($('#verify_button').prop('disabled')) return;
-                self.verifyAction();
+                if (self.mayVerify()) {
+                    self.verifyAction();
+                }
             }
         );
     };
