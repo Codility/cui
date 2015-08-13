@@ -325,6 +325,14 @@ function AceEditor() {
     self.focus = function() {
         self.ace.focus();
     };
+    self.setCommandHandler = function(name, bindKey, handler) {
+        // https://docs.c9.io/api/?print=/api/commands
+        self.ace.commands.addCommand({
+            name: name,
+            bindKey: bindKey,
+            exec: handler
+        });
+    };
 
     self.ace.commands.on("exec", self.enforceReadOnlyRegions);
     return self;

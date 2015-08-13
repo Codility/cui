@@ -993,6 +993,20 @@ function CandidateUi(options)
     self.setupEditor = function() {
         self.editor = AceEditor();
         self.editor.onChangeEvent(self.updateModified);
+        self.editor.setCommandHandler(
+            "save",
+            {win: 'Ctrl-S', mac: 'Command-S'},
+            function(editor) { self.saveAction(true); }
+        );
+        self.editor.setCommandHandler(
+            "verify",
+            {win: 'F9', mac: 'F9'},
+            function(editor) {
+                if ($('#verify_button').prop('disabled')) return;
+                console.log("verify");
+                self.verifyAction();
+            }
+        );
     };
 
     self.setupModals = function() {
