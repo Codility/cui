@@ -40,7 +40,7 @@ DATABASES = {
 # Unused.
 SECRET_KEY = '42'
 
-TEMPLATE_DIRS = (here('templates/'))
+TEMPLATE_DIRS = (here('templates/'),)
 
 STATIC_URL = '/static/'
 CUI_STATIC_DIR = here('static')
@@ -73,4 +73,6 @@ STATICFILES_FINDERS = (
 
 # Testing
 
-TEST_RUNNER = 'run_util.CUITestRunner'
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
+MIDDLEWARE_CLASSES = ()
