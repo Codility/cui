@@ -1,4 +1,4 @@
-Django==1.7.10
+Django==1.8.4
 django-compressor==1.4
 selenium==2.43.0
 PyVirtualDisplay==0.1.5
