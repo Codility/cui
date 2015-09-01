@@ -40,10 +40,10 @@
 
 {% compress css %}
   <link rel="stylesheet" href="{{ STATIC_URL }}cui/vendor/normalize.css"/>
-  <link rel="stylesheet" href="{{ STATIC_URL }}cui/css/cui.auto.css?{{ VERSION }}" type="text/css"/>
   <link rel="stylesheet" href="{{ STATIC_URL }}cui/vendor/jquery/jquery.jqModal.css"/>
   <link rel="stylesheet" href="{{ STATIC_URL }}cui/vendor/introjs_fork/introjs.css">
 {% endcompress %}
+  <link rel="stylesheet" href="{{ STATIC_URL }}cui/css/cui.auto.css?{{ VERSION }}" type="text/css"/>
 {% if in_test %}
   <link rel="stylesheet" href="{{STATIC_URL}}cui/vendor/jasmine-2.0.0/jasmine.css?{{ VERSION }}" />
 {% endif %}
