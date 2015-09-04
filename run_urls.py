@@ -21,12 +21,11 @@
 '''
 
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-import views, run_settings
+import views
 
-urlpatterns = patterns(
-    'views',
-    url(r'^test/$', 'cui_test', name='cui_test'),
-    url(r'^local/$', 'cui_local', name='cui_local')
-)
+urlpatterns = [
+    url(r'^test/$', views.cui_test, name='cui_test'),
+    url(r'^local/$', views.cui_local, name='cui_local')
+]
