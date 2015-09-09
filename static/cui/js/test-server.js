@@ -110,7 +110,7 @@ function TestServer() {
                 'status': 'open',
                 'human_lang_list': ['en'],
                 'prg_lang_list': ['txt'],
-                'type': 'text',
+                'type': 'freeform',
                 'saved': null,
                 'n_saves': 0,
                 'allow_modal_editor': false,
@@ -207,8 +207,8 @@ function TestServer() {
             'human_lang_list': JSON.stringify(t.human_lang_list),
             'prg_lang': prg_lang,
             'human_lang': human_lang,
-            'allow_user_test_cases': t.type != 'sql' && t.type != 'text',
-            'allow_verify': t.type != 'text',
+            'allow_user_test_cases': t.type != 'sql' && t.type != 'freeform',
+            'allow_verify': t.type != 'freeform',
             'allow_modal_editor': t.allow_modal_editor,
             'modal_editor_options': t.modal_editor_options
         };
