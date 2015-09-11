@@ -97,7 +97,7 @@ function ModalEditor($elt, input_string, on_ok, on_cancel, options) {
         } else if (param.type == 'string') {
             if (self.multiline_editor)
                 throw new Error('Only one multiline string is currently supported');
-            $param = $('<textarea class="multiline"></textarea>');
+            $param = $('<textarea class="multiline" spellcheck="false"></textarea>');
             $param.attr('maxlength', ui.options.max_test_case_length);
             $param.val(tuple[param.name]);
             $elt.find('.params').after($param);
