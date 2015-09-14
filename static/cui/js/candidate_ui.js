@@ -849,7 +849,7 @@ function CandidateUi(options)
         self.task.allow_verify = allow_verify;
 
         $('#task_description').html(task_description);
-        if (!self.options.demo && !self.options.cert) self.simpleCopyProtection();
+        if (!self.options.demo && !self.options.training && !self.options.cert) self.simpleCopyProtection();
 
         $('#current_prg_lang').val(prg_lang);
 
@@ -1020,10 +1020,10 @@ function CandidateUi(options)
     };
 
     self.setupModals = function() {
-        if (self.options.train) {
-            $('.in-train').show();
+        if (self.options.training) {
+            $('.in-training').show();
             $('.in-default').hide();
-            $('.no-train').hide();
+            $('.no-training').hide();
         } else if (self.options.demo) {
             $('.in-demo').show();
             $('.in-default').hide();
@@ -1340,7 +1340,7 @@ function CandidateUi(options)
         self.setupModals();
         self.setupButtons();
         self.setupSelects();
-        if (!self.options.demo && !self.options.cert) self.setupTrackers();
+        if (!self.options.demo && !self.options.training && !self.options.cert) self.setupTrackers();
         TestCases.init();
 
         if (self.options.show_chat)
