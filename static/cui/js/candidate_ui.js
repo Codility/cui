@@ -184,7 +184,8 @@ function CandidateUi(options)
     };
 
     self.callDetails = function() {
-        if (!self.call) return "No call";
+        if (!self.call)
+            return "No call";
         else {
             var details = ('call: (owner=' + self.call.owner +
                            ' duration=' + (Date.now() - self.call.timestamp) + 'ms' +
@@ -753,7 +754,8 @@ function CandidateUi(options)
 
     self.validSelectableNode = function(t) {
         var t_nodename = t.prop("nodeName");
-        if (t_nodename=='TEXTAREA') return true;
+        if (t_nodename=='TEXTAREA')
+            return true;
         // console.log("t="+t+" t.html="+t.html()+" t.nodeName="+t_nodename);
 
         if (t_nodename=='TT' || (t_nodename=='SPAN' && t.hasClass('number'))) {
@@ -778,13 +780,16 @@ function CandidateUi(options)
         }
 
         //don't disable copy in the console
-        if(self.selectionRestrictedToElement('#cui_console')) return true;
+        if(self.selectionRestrictedToElement('#cui_console'))
+            return true;
 
         //don't disable copy in the testcase widget
-        if(self.selectionRestrictedToElement('#test_cases_area')) return true;
+        if(self.selectionRestrictedToElement('#test_cases_area'))
+            return true;
 
         var t = $(e.target);
-        if (!self.validSelectableNode(t)) return false;
+        if (!self.validSelectableNode(t))
+            return false;
 
         // recover selection html
         var selection = window.getSelection();
@@ -1194,17 +1199,20 @@ function CandidateUi(options)
         });
         self.editor.onPasteEvent(function(e) {
             var data = get_text(e.text);
-            if (self.editor.last_copy===data) return;
-            self.editor.last_paste=data;
+            if (self.editor.last_copy === data)
+                return;
+            self.editor.last_paste = data;
             setTimeout(function() {
                 var last_paste = $.trim(self.editor.last_paste);
                 // track only pastes with at least 2 lines
-                if (last_paste.split("\n").length<2) return;
+                if (last_paste.split("\n").length<2)
+                    return;
 
                 var solution = self.editor.getValue();
                 var ppos = solution.indexOf(last_paste);
                 var plen = last_paste.length;
-                if (ppos==-1) return; // paste can not be found in solution => skip
+                if (ppos==-1)
+                    return; // paste can not be found in solution => skip
 
                 self.pastes_detected++;
 
