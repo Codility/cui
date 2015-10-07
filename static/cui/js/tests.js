@@ -1063,16 +1063,23 @@ describe_ui('', {}, function() {
             //allow copy of the whole console range
             var c_console = $('#cui_console')[0];
             buildSelection(c_console);
-            expect(ui.selectionRestrictedToConsole()).toBe(true);
+            expect(ui.selectionRestrictedToElement('#cui_console')).toBe(true);
             //allow copy of a sub element in console
             var sub_element = c_console.childNodes[4];
             buildSelection(sub_element);
-            expect(ui.selectionRestrictedToConsole()).toBe(true);
+            expect(ui.selectionRestrictedToElement('#cui_console')).toBe(true);
             //alow copy of overlapping elements within console
             var sub_element2 = c_console.childNodes[6];
             buildSelection(sub_element, sub_element2);
             expect(window.getSelection().getRangeAt(0).commonAncestorContainer.id).toBe('cui_console');
-            expect(ui.selectionRestrictedToConsole()).toBe(true);
+            expect(ui.selectionRestrictedToElement('#cui_console')).toBe(true);
+        });
+        it('should allow copying in test case widget', function(){
+            server.respond();
+            $('#add_test_case').click();
+            $('.test-case input').last().val('Copy this');
+            buildSelection($('.test-case input').last()[0]);
+            expect(ui.selectionRestrictedToElement('#test_cases_area')).toBe(true);
         });
         it('should not allow copying when overlapping with restricted portions',function(){
             server.respond();
@@ -1081,13 +1088,13 @@ describe_ui('', {}, function() {
             var editor_bar = $('#editor_bar')[0];
             var e = {'target': editor_bar}; //target is usually first node in the selection
             buildSelection(editor_bar, c_console);
-            expect(ui.selectionRestrictedToConsole()).toBe(false);
+            expect(ui.selectionRestrictedToElement('#cui_console')).toBe(false);
             expect(ui.validCopySelection(e)).toBe(false);
             //don't allow copy within task description
             var task_description = $('#task_description')[0];
             buildSelection(task_description);
             e.target = task_description;
-            expect(ui.selectionRestrictedToConsole()).toBe(false);
+            expect(ui.selectionRestrictedToElement('#cui_console')).toBe(false);
             expect(ui.validCopySelection(e)).toBe(false);
         });
         it('should allow copying of example data from task description', function(){
@@ -1098,7 +1105,7 @@ describe_ui('', {}, function() {
             var example_node = $('#task_description tt')[0];
             var e = {'target': example_node};
             buildSelection(example_node);
-            expect(ui.selectionRestrictedToConsole()).toBe(false);
+            expect(ui.selectionRestrictedToElement('#cui_console')).toBe(false);
             expect(ui.validCopySelection(e)).toBe(true);
         });
 
