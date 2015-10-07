@@ -763,9 +763,9 @@ function CandidateUi(options)
             return false;
         }
     };
-    self.selectionRestrictedToConsole = function(){
+    self.selectionRestrictedToElement = function(selector){
         var commonAncestor = $(window.getSelection().getRangeAt(0).commonAncestorContainer);
-        if (commonAncestor.closest('#cui_console').length){
+        if (commonAncestor.closest(selector).length){
             return true;
         }
         return false;
@@ -778,7 +778,10 @@ function CandidateUi(options)
         }
 
         //don't disable copy in the console
-        if(self.selectionRestrictedToConsole()) return true;
+        if(self.selectionRestrictedToElement('#cui_console')) return true;
+
+        //don't disable copy in the testcase widget
+        if(self.selectionRestrictedToElement('#test_cases_area')) return true;
 
         var t = $(e.target);
         if (!self.validSelectableNode(t)) return false;
