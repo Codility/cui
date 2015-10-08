@@ -569,7 +569,7 @@ function CandidateUi(options)
         $('#final_prompt').jqmHide();
         $('#final_verification .dialog_buttons').hide();
         $('#final_verification .message').html(
-                '<b>Codility is verifying your solution.</b><br><br>'
+                '<b>We are verifying your solution.</b><br><br>'
         );
         $('#fv_loader').css({display:'block'});
         $('#final_verification').jqmShow();
@@ -1000,7 +1000,10 @@ function CandidateUi(options)
     };
 
     self.setupEditor = function() {
-        self.editor = AceEditor();
+        var editor_options = {
+            'support_email': self.options.support_email,
+        };
+        self.editor = AceEditor(editor_options);
         self.editor.onChangeEvent(self.updateModified);
         self.editor.setCommandHandler(
             "save",

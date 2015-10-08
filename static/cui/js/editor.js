@@ -122,7 +122,7 @@ function AceEditorUtils() {
     return self;
 }
 
-function AceEditor() {
+function AceEditor(options) {
     var self = Editor();
 
     try {
@@ -135,7 +135,7 @@ function AceEditor() {
         window.alert("The rich code editor failed to load.\n" +
                      "Please try reloading or use another browser.\n" +
                      "\n" +
-                     "If you continue to have problems, please contact support@codility.com.");
+                     "If you continue to have problems, please contact {0}.".format(options.support_email));
         // Fall back to normal textarea-based Editor
         return self;
     }
