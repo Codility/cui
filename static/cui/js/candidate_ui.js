@@ -1305,24 +1305,12 @@ function CandidateUi(options)
             "Try reloading this page.");
     };
 
-    self.WELCOME_MESSAGE = (
-        'This is <a href="https://github.com/codility/cui" target="_blank">CUI</a>.  ' +
-        'CUI is free software.  ' +
-        'See <a href="https://github.com/Codility/cui/blob/master/COPYING.LESSER" target="_blank">COPYING.LESSER</a> ' +
-        'and <a href="https://github.com/Codility/cui/blob/master/AUTHORS" target="_blank">AUTHORS</a> ' +
-        'for details.'
-    );
-
     self.initTask = function() {
         Clock.init(self.options.ticket_id, self.options.urls['clock'], self.options.time_remaining_sec, self.options.time_elapsed_sec);
 
         self.reloadTask();
         setTimeout(self.checkAutoSave, CHECK_AUTOSAVE_PERIOD);
         self.updateControls();
-
-        if (self.options.show_welcome) {
-            Console.msg_ok(self.WELCOME_MESSAGE);
-        }
     };
 
     self.initialHelp = function() {

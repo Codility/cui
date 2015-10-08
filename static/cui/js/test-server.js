@@ -155,7 +155,6 @@ function TestServer() {
 
         show_survey: true,
         show_help: false,
-        show_welcome: true,
         sequential: false,
 
         urls: {
