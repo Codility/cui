@@ -570,7 +570,7 @@ function CandidateUi(options)
         $('#final_prompt').jqmHide();
         $('#final_verification .dialog_buttons').hide();
         $('#final_verification .message').html(
-                '<b>Codility is verifying your solution.</b><br><br>'
+                '<b>We are verifying your solution.</b><br><br>'
         );
         $('#fv_loader').css({display:'block'});
         $('#final_verification').jqmShow();
@@ -1005,7 +1005,10 @@ function CandidateUi(options)
     };
 
     self.setupEditor = function() {
-        self.editor = AceEditor();
+        var editor_options = {
+            'support_email': self.options.support_email,
+        };
+        self.editor = AceEditor(editor_options);
         self.editor.onChangeEvent(self.updateModified);
         self.editor.setCommandHandler(
             "save",
@@ -1313,24 +1316,12 @@ function CandidateUi(options)
             "Try reloading this page.");
     };
 
-    self.WELCOME_MESSAGE = (
-        'This is <a href="https://github.com/codility/cui" target="_blank">CUI</a>.  ' +
-        'CUI is free software.  ' +
-        'See <a href="https://github.com/Codility/cui/blob/master/COPYING.LESSER" target="_blank">COPYING.LESSER</a> ' +
-        'and <a href="https://github.com/Codility/cui/blob/master/AUTHORS" target="_blank">AUTHORS</a> ' +
-        'for details.'
-    );
-
     self.initTask = function() {
         Clock.init(self.options.ticket_id, self.options.urls['clock'], self.options.time_remaining_sec, self.options.time_elapsed_sec);
 
         self.reloadTask();
         setTimeout(self.checkAutoSave, CHECK_AUTOSAVE_PERIOD);
         self.updateControls();
-
-        if (self.options.show_welcome) {
-            Console.msg_ok(self.WELCOME_MESSAGE);
-        }
     };
 
     self.initialHelp = function() {
