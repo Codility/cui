@@ -135,7 +135,7 @@ function AceEditor(options) {
         window.alert("The rich code editor failed to load.\n" +
                      "Please try reloading or use another browser.\n" +
                      "\n" +
-                     "If you continue to have problems, please contact " + options.support_email + "."));
+                     "If you continue to have problems, please contact " + options.support_email + ".");
         // Fall back to normal textarea-based Editor
         return self;
     }
