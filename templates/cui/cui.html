@@ -24,6 +24,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   {% include "cui/_head.html" %}
+  {% block favicon %}{# customizable #}
+    <link rel="shortcut icon" href="{{ STATIC_URL }}cui/img/favicon{% if DEBUG %}_debug{% endif %}.ico">
+  {% endblock %}
   {% block extrahead %}{% endblock %}
 </head>
 
